@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+.container {
+  width: 100%; /* Ensure the container takes full width */
+  padding: 0 16px; /* Optional horizontal padding */
+  box-sizing: border-box; /* Include padding in width calculation */
+}

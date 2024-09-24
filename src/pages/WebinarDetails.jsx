@@ -1,0 +1,104 @@
+import React from "react";
+import { Box } from "@mui/material";
+import LoginedNavbar from "../components/LoginedNavbar";
+import { FaRegHeart } from "react-icons/fa";
+import { FaStar } from "react-icons/fa6";
+import WebinarCard from "../pages/WebinarCard";
+
+const drawerWidth = 280;
+
+const WebinarDetails = () => {
+  return (
+    <>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          backgroundColor: "#131213",
+          minHeight: "100vh",
+          padding: 0,
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "70px",
+            height: "100%",
+            background:
+              "linear-gradient(to right, #220e37 0%, rgba(34, 14, 55, 0) 100%)",
+            zIndex: 1,
+          }}
+        />
+        <div>
+          <LoginedNavbar />
+        </div>
+        <div
+          style={{ position: "relative", zIndex: 2 }}
+          className="mt-12 mx-4 md:mx-8 flex flex-col md:flex-row justify-start"
+        >
+          <img
+            src={`${process.env.PUBLIC_URL}/images/Rectangle1.png`}
+            alt=""
+            className="w-full md:w-auto"
+          />
+          <div className="mt-10 mx-0 md:mx-10 w-auto md:mr-96 flex-1">
+            <div className="flex justify-between items-center">
+              <h1 className="text-white text-3xl font-semibold">Life in Paris</h1>
+              <div className="mx-0 md:mx-52 flex items-center gap-1">
+                <FaStar className="text-[#FFC01E]" />
+                <p className="text-white text-lg font-medium">7.8/10</p>
+              </div>
+            </div>
+            <div className="flex justify-between mt-2 md:mr-96 flex-wrap">
+              <p className="text-white text-lg font-medium mr-4">2023</p>
+              <p className="text-white text-lg font-medium mx-8">Climate Change</p>
+              <p className="text-white mx-8 text-lg font-medium">2h 38m</p>
+            </div>
+            <div className="mt-5 mr-0 md:mr-52">
+              <p className="text-white text-base">
+                The webinar follows the lives of a wealthy family, the Johnsons,
+                who appear to have it all: a grand mansion, luxurious cars, and
+                expensive designer clothing. However, behind the facade of their
+                lavish lifestyle, there are deep-seated tensions and secrets
+                that threaten to tear the family apart.
+              </p>
+            </div>
+            <div className="flex flex-col md:flex-row items-center">
+              <button className="bg-[#6a55ea] h-16 w-full md:w-36 text-white rounded-2xl mt-3">
+                Watch Now
+              </button>
+              <button className="bg-white h-16 w-full md:w-16 text-black mx-0 md:mx-5 rounded-2xl mt-3 flex justify-center items-center">
+                <FaRegHeart className="w-6 h-6" />
+              </button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h1
+            style={{ position: "relative", zIndex: 2 }}
+            className="text-white text-2xl font-semibold ml-4 md:ml-8 mt-16 p-4"
+          >
+            Related Webinars
+          </h1>
+          <div
+            style={{ position: "relative", zIndex: 2 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mx-4 md:mx-8 my-4"
+          >
+            <WebinarCard />
+            <WebinarCard />
+            <WebinarCard />
+            <WebinarCard />
+          </div>
+        </div>
+      </Box>
+    </>
+  );
+};
+
+export default WebinarDetails;

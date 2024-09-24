@@ -1,0 +1,158 @@
+import React from "react";
+import { Box, Typography, Button } from "@mui/material";
+import LoginedNavbar from "../components/LoginedNavbar";
+import { FaStar } from "react-icons/fa6";
+import { FaRegStar } from "react-icons/fa";
+import { FiPlayCircle } from "react-icons/fi";
+import { RiBook2Line } from "react-icons/ri";
+
+const drawerWidth = 280;
+const BookDetails = () => {
+  return (
+    <>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          backgroundColor: "#131213",
+          minHeight: "100vh",
+          padding: 0,
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "70px",
+            height: "100%",
+            background:
+              "linear-gradient(to right, #220e37 0%, rgba(34, 14, 55, 0) 100%)",
+            zIndex: 1,
+          }}
+        />
+        <LoginedNavbar />
+        <Box
+          sx={{
+            position: "relative",
+            zIndex: 2,
+            mt: 2,
+            mx: { xs: 2, md: 8 },
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", md: "auto 1fr" },
+            gap: { xs: 2, md: 4 },
+          }}
+        >
+          <img
+            className="w-full md:w-64"
+            src={`${process.env.PUBLIC_URL}/images/image1.png`}
+            alt=""
+          />
+          <Box className="mt-10" sx={{ flexGrow: 1 }}>
+            <Typography className="text-white text-xl font-medium">
+              Harry Potter and the Sorcer...
+            </Typography>
+            <Typography className="text-white text-base font-normal">
+              J.K. Rownlings
+            </Typography>
+            <Box className="flex items-center gap-1 mt-2">
+              <FaStar className="text-[#FFC01E]" />
+              <FaStar className="text-[#FFC01E]" />
+              <FaStar className="text-[#FFC01E]" />
+              <FaStar className="text-[#FFC01E]" />
+              <FaRegStar className="text-[#FFC01E]" />
+              <Typography className="text-white text-lg font-normal">
+                4.0
+              </Typography>
+            </Box>
+            <Box className="flex items-center gap-2 mt-2">
+              {["Fantasy", "Drama", "Fiction"].map((genre) => (
+                <Box
+                  key={genre}
+                  className="border border-white rounded-xl text-white text-xs font-semibold px-3 py-1"
+                >
+                  {genre}
+                </Box>
+              ))}
+            </Box>
+            <Box className="flex items-center mt-3 gap-3">
+              <Box className="flex items-center mt-3">
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#6a55ea", // Your desired color
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: "#5a47d1", // Darker shade on hover
+                    },
+                    height: "64px", // Maintain the height
+                    width: "160px", // Maintain the width
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 1,
+                  }}
+                >
+                  <FiPlayCircle />
+                  Play Audio
+                </Button>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    borderColor: "white", // White border
+                    color: "white", // White text
+                    height: "64px", // Maintain the height
+                    width: "160px", // Maintain the width
+                    marginLeft: "20px", // Margin for separation
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 1,
+                    "&:hover": {
+                      backgroundColor: "rgba(255, 255, 255, 0.1)", // Lighten background on hover
+                    },
+                  }}
+                >
+                  <RiBook2Line />
+                  Read Book
+                </Button>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+        <Box
+          sx={{ position: "relative", zIndex: 2, mt: 4, mx: { xs: 2, md: 8 } }}
+        >
+          <Typography className="text-white font-semibold text-sm">
+            Summary
+          </Typography>
+          <Typography className="text-white font-light text-sm mt-2">
+            Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
+            sint. Velit officia consequat duis enim velit mollit. Exercitation
+            veniam consequat sunt nostrud amet. Mollit non deserunt ullamco est
+            sit aliqua dolor do amet sint. Velit officia consequat duis enim
+            velit mollit. Exercitation veniam consequat sunt. Velit officia
+            consequat duis enim velit mollit. Amet minim mollit non deserunt
+            ullamco est sit aliqua dolor do amet sint. Velit officia consequat
+            duis enim velit mollit. Exercitation veniam consequat sunt nostrud
+            amet. Amet minim mollit non deserunt ullamco est sit aliqua dolor do
+            amet sint. Velit officia consequat duis enim velit mollit.
+            Exercitation veniam consequat sunt nostrud amet. Mollit non deserunt
+            ullamco est sit aliqua dolor do amet sint. Velit officia consequat
+            duis enim velit mollit. Exercitation veniam consequat sunt. Velit
+            officia consequat duis enim velit mollit. Amet minim mollit non
+            deserunt ullamco est sit aliqua dolor do amet sint. Velit officia
+            consequat duis enim velit mollit. Exercitation veniam consequat sunt
+            nostrud amet.
+          </Typography>
+        </Box>
+      </Box>
+    </>
+  );
+};
+
+export default BookDetails;
