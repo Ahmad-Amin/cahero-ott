@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import LoginedNavbar from "../components/LoginedNavbar";
 import { FaStar } from "react-icons/fa6";
 import { FaRegStar } from "react-icons/fa";
 import { FiPlayCircle } from "react-icons/fi";
 import { RiBook2Line } from "react-icons/ri";
+import AudioPlayer from "../components/AudioPlayer"; // Import your AudioPlayer component
 
 const drawerWidth = 280;
+
 const BookDetails = () => {
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false); // State to control AudioPlayer rendering
+
   return (
     <>
       <Box
@@ -50,7 +54,7 @@ const BookDetails = () => {
           <img
             className="w-full md:w-64"
             src={`${process.env.PUBLIC_URL}/images/image1.png`}
-            alt=""
+            alt="Book cover"
           />
           <Box className="mt-10" sx={{ flexGrow: 1 }}>
             <Typography className="text-white text-xl font-medium">
@@ -65,9 +69,7 @@ const BookDetails = () => {
               <FaStar className="text-[#FFC01E]" />
               <FaStar className="text-[#FFC01E]" />
               <FaRegStar className="text-[#FFC01E]" />
-              <Typography className="text-white text-lg font-normal">
-                4.0
-              </Typography>
+              <Typography className="text-white text-lg font-normal">4.0</Typography>
             </Box>
             <Box className="flex items-center gap-2 mt-2">
               {["Fantasy", "Drama", "Fiction"].map((genre) => (
@@ -83,14 +85,15 @@ const BookDetails = () => {
               <Box className="flex items-center mt-3">
                 <Button
                   variant="contained"
+                  onClick={() => setIsAudioPlaying(true)} // Set state to true on button click
                   sx={{
                     backgroundColor: "#6a55ea", // Your desired color
                     color: "white",
                     "&:hover": {
                       backgroundColor: "#5a47d1", // Darker shade on hover
                     },
-                    height: "64px", // Maintain the height
-                    width: "160px", // Maintain the width
+                    height: "64px",
+                    width: "160px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -105,9 +108,9 @@ const BookDetails = () => {
                   sx={{
                     borderColor: "white", // White border
                     color: "white", // White text
-                    height: "64px", // Maintain the height
-                    width: "160px", // Maintain the width
-                    marginLeft: "20px", // Margin for separation
+                    height: "64px",
+                    width: "160px",
+                    marginLeft: "20px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -122,14 +125,13 @@ const BookDetails = () => {
                 </Button>
               </Box>
             </Box>
+
+            {/* Conditionally render AudioPlayer inside the Box */}
+            
           </Box>
         </Box>
-        <Box
-          sx={{ position: "relative", zIndex: 2, mt: 4, mx: { xs: 2, md: 8 } }}
-        >
-          <Typography className="text-white font-semibold text-sm">
-            Summary
-          </Typography>
+        <Box sx={{ position: "relative", zIndex: 2, mt: 4, mx: { xs: 2, md: 8 } }}>
+          <Typography className="text-white font-semibold text-sm">Summary</Typography>
           <Typography className="text-white font-light text-sm mt-2">
             Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
             sint. Velit officia consequat duis enim velit mollit. Exercitation
@@ -139,17 +141,15 @@ const BookDetails = () => {
             consequat duis enim velit mollit. Amet minim mollit non deserunt
             ullamco est sit aliqua dolor do amet sint. Velit officia consequat
             duis enim velit mollit. Exercitation veniam consequat sunt nostrud
-            amet. Amet minim mollit non deserunt ullamco est sit aliqua dolor do
-            amet sint. Velit officia consequat duis enim velit mollit.
-            Exercitation veniam consequat sunt nostrud amet. Mollit non deserunt
-            ullamco est sit aliqua dolor do amet sint. Velit officia consequat
-            duis enim velit mollit. Exercitation veniam consequat sunt. Velit
-            officia consequat duis enim velit mollit. Amet minim mollit non
-            deserunt ullamco est sit aliqua dolor do amet sint. Velit officia
-            consequat duis enim velit mollit. Exercitation veniam consequat sunt
-            nostrud amet.
+            amet.
           </Typography>
         </Box>
+        {isAudioPlaying && (
+              <Box 
+              sx={{ mt: 3 }}>
+                <AudioPlayer />
+              </Box>
+            )}
       </Box>
     </>
   );

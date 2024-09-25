@@ -46,13 +46,13 @@ const SubscriptionPlans = () => {
           </div>
         </div>
 
-        <div className="w-auto h-auto mx-20 flex justify-between">
+        <div className="w-auto h-auto mx-20 flex justify-between overflow-hidden">
           <div className="flex-1 w-full h-full p-4">
             <div className="relative">
               <img
                 src={`${process.env.PUBLIC_URL}/images/Bg.png`}
                 alt="Basic Plan"
-                className="w-full h-full"
+                className="w-full h-full scale-[1.1]"
               />
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
                 <h2 className="text-2xl font-bold">Basic</h2>
@@ -96,12 +96,12 @@ const SubscriptionPlans = () => {
             </div>
           </div>
 
-          <div className="flex-1 w-full h-full p-4">
+          <div className="flex-1 w-full h-full p-4 overflow-hidden">
             <div className="relative">
               <img
                 src={`${process.env.PUBLIC_URL}/images/Bg.png`}
                 alt="Advanced Plan"
-                className="w-full h-full"
+                className="w-full h-full scale-[1.1]"
               />
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
                 <h2 className="text-2xl font-bold">Standard</h2>
@@ -145,12 +145,12 @@ const SubscriptionPlans = () => {
             </div>
           </div>
 
-          <div className="flex-1 w-full h-full p-4 relative">
+          <div className="flex-1 w-full h-full p-4 relative overflow-hidden">
             <div className="relative">
               <img
                 src={`${process.env.PUBLIC_URL}/images/Bg.png`}
                 alt="Premium Plan"
-                className="w-full h-full"
+                className="w-full h-full scale-[1.1]"
               />
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
                 <h2 className="text-2xl font-bold">Premium</h2>

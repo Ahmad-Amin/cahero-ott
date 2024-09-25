@@ -29,6 +29,7 @@ export default function Homepage({ window }) {
     setMobileOpen(!mobileOpen);
   };
 
+  // List of menu items
   const menuItems = [
     { text: "Dashboard", icon: <DashboardIcon />, link: "/" },
     { text: "Webinar", icon: <VideoLibraryIcon />, link: "/webinar" },
@@ -38,6 +39,7 @@ export default function Homepage({ window }) {
     { text: "Subscription Plans", icon: <CalendarTodayIcon />, link: "/subscription-plans" },
   ];
 
+  // Sidebar Drawer
   const drawer = (
     <div className="bg-[#101011] text-white h-full">
       <div className="p-2 flex items-center">
@@ -53,8 +55,7 @@ export default function Homepage({ window }) {
             <Link to={item.link} className="w-full">
               <ListItemButton
                 sx={{
-                  backgroundColor:
-                    location.pathname === item.link ? "#ffffff1a" : "transparent",
+                  backgroundColor: location.pathname === item.link ? "#ffffff1a" : "transparent",
                   borderRadius: "12px",
                   "&:hover": { backgroundColor: "#ffffff33" },
                 }}
@@ -86,6 +87,9 @@ export default function Homepage({ window }) {
 
   const container = window !== undefined ? () => window().document.body : undefined;
 
+  // Conditionally render sidebar based on the route
+  const shouldHideSidebar = location.pathname.includes('/lectures/');
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -111,46 +115,51 @@ export default function Homepage({ window }) {
         </Box>
       </AppBar>
 
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        aria-label="menu navigation"
-      >
-        {/* Mobile Drawer */}
-        <Drawer
-          container={container}
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{ keepMounted: true }} // Improves performance on mobile
-          sx={{
-            display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-              backgroundColor: "#131213",
-            },
-          }}
+      {/* Sidebar conditionally rendered */}
+      {!shouldHideSidebar && (
+        <Box
+          component="nav"
+          sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+          aria-label="menu navigation"
         >
-          {drawer}
-        </Drawer>
+          {/* Mobile Drawer */}
+          <Drawer
+            container={container}
+            variant="temporary"
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{ keepMounted: true }} // Improves performance on mobile
+            sx={{
+              display: { xs: "block", sm: "none" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: drawerWidth,
+                backgroundColor: "#131213",
+              },
+            }}
+          >
+            {drawer}
+          </Drawer>
 
-        {/* Permanent Drawer for larger screens */}
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: "none", sm: "block" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-              backgroundColor: "#131213",
-            },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Box>
+          {/* Permanent Drawer for larger screens */}
+          <Drawer
+            variant="permanent"
+            sx={{
+              display: { xs: "none", sm: "block" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: drawerWidth,
+                backgroundColor: "#131213",
+              },
+            }}
+            open
+          >
+            {drawer}
+          </Drawer>
+        </Box>
+      )}
+
+      {/* Main content area where the nested routes will be rendered */}
       <Outlet />
     </Box>
   );

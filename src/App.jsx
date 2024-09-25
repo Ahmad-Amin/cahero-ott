@@ -9,9 +9,8 @@ import WebinarDetails from "./pages/WebinarDetails";
 import BookDetails from "./pages/BookDetails";
 import ProfileSettings from "./pages/ProfileSettings";
 import SubscriptionPlans from "./pages/SubscriptionPlans";
+import VideoPlayer from "./components/VideoPlayer";
 
-// import ProfileSettings from "./pages/ProfileSettings";
-// import SubscriptionPlans from "./pages/SubscriptionPlans";
 
 function App() {
   return (
@@ -26,6 +25,7 @@ function App() {
             <Route path="lectures" element={<Lectures />} />
             <Route path="profile-settings" element={<ProfileSettings/>} />
             <Route path="subscription-plans" element={<SubscriptionPlans/>} />
+            <Route path="/lectures/:id" element={ <VideoPlayer/> }/>
           </Route>
         </Routes>
       </BrowserRouter>
