@@ -47,20 +47,18 @@ const WebinarDetails = () => {
             alt=""
             className="w-full md:w-auto"
           />
-          <div className="mt-10 mx-0 md:mx-10 w-auto md:mr-96 flex-1">
+          <div className="mt-10 mx-5 w-2/4">
             <div className="flex justify-between items-center">
               <h1 className="text-white text-3xl font-semibold">Life in Paris</h1>
-              <div className="mx-0 md:mx-52 flex items-center gap-1">
+              <div className="mx-0 flex items-center gap-1">
                 <FaStar className="text-[#FFC01E]" />
                 <p className="text-white text-lg font-medium">7.8/10</p>
               </div>
             </div>
-            <div className="flex justify-between mt-2 md:mr-96 flex-wrap">
-              <p className="text-white text-lg font-medium mr-4">2023</p>
-              <p className="text-white text-lg font-medium mx-8">Climate Change</p>
-              <p className="text-white mx-8 text-lg font-medium">2h 38m</p>
+            <div className="flex justify-between mt-2 flex-wrap">
+              <p className="text-white text-lg font-medium mr-4">2023&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climate Change&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2h 38m</p>
             </div>
-            <div className="mt-5 mr-0 md:mr-52">
+            <div className="mt-5 mr-0">
               <p className="text-white text-base">
                 The webinar follows the lives of a wealthy family, the Johnsons,
                 who appear to have it all: a grand mansion, luxurious cars, and

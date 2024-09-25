@@ -1,10 +1,44 @@
-import React from "react";
-import TextField from "@mui/material/TextField"; // For Material-UI
+import React, { useState } from "react";
+import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import CloseIcon from "@mui/icons-material/Close";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 function SignUpForm({ onClose, toggleSignIn }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleClickShowConfirmPassword = () => setShowConfirmPassword(!showConfirmPassword);
+
+  // Move textfieldStyles object here, above where it's used in the form
+  const textfieldStyles = {
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderColor: "#79747E",
+      },
+      "&:hover fieldset": {
+        borderColor: "white",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "white",
+      },
+    },
+    "& .MuiInputLabel-root": {
+      color: "white",
+    },
+    "& .MuiInputLabel-root.Mui-focused": {
+      color: "white",
+    },
+    "& .MuiOutlinedInput-input": {
+      color: "white",
+    },
+  };
+
   return (
     <div className="modal-overlay">
       <div className="modal bg-[#0d0d0d] text-white p-5 sm:p-10">
@@ -24,56 +58,14 @@ function SignUpForm({ onClose, toggleSignIn }) {
               id="first-name"
               label="First Name"
               variant="outlined"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#79747E",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white",
-                  },
-                },
-                "& .MuiInputLabel-root": {
-                  color: "white",
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "white",
-                },
-                "& .MuiOutlinedInput-input": {
-                  color: "white",
-                },
-              }}
+              sx={textfieldStyles} // Using textfieldStyles here
             />
             <TextField
               className="w-full sm:w-1/2"
               id="last-name"
               label="Last Name"
               variant="outlined"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#79747E",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white",
-                  },
-                },
-                "& .MuiInputLabel-root": {
-                  color: "white",
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "white",
-                },
-                "& .MuiOutlinedInput-input": {
-                  color: "white",
-                },
-              }}
+              sx={textfieldStyles} // Using textfieldStyles here
             />
           </div>
           <div className="mb-5 gap-4 flex flex-col sm:flex-row">
@@ -83,28 +75,7 @@ function SignUpForm({ onClose, toggleSignIn }) {
               label="Email"
               variant="outlined"
               type="email"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#79747E",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white",
-                  },
-                },
-                "& .MuiInputLabel-root": {
-                  color: "white",
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "white",
-                },
-                "& .MuiOutlinedInput-input": {
-                  color: "white",
-                },
-              }}
+              sx={textfieldStyles} // Using textfieldStyles here
             />
             <TextField
               className="w-full sm:w-1/2"
@@ -112,28 +83,7 @@ function SignUpForm({ onClose, toggleSignIn }) {
               label="Phone Number"
               variant="outlined"
               type="tel"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#79747E",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white",
-                  },
-                },
-                "& .MuiInputLabel-root": {
-                  color: "white",
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "white",
-                },
-                "& .MuiOutlinedInput-input": {
-                  color: "white",
-                },
-              }}
+              sx={textfieldStyles} // Using textfieldStyles here
             />
           </div>
           <div className="mb-5">
@@ -142,28 +92,21 @@ function SignUpForm({ onClose, toggleSignIn }) {
               id="password"
               label="Password"
               variant="outlined"
-              type="password"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#79747E",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white",
-                  },
-                },
-                "& .MuiInputLabel-root": {
-                  color: "white",
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "white",
-                },
-                "& .MuiOutlinedInput-input": {
-                  color: "white",
-                },
+              type={showPassword ? "text" : "password"}
+              sx={textfieldStyles} // Using textfieldStyles here
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      edge="end"
+                      sx={{ color: "white" }}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
             />
           </div>
@@ -173,28 +116,21 @@ function SignUpForm({ onClose, toggleSignIn }) {
               id="confirm-password"
               label="Confirm Password"
               variant="outlined"
-              type="password"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#79747E",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white",
-                  },
-                },
-                "& .MuiInputLabel-root": {
-                  color: "white",
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "white",
-                },
-                "& .MuiOutlinedInput-input": {
-                  color: "white",
-                },
+              type={showConfirmPassword ? "text" : "password"}
+              sx={textfieldStyles} // Using textfieldStyles here
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle confirm password visibility"
+                      onClick={handleClickShowConfirmPassword}
+                      edge="end"
+                      sx={{ color: "white" }}
+                    >
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
             />
           </div>
@@ -216,7 +152,9 @@ function SignUpForm({ onClose, toggleSignIn }) {
               className="text-[#313131]"
               label={
                 <span className="font-extrabold text-sm">
-                  I agree to all the <button className="text-[#6A55EA]">terms</button> and <button className="text-[#6A55EA]">privacy policies</button>
+                  I agree to all the{" "}
+                  <button className="text-[#6A55EA]">terms</button> and{" "}
+                  <button className="text-[#6A55EA]">privacy policies</button>
                 </span>
               }
             />

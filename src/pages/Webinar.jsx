@@ -4,15 +4,39 @@ import { Link } from 'react-router-dom'; // Import Link
 import WebinarCard from './WebinarCard';
 import LoginedNavbar from '../components/LoginedNavbar';
 import SearchBar from '../components/Searchbar';
+
 const drawerWidth = 280;
 
 const Webinar = () => {
-  // Example webinar data
   const webinars = [
-    { id: 1, title: 'Webinar 1' },
-    { id: 2, title: 'Webinar 2' },
-    { id: 3, title: 'Webinar 3' },
-    { id: 4, title: 'Webinar 4' },
+    {
+      id: 1,
+      title: 'Tokyo Train',
+      year: '2022',
+      genre: 'Webinar Genre',
+      image: `${process.env.PUBLIC_URL}/images/Tokyotrain.png`,
+    },
+    {
+      id: 2,
+      title: 'Moon Fall',
+      year: '2023',
+      genre: 'Webinar Genre',
+      image: `${process.env.PUBLIC_URL}/images/Moonfall.png`,
+    },
+    {
+      id: 3,
+      title: 'Life in Paris',
+      year: '2022',
+      genre: 'Webinar Genre',
+      image: `${process.env.PUBLIC_URL}/images/LifeinParis.png`,
+    },
+    {
+      id: 4,
+      title: 'House of Gucci',
+      year: '2021',
+      genre: 'Webinar Genre',
+      image: `${process.env.PUBLIC_URL}/images/HouseofGucci.png`,
+    },
   ];
 
   return (
@@ -55,7 +79,12 @@ const Webinar = () => {
         <div style={{ position: "relative", zIndex: 2 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mx-8 my-4">
           {webinars.map(webinar => (
             <Link to={`/webinar/${webinar.id}`} key={webinar.id}>
-              <WebinarCard title={webinar.title} />
+              <WebinarCard 
+                title={webinar.title}
+                year={webinar.year}
+                genre={webinar.genre}
+                image={webinar.image}
+              />
             </Link>
           ))}
         </div>
@@ -68,7 +97,12 @@ const Webinar = () => {
         <div style={{ position: "relative", zIndex: 2 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mx-8 my-4">
           {webinars.map(webinar => (
             <Link to={`/webinar/${webinar.id}`} key={webinar.id}>
-              <WebinarCard title={webinar.title} />
+              <WebinarCard 
+                title={webinar.title}
+                year={webinar.year}
+                genre={webinar.genre}
+                image={webinar.image}
+              />
             </Link>
           ))}
         </div>

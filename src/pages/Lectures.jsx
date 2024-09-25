@@ -1,10 +1,62 @@
-import React from 'react'
-import { Box } from '@mui/material'
+import React from 'react';
+import { Box } from '@mui/material';
 import WebinarCard from './WebinarCard';
 import LoginedNavbar from '../components/LoginedNavbar';
 import SearchBar from '../components/Searchbar';
+
 const drawerWidth = 280;
+
 const Lectures = () => {
+  // Dataset for lectures
+  const lectureData = [
+    {
+      title: "Affection of Love",
+      year: "2022",
+      genre: "Tutor Name",
+      image: `${process.env.PUBLIC_URL}/images/AffectionOfLove.png`,
+      height: "250px",
+    },
+    {
+      title: "Physical Activities",
+      year: "2022",
+      genre: "Tutor Name",
+      image: `${process.env.PUBLIC_URL}/images/PhysicalActivities.png`,
+      height: "250px",
+    },
+    {
+      title: "Study of Stars",
+      year: "2022",
+      genre: "Tutor Name",
+      image: `${process.env.PUBLIC_URL}/images/StudyOfStars.png`,
+      height: "250px",
+    },
+  ];
+
+  // Dataset for recommended lectures
+  const recommendedData = [
+    {
+      title: "Affection of Love",
+      year: "2022",
+      genre: "Tutor Name",
+      image: `${process.env.PUBLIC_URL}/images/AffectionOfLove.png`,
+      height: "250px",
+    },
+    {
+      title: "Physical Activities",
+      year: "2022",
+      genre: "Tutor Name",
+      image: `${process.env.PUBLIC_URL}/images/PhysicalActivities.png`,
+      height: "250px",
+    },
+    {
+      title: "Study of Stars",
+      year: "2022",
+      genre: "Tutor Name",
+      image: `${process.env.PUBLIC_URL}/images/StudyOfStars.png`,
+      height: "250px",
+    },
+  ];
+
   return (
     <>
       <Box 
@@ -41,25 +93,40 @@ const Lectures = () => {
             <SearchBar className="w-full mx-8" />
           </div>
         </div>
-        <div style={{ position: "relative", zIndex: 2 }} className="grid grid-cols-4 gap-6 mx-8 my-4">
-            <WebinarCard />
-            <WebinarCard />
-            <WebinarCard />
-            <WebinarCard/>
-          </div>
-          <div style={{ position: "relative", zIndex: 2 }} className="mt-12 flex justify-between items-center">
-          <p className="text-xl mx-8 text-white font-semibold">Recommended Lectures</p>
-          <div className="ml-auto w-auto">
-          </div>
+        
+        <div style={{ position: "relative", zIndex: 2 }} className="grid grid-cols-3 gap-6 mx-8 my-4">
+          {lectureData.map((lecture, index) => (
+            <WebinarCard
+              key={index}
+              title={lecture.title}
+              year={lecture.year}
+              genre={lecture.genre}
+              image={lecture.image}
+              height={lecture.height} // Passing the height prop
+            />
+          ))}
         </div>
-        <div style={{ position: "relative", zIndex: 2 }} className="grid grid-cols-4 gap-6 mx-8 my-4">
-            <WebinarCard />
-            <WebinarCard />
-            <WebinarCard/>
-          </div>
+        
+        <div style={{ position: "relative", zIndex: 2 }} className="mt-12 flex justify-between items-center">
+          <p className="text-xl mx-8 text-white font-semibold">Recommended Lectures</p>
+          <div className="ml-auto w-auto"></div>
+        </div>
+        
+        <div style={{ position: "relative", zIndex: 2 }} className="grid grid-cols-3 gap-6 mx-8 my-4">
+          {recommendedData.map((lecture, index) => (
+            <WebinarCard
+              key={index}
+              title={lecture.title}
+              year={lecture.year}
+              genre={lecture.genre}
+              image={lecture.image}
+              height={lecture.height} // Passing the height prop
+            />
+          ))}
+        </div>
       </Box>
     </>
-  )
+  );
 }
 
-export default Lectures
+export default Lectures;

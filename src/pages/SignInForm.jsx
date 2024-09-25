@@ -1,10 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField"; // For Material-UI
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 function SignInForm({ onClose, toggleSignUp }) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+
   return (
     <div className="modal-overlay">
       <div className="modal bg-[#0d0d0d] text-white">
@@ -53,7 +61,7 @@ function SignInForm({ onClose, toggleSignUp }) {
               id="outlined-basic"
               label="Password"
               variant="outlined"
-              type="password"
+              type={showPassword ? "text" : "password"}
               sx={{
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
@@ -75,6 +83,20 @@ function SignInForm({ onClose, toggleSignUp }) {
                 "& .MuiOutlinedInput-input": {
                   color: "white",
                 },
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      edge="end"
+                      sx={{ color: "white" }} // Styling the icon in white
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
             />
           </div>

@@ -40,7 +40,8 @@ function Navbar() {
     <div
       className="w-full h-20 flex items-center justify-start bg-transparent absolute mt-10 md:mt-0" // Added mt-10 for mobile view
     >
-      <SearchBar />
+     <SearchBar />
+
       <div className="flex items-center justify-end">
         <div className="h-18 w-20 text-white flex items-center">
           <button onClick={toggleSignIn} className="text-white">Sign in</button>
