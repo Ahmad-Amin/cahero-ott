@@ -3,13 +3,13 @@ import React from 'react';
 function WebinarCard({ title, year, genre, image, height, author }) {
   return (
     <div
-      className="rounded-xl shadow-lg bg-[#1c1c1e] text-white border-2 border-gray-400 relative"
+      className="rounded-xl shadow-lg bg-[#1c1c1e] text-white border-2 border-gray-400 relative overflow-hidden"
       style={{ height: height || '400px' }} // Default height is 400px
     >
       <img
         src={image}
         alt={title}
-        className="rounded-t-xl w-full object-cover rounded-lg"
+        className="rounded-t-xl w-full object-cover rounded-lg scale-[1.03] "
         style={{ height: '100%' }} // Adjust the height of the image portion
       />
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-white to-transparent text-black p-4 rounded-b-xl">

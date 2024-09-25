@@ -40,14 +40,14 @@ const WebinarDetails = () => {
         </div>
         <div
           style={{ position: "relative", zIndex: 2 }}
-          className="mt-12 mx-4 md:mx-8 flex flex-col md:flex-row justify-start"
+          className="mt-12 mx-4 md:mx-8 flex flex-row flex-wrap justify-start"
         >
           <img
             src={`${process.env.PUBLIC_URL}/images/Rectangle1.png`}
             alt=""
             className="w-full md:w-auto"
           />
-          <div className="mt-10 mx-5 w-2/4">
+          <div className="mt-10 mx-5 w-full lg:w-2/4">
             <div className="flex justify-between items-center">
               <h1 className="text-white text-3xl font-semibold">Life in Paris</h1>
               <div className="mx-0 flex items-center gap-1">
@@ -88,10 +88,30 @@ const WebinarDetails = () => {
             style={{ position: "relative", zIndex: 2 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mx-4 md:mx-8 my-4"
           >
-            <WebinarCard />
-            <WebinarCard />
-            <WebinarCard />
-            <WebinarCard />
+            <WebinarCard
+          title="Tokyo Train"
+          year="2022"
+          genre="Webinar Genre"
+          image={`${process.env.PUBLIC_URL}/images/Tokyotrain.png`}
+        />
+        <WebinarCard
+          title="Moon Fall"
+          year="2023"
+          genre="Webinar Genre"
+          image={`${process.env.PUBLIC_URL}/images/Moonfall.png`}
+        />
+        <WebinarCard
+          title="Life in Paris"
+          year="2022"
+          genre="Webinar Genre"
+          image={`${process.env.PUBLIC_URL}/images/LifeinParis.png`}
+        />
+        <WebinarCard
+          title="House of Gucci"
+          year="2021"
+          genre="Webinar Genre"
+          image={`${process.env.PUBLIC_URL}/images/HouseofGucci.png`}
+        />
           </div>
         </div>
       </Box>
