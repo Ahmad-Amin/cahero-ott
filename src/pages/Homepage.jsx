@@ -50,37 +50,43 @@ export default function Homepage({ window }) {
         />
       </div>
       <List className="mx-6 space-y-2">
-        {menuItems.map((item) => (
-          <ListItem key={item.text} disablePadding>
-            <Link to={item.link} className="w-full">
-              <ListItemButton
-                sx={{
-                  backgroundColor: location.pathname === item.link ? "#ffffff1a" : "transparent",
-                  borderRadius: "12px",
-                  "&:hover": { backgroundColor: "#ffffff33" },
-                }}
-              >
-                <ListItemIcon
+        {menuItems.map((item) => {
+          const isActive =
+            location.pathname === item.link || 
+            (item.link === "/all-books" && location.pathname.startsWith("/all-books"));
+
+          return (
+            <ListItem key={item.text} disablePadding>
+              <Link to={item.link} className="w-full">
+                <ListItemButton
                   sx={{
-                    color: "white",
-                    minWidth: "30px", // Consistent space between icon and text
+                    backgroundColor: isActive ? "#ffffff1a" : "transparent",
+                    borderRadius: "12px",
+                    "&:hover": { backgroundColor: "#ffffff33" },
                   }}
                 >
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.text}
-                  primaryTypographyProps={{
-                    fontSize: 16,
-                    fontWeight: location.pathname === item.link ? "bold" : "normal",
-                    color: "white",
-                    marginLeft: "8px", // Consistent margin for all items
-                  }}
-                />
-              </ListItemButton>
-            </Link>
-          </ListItem>
-        ))}
+                  <ListItemIcon
+                    sx={{
+                      color: "white",
+                      minWidth: "30px", // Consistent space between icon and text
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.text}
+                    primaryTypographyProps={{
+                      fontSize: 16,
+                      fontWeight: isActive ? "bold" : "normal",
+                      color: "white",
+                      marginLeft: "8px", // Consistent margin for all items
+                    }}
+                  />
+                </ListItemButton>
+              </Link>
+            </ListItem>
+          );
+        })}
       </List>
     </div>
   );

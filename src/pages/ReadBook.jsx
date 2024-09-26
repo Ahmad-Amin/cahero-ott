@@ -1,13 +1,13 @@
 import React from "react";
 import { Box } from "@mui/material";
 import LoginedNavbar from "../components/LoginedNavbar";
-import { useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { MdArrowBack } from "react-icons/md"; // Importing the left arrow icon from React Icons
 
 const drawerWidth = 280;
 
 const SubscriptionPlans = () => {
-  const navigate = useNavigate(); // Use navigate to programmatically go back
+  const {id: bookId} = useParams()
 
   return (
     <>
@@ -43,13 +43,14 @@ const SubscriptionPlans = () => {
             style={{ zIndex: 2 }}
             className="mx-4 md:mx-8 mt-10 text-white text-xl font-semibold"
           >
+            <Link to={`/all-books/${bookId}`} >
             <button
-              onClick={() => navigate(-1)}
-              className="flex items-center bg-transparent text-white opacity-75 hover:opacity-100 text-lg font-semibold z-10"
+              className="relative flex items-center bg-transparent text-white opacity-75 hover:opacity-100 text-lg font-semibold z-10"
             >
               <MdArrowBack className="mr-2" />
               BACK
             </button>
+            </Link>
           </div>
         </div>
         <div className="text-white mx-8 md:mx-16 mt-12 text-xl font-semibold">

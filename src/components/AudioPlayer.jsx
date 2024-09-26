@@ -2,15 +2,15 @@ import { Typography } from "@mui/material";
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { FaPlay, FaPause } from "react-icons/fa"; // Import play/pause icons
 
-const AudioPlayer = () => {
-  const [isPlaying, setIsPlaying] = useState(false); // State to track play/pause
+const AudioPlayer = ({ playing = false }) => {
+  const [isPlaying, setIsPlaying] = useState(playing); // State to track play/pause
   const [progress, setProgress] = useState(0); // State for audio progress
   const [isDragging, setIsDragging] = useState(false); // State for dragging progress
   const audioRef = useRef(null); // Reference to the audio element
   const progressBarRef = useRef(null); // Reference to the progress bar element
 
   // Play/Pause toggle
-  const togglePlayPause = () => {
+  const togglePlayPause = (isPlaying) => {
     if (isPlaying) {
       audioRef.current.pause(); // Pause audio if playing
     } else {
@@ -19,9 +19,14 @@ const AudioPlayer = () => {
     setIsPlaying((prev) => !prev); // Toggle play/pause state
   };
 
+  useEffect(() => {
+    togglePlayPause(false)
+  }, [])
+
   // Update progress as the audio plays (useCallback ensures the function reference is stable)
   const updateProgress = useCallback(() => {
-    if (!isDragging) { // Only update progress if not dragging
+    if (!isDragging) {
+      // Only update progress if not dragging
       const currentTime = audioRef.current.currentTime;
       const duration = audioRef.current.duration;
       const progressPercentage = (currentTime / duration) * 100;
@@ -48,11 +53,14 @@ const AudioPlayer = () => {
   }, []);
 
   // Handle drag move (useCallback to ensure the function reference is stable)
-  const handleMouseMove = useCallback((e) => {
-    if (isDragging) {
-      handleSeek(e); // Update the position while dragging
-    }
-  }, [isDragging]);
+  const handleMouseMove = useCallback(
+    (e) => {
+      if (isDragging) {
+        handleSeek(e); // Update the position while dragging
+      }
+    },
+    [isDragging]
+  );
 
   // Handle drag end
   const handleMouseUp = useCallback(() => {
@@ -107,7 +115,7 @@ const AudioPlayer = () => {
 
         {/* Play/Pause Button */}
         <div className="ml-auto">
-          <button onClick={togglePlayPause} className="text-white text-3xl">
+          <button onClick={() =>togglePlayPause(isPlaying)} className="text-white text-3xl">
             {isPlaying ? <FaPause /> : <FaPlay />}
           </button>
         </div>

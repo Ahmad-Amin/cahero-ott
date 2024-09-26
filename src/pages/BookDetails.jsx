@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import LoginedNavbar from "../components/LoginedNavbar";
 import { FaStar } from "react-icons/fa6";
@@ -6,30 +6,17 @@ import { FaRegStar } from "react-icons/fa";
 import { FiPlayCircle } from "react-icons/fi";
 import { RiBook2Line } from "react-icons/ri";
 import AudioPlayer from "../components/AudioPlayer"; // Import your AudioPlayer component
-import { useNavigate, useLocation } from "react-router-dom"; // Import useNavigate and useLocation
+import { useNavigate, Link } from "react-router-dom"; // Import useNavigate and useLocation
 import { MdArrowBack } from "react-icons/md"; // Importing the left arrow icon from React Icons
+import { useParams } from "react-router-dom";
 
 const drawerWidth = 280;
 
 const BookDetails = () => {
   const [isAudioPlaying, setIsAudioPlaying] = useState(false); // State to control AudioPlayer rendering
   const navigate = useNavigate(); // Create a navigate function
-  const location = useLocation(); // Get the current location
 
-  useEffect(() => {
-    // Check if the current location is /read-book or /book-details
-    const handleNavigation = () => {
-      if (
-        location.pathname !== "/read-book" &&
-        location.pathname !== "/book-details"
-      ) {
-        setIsAudioPlaying(false); // Stop audio if navigated away from both routes
-      }
-    };
-
-    // Listen for location changes
-    handleNavigation();
-  }, [location.pathname]);
+  const { id: bookId } = useParams();
 
   return (
     <>
@@ -62,7 +49,7 @@ const BookDetails = () => {
         <button
           style={{ zIndex: 3 }} // Set a higher zIndex here
           onClick={() => navigate(-1)}
-          className="flex items-center bg-transparent text-white mx-5 opacity-75 hover:opacity-100 text-lg font-semibold"
+          className="relative flex items-center bg-transparent text-white mx-5 opacity-75 hover:opacity-100 text-lg font-semibold"
         >
           <MdArrowBack className="mr-2" />
           BACK
@@ -133,27 +120,29 @@ const BookDetails = () => {
                   <FiPlayCircle />
                   Play Audio
                 </Button>
-                <Button
-                  variant="outlined"
-                  onClick={() => navigate("/read-book")} // Navigate to /read-book on button click
-                  sx={{
-                    borderColor: "white", // White border
-                    color: "white", // White text
-                    height: "64px",
-                    width: "160px",
-                    marginLeft: "20px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 1,
-                    "&:hover": {
-                      backgroundColor: "rgba(255, 255, 255, 0.1)", // Lighten background on hover
-                    },
-                  }}
-                >
-                  <RiBook2Line />
-                  Read Book
-                </Button>
+                <Link to={`/all-books/${bookId}/read-book`} >
+                  <Button
+                    variant="outlined"
+                    onClick={() => navigate("/read-book")} // Navigate to /read-book on button click
+                    sx={{
+                      borderColor: "white", // White border
+                      color: "white", // White text
+                      height: "64px",
+                      width: "160px",
+                      marginLeft: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 1,
+                      "&:hover": {
+                        backgroundColor: "rgba(255, 255, 255, 0.1)", // Lighten background on hover
+                      },
+                    }}
+                  >
+                    <RiBook2Line />
+                    Read Book
+                  </Button>
+                </Link>
               </Box>
             </Box>
 
@@ -180,7 +169,7 @@ const BookDetails = () => {
         </Box>
         {isAudioPlaying && (
           <Box sx={{ mt: 3 }}>
-            <AudioPlayer />
+            <AudioPlayer playing={isAudioPlaying} />
           </Box>
         )}
       </Box>

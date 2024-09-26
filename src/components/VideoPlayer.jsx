@@ -6,7 +6,7 @@ const VideoPlayer = () => {
   const navigate = useNavigate(); // Use navigate to programmatically go back
 
   return (
-    <div className="relative w-full max-w-full mx-auto bg-[#131213]">
+    <div className="relative w-full max-w-full mx-auto bg-[#131213] flex items-center justify-center content-center">
       {/* Back Button */}
       <button
         onClick={() => navigate(-1)}  // Navigate back to the previous page
@@ -18,7 +18,7 @@ const VideoPlayer = () => {
       </button>
 
       {/* Video Player */}
-      <div className="w-full h-0 pb-[47.7%] relative"> {/* Aspect ratio 16:9 */}
+      <div className="w-full h-0 pb-[47.7%]"> {/* Aspect ratio 16:9 */}
         <video
           src="https://youtu.be/it1rTvBcfRg" // Replace with your video source link
           className="absolute top-0 left-0 w-full h-full"

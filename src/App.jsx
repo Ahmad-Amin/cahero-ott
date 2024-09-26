@@ -21,13 +21,13 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="all-books" element={<Allbooks />} />
             <Route path="all-books/:id" element={<BookDetails />} />
+            <Route path="/all-books/:id/read-book" element={<ReadBook/>} />
             <Route path="webinar" element={<Webinar />} />
             <Route path="webinar/:id" element={<WebinarDetails />} />
             <Route path="lectures" element={<Lectures />} />
+            <Route path="/lectures/:id" element={ <VideoPlayer/> }/>
             <Route path="profile-settings" element={<ProfileSettings/>} />
             <Route path="subscription-plans" element={<SubscriptionPlans/>} />
-            <Route path="/lectures/:id" element={ <VideoPlayer/> }/>
-            <Route path="/read-book" element={<ReadBook/>} />
           </Route>
         </Routes>
       </BrowserRouter>
