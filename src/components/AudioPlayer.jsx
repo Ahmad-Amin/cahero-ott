@@ -16,7 +16,7 @@ const AudioPlayer = () => {
     } else {
       audioRef.current.play(); // Play audio if paused
     }
-    setIsPlaying(!isPlaying); // Toggle play/pause state
+    setIsPlaying((prev) => !prev); // Toggle play/pause state
   };
 
   // Update progress as the audio plays (useCallback ensures the function reference is stable)
@@ -40,7 +40,6 @@ const AudioPlayer = () => {
     audioRef.current.currentTime = newTime; // Seek to the new time
     setProgress((offsetX / progressBarWidth) * 100); // Update the progress bar visually
   };
-  
 
   // Handle drag start (useCallback to ensure the function reference is stable)
   const handleMouseDown = useCallback((e) => {

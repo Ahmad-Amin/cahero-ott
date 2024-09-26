@@ -61,7 +61,7 @@ const ProfileSettings = () => {
             <div className="mt-10 ml-10 w-auto flex-1">
               <div className="flex justify-between items-center">
                 <h1 className="text-white text-4xl font-semibold">Star Shah</h1>
-                <div className="w-20">
+                <div className="w-24">
                   <button className="text-[#6a55ea] text-base font-medium">
                     Edit Profile
                   </button>
@@ -89,7 +89,7 @@ const ProfileSettings = () => {
               className="text-white mt-10 mx-4 md:mx-8 text-base font-normal flex justify-between w-auto"
             >
               <h1 className="text-xl font-semibold">Bio</h1>
-              <div className=" w-20 ">
+              <div className=" w-24 ">
               <button className="text-[#6a55ea] font-medium">
                 Edit Bio
               </button>
@@ -117,7 +117,7 @@ const ProfileSettings = () => {
               <h1 className="text-lg opacity-85 font-thin">
                 starshah1@gmail.com
               </h1>
-              <div className="w-20">
+              <div className="w-24">
               <button className="text-[#6a55ea] font-medium">
                 Edit Email
               </button>
@@ -127,7 +127,7 @@ const ProfileSettings = () => {
               className="text-white mt-10 mx-4 md:mx-8 text-base font-normal flex justify-between w-auto"
             >
               <h1 className="text-lg opacity-85 font-thin">+44 765 1342</h1>
-              <div className="w-20">
+              <div className="w-24">
               <button className="text-[#6a55ea] font-medium">
                 Edit Phone
               </button>

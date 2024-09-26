@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import LoginedNavbar from "../components/LoginedNavbar";
 import { FaStar } from "react-icons/fa6";
@@ -6,11 +6,30 @@ import { FaRegStar } from "react-icons/fa";
 import { FiPlayCircle } from "react-icons/fi";
 import { RiBook2Line } from "react-icons/ri";
 import AudioPlayer from "../components/AudioPlayer"; // Import your AudioPlayer component
+import { useNavigate, useLocation } from "react-router-dom"; // Import useNavigate and useLocation
+import { MdArrowBack } from "react-icons/md"; // Importing the left arrow icon from React Icons
 
 const drawerWidth = 280;
 
 const BookDetails = () => {
   const [isAudioPlaying, setIsAudioPlaying] = useState(false); // State to control AudioPlayer rendering
+  const navigate = useNavigate(); // Create a navigate function
+  const location = useLocation(); // Get the current location
+
+  useEffect(() => {
+    // Check if the current location is /read-book or /book-details
+    const handleNavigation = () => {
+      if (
+        location.pathname !== "/read-book" &&
+        location.pathname !== "/book-details"
+      ) {
+        setIsAudioPlaying(false); // Stop audio if navigated away from both routes
+      }
+    };
+
+    // Listen for location changes
+    handleNavigation();
+  }, [location.pathname]);
 
   return (
     <>
@@ -36,10 +55,19 @@ const BookDetails = () => {
             height: "100%",
             background:
               "linear-gradient(to right, #220e37 0%, rgba(34, 14, 55, 0) 100%)",
-            zIndex: 1,
+            zIndex: 0,
           }}
         />
         <LoginedNavbar />
+        <button
+          style={{ zIndex: 3 }} // Set a higher zIndex here
+          onClick={() => navigate(-1)}
+          className="flex items-center bg-transparent text-white mx-5 opacity-75 hover:opacity-100 text-lg font-semibold"
+        >
+          <MdArrowBack className="mr-2" />
+          BACK
+        </button>
+
         <Box
           sx={{
             position: "relative",
@@ -69,7 +97,9 @@ const BookDetails = () => {
               <FaStar className="text-[#FFC01E]" />
               <FaStar className="text-[#FFC01E]" />
               <FaRegStar className="text-[#FFC01E]" />
-              <Typography className="text-white text-lg font-normal">4.0</Typography>
+              <Typography className="text-white text-lg font-normal">
+                4.0
+              </Typography>
             </Box>
             <Box className="flex items-center gap-2 mt-2">
               {["Fantasy", "Drama", "Fiction"].map((genre) => (
@@ -105,6 +135,7 @@ const BookDetails = () => {
                 </Button>
                 <Button
                   variant="outlined"
+                  onClick={() => navigate("/read-book")} // Navigate to /read-book on button click
                   sx={{
                     borderColor: "white", // White border
                     color: "white", // White text
@@ -127,12 +158,15 @@ const BookDetails = () => {
             </Box>
 
             {/* Conditionally render AudioPlayer inside the Box */}
-            
           </Box>
         </Box>
-        <Box sx={{ position: "relative", zIndex: 2, mt: 4, mx: { xs: 2, md: 8 } }}>
-          <Typography className="text-white font-semibold text-sm">Summary</Typography>
-          <Typography className="text-white font-light text-sm mt-2">
+        <Box
+          sx={{ position: "relative", zIndex: 2, mt: 4, mx: { xs: 2, md: 8 } }}
+        >
+          <Typography className="text-white font-semibold text-sm">
+            Summary
+          </Typography>
+          <Typography className="text-white font-light text-sm mt-2 opacity-70">
             Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
             sint. Velit officia consequat duis enim velit mollit. Exercitation
             veniam consequat sunt nostrud amet. Mollit non deserunt ullamco est
@@ -145,11 +179,10 @@ const BookDetails = () => {
           </Typography>
         </Box>
         {isAudioPlaying && (
-              <Box 
-              sx={{ mt: 3 }}>
-                <AudioPlayer />
-              </Box>
-            )}
+          <Box sx={{ mt: 3 }}>
+            <AudioPlayer />
+          </Box>
+        )}
       </Box>
     </>
   );

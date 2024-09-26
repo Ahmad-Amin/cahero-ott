@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import WebinarCard from './WebinarCard';
 import LoginedNavbar from '../components/LoginedNavbar';
 import SearchBar from '../components/Searchbar';
@@ -7,9 +8,17 @@ import SearchBar from '../components/Searchbar';
 const drawerWidth = 280;
 
 const Lectures = () => {
+  const navigate = useNavigate(); // Hook to handle navigation
+
+  // Function to handle card click and navigate to the appropriate video player route
+  const handleCardClick = (id) => {
+    navigate(`/lectures/${id}`);
+  };
+
   // Dataset for lectures
   const lectureData = [
     {
+      id: 1, // Add an id property
       title: "Affection of Love",
       year: "2022",
       genre: "Tutor Name",
@@ -17,6 +26,7 @@ const Lectures = () => {
       height: "250px",
     },
     {
+      id: 2, // Add an id property
       title: "Physical Activities",
       year: "2022",
       genre: "Tutor Name",
@@ -24,6 +34,7 @@ const Lectures = () => {
       height: "250px",
     },
     {
+      id: 3, // Add an id property
       title: "Study of Stars",
       year: "2022",
       genre: "Tutor Name",
@@ -35,6 +46,7 @@ const Lectures = () => {
   // Dataset for recommended lectures
   const recommendedData = [
     {
+      id: 1, // Add an id property
       title: "Affection of Love",
       year: "2022",
       genre: "Tutor Name",
@@ -42,6 +54,7 @@ const Lectures = () => {
       height: "250px",
     },
     {
+      id: 2, // Add an id property
       title: "Physical Activities",
       year: "2022",
       genre: "Tutor Name",
@@ -49,6 +62,7 @@ const Lectures = () => {
       height: "250px",
     },
     {
+      id: 3, // Add an id property
       title: "Study of Stars",
       year: "2022",
       genre: "Tutor Name",
@@ -95,15 +109,16 @@ const Lectures = () => {
         </div>
         
         <div style={{ position: "relative", zIndex: 2 }} className="grid grid-cols-3 gap-6 mx-8 my-4">
-          {lectureData.map((lecture, index) => (
-            <WebinarCard
-              key={index}
-              title={lecture.title}
-              year={lecture.year}
-              genre={lecture.genre}
-              image={lecture.image}
-              height={lecture.height} // Passing the height prop
-            />
+          {lectureData.map((lecture) => (
+            <div className="main" key={lecture.id} onClick={() => handleCardClick(lecture.id)}> {/* Wrap card with div for click handling */}
+              <WebinarCard
+                title={lecture.title}
+                year={lecture.year}
+                genre={lecture.genre}
+                image={lecture.image}
+                height={lecture.height}
+              />
+            </div>
           ))}
         </div>
         
@@ -113,15 +128,16 @@ const Lectures = () => {
         </div>
         
         <div style={{ position: "relative", zIndex: 2 }} className="grid grid-cols-3 gap-6 mx-8 my-4">
-          {recommendedData.map((lecture, index) => (
-            <WebinarCard
-              key={index}
-              title={lecture.title}
-              year={lecture.year}
-              genre={lecture.genre}
-              image={lecture.image}
-              height={lecture.height} // Passing the height prop
-            />
+          {recommendedData.map((lecture) => (
+            <div className="main" key={lecture.id} onClick={() => handleCardClick(lecture.id)}> {/* Wrap card with div for click handling */}
+              <WebinarCard
+                title={lecture.title}
+                year={lecture.year}
+                genre={lecture.genre}
+                image={lecture.image}
+                height={lecture.height}
+              />
+            </div>
           ))}
         </div>
       </Box>

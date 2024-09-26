@@ -10,6 +10,7 @@ import BookDetails from "./pages/BookDetails";
 import ProfileSettings from "./pages/ProfileSettings";
 import SubscriptionPlans from "./pages/SubscriptionPlans";
 import VideoPlayer from "./components/VideoPlayer";
+import ReadBook from "./pages/ReadBook";
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
             <Route path="profile-settings" element={<ProfileSettings/>} />
             <Route path="subscription-plans" element={<SubscriptionPlans/>} />
             <Route path="/lectures/:id" element={ <VideoPlayer/> }/>
+            <Route path="/read-book" element={<ReadBook/>} />
           </Route>
         </Routes>
       </BrowserRouter>

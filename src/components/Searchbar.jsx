@@ -60,7 +60,7 @@ const SearchBar = () => {
                       <div 
                         className={`flex items-center justify-start px-10 w-56 h-12 ${selectedOption === option ? 'bg-[#1b1a1f] rounded-lg' : ''}`}
                       >
-                        <label className="flex items-center cursor-pointer">
+                        <label className="flex items-center w-full h-full cursor-pointer ">
                           <input 
                             type="radio" // Change checkbox to radio
                             name="dateOption" // All radio buttons should have the same name
