@@ -23,7 +23,6 @@ const AudioPlayer = ({ playing = false }) => {
     togglePlayPause(false)
   }, [])
 
-  // Update progress as the audio plays (useCallback ensures the function reference is stable)
   const updateProgress = useCallback(() => {
     if (!isDragging) {
       // Only update progress if not dragging
@@ -34,7 +33,6 @@ const AudioPlayer = ({ playing = false }) => {
     }
   }, [isDragging]);
 
-  // Handle seeking by clicking or dragging on the progress bar
   const handleSeek = (e) => {
     const progressBar = progressBarRef.current;
     const rect = progressBar.getBoundingClientRect(); // Get the size and position of the progress bar
