@@ -1,5 +1,4 @@
 import React from "react";
-import { Box } from "@mui/material";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -67,8 +66,8 @@ const UpcomingWebinars = () => {
 
           {/* Icons */}
           <div className="absolute top-3 right-3 flex gap-2">
-            <ModeEditIcon className="text-white cursor-pointer hover:text-blue-500 transition-colors duration-300" />
-            <DeleteIcon className="text-red-500 cursor-pointer hover:text-red-700 transition-colors duration-300" />
+            <ModeEditIcon className="text-[#05c283] cursor-pointer hover:text-[#038f60] ease-in-out transition-colors duration-300" />
+            <DeleteIcon className="text-[#e53939] cursor-pointer hover:text-[#b22c2c] ease-in-out transition-colors duration-300" />
           </div>
 
           <p className="text-[#808080] mt-2">{webinar.description}</p>
