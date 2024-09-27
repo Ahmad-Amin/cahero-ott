@@ -8,7 +8,6 @@ import { Link } from "react-router-dom";
 import ConfirmDelete from "../../components/Admin Components/ConfirmDelete"; // Import the DeleteConfirmation component
 
 const UpcomingWebinars = () => {
-
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
   const handleDeleteConfirm = () => {
@@ -67,65 +66,65 @@ const UpcomingWebinars = () => {
 
   return (
     <>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
-      {upcomingWebinars.map((webinar, index) => (
-        <div
-          key={index}
-          className="bg-transparent rounded-3xl p-4 shadow-md h-auto border-2 relative mb-6"
-        >
-          <h2 className="font-bold text-xl text-white mt-1">{webinar.title}</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+        {upcomingWebinars.map((webinar, index) => (
+          <div
+            key={index}
+            className="bg-transparent rounded-3xl p-4 shadow-md h-auto border-2 relative mb-6"
+          >
+            <h2 className="font-bold text-lg md:text-xl lg:text-2xl text-white mt-1">
+              {webinar.title}
+            </h2>
 
-          <div className="absolute top-3 right-3 flex gap-2">
-            <Link to="/dashboard/webinars/manage-webinar">
-              <ModeEditIcon className="text-[#05c283] cursor-pointer hover:text-[#038f60] ease-in-out transition-colors duration-300" />
-            </Link>
-            <DeleteIcon className="text-[#e53939] cursor-pointer hover:text-[#b22c2c] ease-in-out transition-colors duration-300" 
-                        onClick={() => setIsModalOpen(true)} // Open modal on click
-/>
-          </div>
+            <div className="absolute top-3 right-3 flex gap-2">
+              <Link to="/dashboard/webinars/manage-webinar">
+                <ModeEditIcon className="text-[#05c283] cursor-pointer hover:text-[#038f60] ease-in-out transition-colors duration-300" />
+              </Link>
+              <DeleteIcon
+                className="text-[#e53939] cursor-pointer hover:text-[#b22c2c] ease-in-out transition-colors duration-300"
+                onClick={() => setIsModalOpen(true)} // Open modal on click
+              />
+            </div>
 
-          <p className="text-[#808080] mt-2">{webinar.description}</p>
+            <p className="text-[#808080] mt-2 text-sm md:text-base">
+              {webinar.description}
+            </p>
 
-          <div className="flex items-center mt-2">
-            <div className="text-[#6a55ea] mr-1">
-              <CalendarTodayIcon />
+            <div className="flex items-center mt-2 text-sm md:text-base">
+              <CalendarTodayIcon className="text-[#6a55ea] mr-1" />
+              <p className="text-white mr-2">Date:</p>
+              <p className="text-[#b2b2b2]">{webinar.date}</p>
             </div>
-            <p className="text-white mr-2">Date:</p>
-            <p className="text-[#b2b2b2]">{webinar.date}</p>
-          </div>
-          <div className="flex items-center mt-2">
-            <div className="text-[#6a55ea] mr-1">
-              <AccessTimeIcon />
+            <div className="flex items-center mt-2 text-sm md:text-base">
+              <AccessTimeIcon className="text-[#6a55ea] mr-1" />
+              <p className="text-white mr-2">Time:</p>
+              <p className="text-[#b2b2b2]">{webinar.time}</p>
             </div>
-            <p className="text-white mr-2">Time:</p>
-            <p className="text-[#b2b2b2]">{webinar.time}</p>
-          </div>
 
-          {/* Joined Users */}
-          <div className="flex items-center mt-2">
-            <div className="text-[#6a55ea] mr-1">
-              <PeopleAltIcon />
-            </div>
-            <p className="text-white mr-2">Joined Users:</p>
-            <div className="flex ml-2">
-              {webinar.joinedUsers.map((user, userIndex) => (
-                <img
-                  key={userIndex}
-                  src={user}
-                  alt={`User ${userIndex + 1}`}
-                  className="inline-block w-8 h-8 rounded-full -ml-2"
-                />
-              ))}
+            {/* Joined Users */}
+            <div className="flex items-center mt-2">
+              <PeopleAltIcon className="text-[#6a55ea] mr-1" />
+              <p className="text-white mr-2">Joined Users:</p>
+              <div className="flex ml-2">
+                {webinar.joinedUsers.map((user, userIndex) => (
+                  <img
+                    key={userIndex}
+                    src={user}
+                    alt={`User ${userIndex + 1}`}
+                    className="inline-block w-6 h-6 md:w-8 md:h-8 rounded-full -ml-2"
+                  />
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      ))}
-    </div>
-    <ConfirmDelete
-    isOpen={isModalOpen}
-    onClose={() => setIsModalOpen(false)} // Close modal
-    onConfirm={handleDeleteConfirm} // Handle delete confirmation
-  />
+        ))}
+      </div>
+
+      <ConfirmDelete
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)} // Close modal
+        onConfirm={handleDeleteConfirm} // Handle delete confirmation
+      />
     </>
   );
 };
