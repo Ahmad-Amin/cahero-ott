@@ -77,11 +77,17 @@ const handleDeleteConfirm = () => {
           key={index}
           className="bg-transparent rounded-3xl p-4 shadow-md h-auto border-2 relative"
         >
+          <div className="flex flex-row gap-3">
+          <div className="flex-1">
           <h2 className="font-bold text-xl text-white mt-1">{webinar.title}</h2>
+          </div>
+          <div>
           <DeleteIcon
-            className="absolute top-3 right-3 text-[#e53939] hover:text-[#b22c2c] ease-in-out transition-colors duration-300 cursor-pointer"
+            className="text-[#e53939] hover:text-[#b22c2c] ease-in-out transition-colors duration-300 cursor-pointer"
             onClick={() => setIsModalOpen(true)} // Open modal on click
           />
+          </div>
+          </div>
           <p className="text-[#808080] mt-2">{webinar.description}</p>
           <div className="flex items-center mt-2">
             <div className="text-[#6a55ea] mr-1">

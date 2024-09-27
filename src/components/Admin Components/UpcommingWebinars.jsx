@@ -72,18 +72,24 @@ const UpcomingWebinars = () => {
             key={index}
             className="bg-transparent rounded-3xl p-4 shadow-md h-auto border-2 relative mb-6"
           >
+            <div className="flex flex-row gap-3">
+            <div className="flex-1"> 
             <h2 className="font-bold text-lg md:text-xl lg:text-2xl text-white mt-1">
               {webinar.title}
             </h2>
+            </div>
 
-            <div className="absolute top-3 right-3 flex gap-2">
+            <div>
               <Link to="/dashboard/webinars/manage-webinar">
                 <ModeEditIcon className="text-[#05c283] cursor-pointer hover:text-[#038f60] ease-in-out transition-colors duration-300" />
               </Link>
-              <DeleteIcon
+            </div>
+            <div>
+            <DeleteIcon
                 className="text-[#e53939] cursor-pointer hover:text-[#b22c2c] ease-in-out transition-colors duration-300"
                 onClick={() => setIsModalOpen(true)} // Open modal on click
               />
+            </div>
             </div>
 
             <p className="text-[#808080] mt-2 text-sm md:text-base">
