@@ -11,7 +11,6 @@ const BookManagement = () => {
         sx={{
           flexGrow: 1,
           p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
           backgroundColor: "#101011",
           minHeight: "100vh",
           padding: 0,

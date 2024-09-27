@@ -24,7 +24,7 @@ const AdminNavbar = ({ pageTitle }) => {
         <h1 className="text-4xl font-semibold text-white">{pageTitle}</h1>
       </div>
 
-      <div className="flex justify-between items-center gap-3">
+      <div className="flex justify-between items-center gap-8">
         <div className="relative">
           <div
             className="bg-transparent text-white rounded-md px-4 py-6 cursor-pointer flex items-center gap-4"
@@ -83,7 +83,7 @@ const AdminNavbar = ({ pageTitle }) => {
           <NotificationsIcon />
         </div>
 
-        <div className="flex items-center cursor-pointer gap-3">
+        <div className="flex flex-row items-center cursor-pointer gap-5 mr-6">
           <img src={`${process.env.PUBLIC_URL}/images/ProfileA.png`} alt="Profile" />
           <div>
             <h1>Musfiq</h1>

@@ -29,26 +29,33 @@ export default function AdminPanelLayout() {
     setMobileOpen(!mobileOpen);
   };
 
-  // Map of paths to titles for the navbar
+  // Updated getPageTitle function
   const getPageTitle = (path) => {
-    switch (path) {
-      case "/dashboard":
-        return "Dashboard";
-      case "/dashboard/webinars":
+    // Split the path by "/" and filter out any empty strings
+    const segments = path.split("/").filter(Boolean);
+
+    // Check if there are at least two segments in the path
+    if (segments.length < 2) return "Dashboard"; // Default title if no second segment
+
+    // Get the second segment to decide the title
+    const secondSegment = segments[1];
+
+    switch (secondSegment) {
+      case "webinars":
         return "Webinars";
-      case "/dashboard/video-lecture":
+      case "video-lecture":
         return "Video Lectures";
-      case "/dashboard/recordings":
+      case "recordings":
         return "Recordings";
-      case "/dashboard/subscription":
+      case "subscription":
         return "Subscription";
-      case "/dashboard/users":
+      case "users":
         return "Users";
-      case "/dashboard/book-creation":
+      case "book-creation":
         return "Book Creation";
-      case "/dashboard/profile":
+      case "profile":
         return "Profile";
-      case "/dashboard/notifications":
+      case "notifications":
         return "Notifications";
       default:
         return "Dashboard"; // Fallback title
@@ -133,11 +140,9 @@ export default function AdminPanelLayout() {
           boxShadow: "none",
         }}
       >
-        {/* Send the dynamic page title based on the current route */}
         <AdminNavbar pageTitle={getPageTitle(location.pathname)} />
       </AppBar>
 
-      {/* Sidebar Drawer */}
       <Box
         component="nav"
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
@@ -147,7 +152,7 @@ export default function AdminPanelLayout() {
           variant="temporary"
           open={mobileOpen}
           onClose={handleDrawerToggle}
-          ModalProps={{ keepMounted: true }} // Improves performance on mobile
+          ModalProps={{ keepMounted: true }}
           sx={{
             display: { xs: "block", sm: "none" },
             "& .MuiDrawer-paper": {
@@ -176,21 +181,21 @@ export default function AdminPanelLayout() {
         </Drawer>
       </Box>
 
-      {/* Main content area */}
+
       <Box
-  component="main"
-  sx={{
-    flexGrow: 1,
-    width: { sm: `calc(100% - ${drawerWidth}px)` }, // Adjust width based on the drawer
-    mt: 15, // Adjust top margin if needed
-    p:2,
-    backgroundColor: "#101011",
-    minHeight: "100vh",
-    overflow: "hidden", // Prevent overflow
-  }}
->
-  <Outlet />
-</Box>
+        component="main"
+        sx={{
+          flexGrow: 1,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          mt: 15, 
+          p: 2,
+          backgroundColor: "#101011",
+          minHeight: "100vh",
+          overflow: "hidden", 
+        }}
+      >
+        <Outlet />
+      </Box>
     </Box>
   );
 }
