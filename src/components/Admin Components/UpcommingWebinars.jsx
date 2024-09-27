@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import { Link } from "react-router-dom";
+import ConfirmDelete from "../../components/Admin Components/ConfirmDelete"; // Import the DeleteConfirmation component
 
 const UpcomingWebinars = () => {
+
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+
+  const handleDeleteConfirm = () => {
+    console.log("Webinar deleted");
+    setIsModalOpen(false);
+  };
+
   const upcomingWebinars = [
     {
       title: "Mastering Remote Work: Tips & Tools",
@@ -56,7 +66,8 @@ const UpcomingWebinars = () => {
   ];
 
   return (
-    <div  className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6" >
+    <>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
       {upcomingWebinars.map((webinar, index) => (
         <div
           key={index}
@@ -64,15 +75,17 @@ const UpcomingWebinars = () => {
         >
           <h2 className="font-bold text-xl text-white mt-1">{webinar.title}</h2>
 
-          {/* Icons */}
           <div className="absolute top-3 right-3 flex gap-2">
-            <ModeEditIcon className="text-[#05c283] cursor-pointer hover:text-[#038f60] ease-in-out transition-colors duration-300" />
-            <DeleteIcon className="text-[#e53939] cursor-pointer hover:text-[#b22c2c] ease-in-out transition-colors duration-300" />
+            <Link to="/dashboard/webinars/manage-webinar">
+              <ModeEditIcon className="text-[#05c283] cursor-pointer hover:text-[#038f60] ease-in-out transition-colors duration-300" />
+            </Link>
+            <DeleteIcon className="text-[#e53939] cursor-pointer hover:text-[#b22c2c] ease-in-out transition-colors duration-300" 
+                        onClick={() => setIsModalOpen(true)} // Open modal on click
+/>
           </div>
 
           <p className="text-[#808080] mt-2">{webinar.description}</p>
 
-          {/* Webinar Details */}
           <div className="flex items-center mt-2">
             <div className="text-[#6a55ea] mr-1">
               <CalendarTodayIcon />
@@ -108,6 +121,12 @@ const UpcomingWebinars = () => {
         </div>
       ))}
     </div>
+    <ConfirmDelete
+    isOpen={isModalOpen}
+    onClose={() => setIsModalOpen(false)} // Close modal
+    onConfirm={handleDeleteConfirm} // Handle delete confirmation
+  />
+    </>
   );
 };
 

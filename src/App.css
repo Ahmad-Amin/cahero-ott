@@ -10,3 +10,13 @@ body {
   padding: 0 16px; /* Optional horizontal padding */
   box-sizing: border-box; /* Include padding in width calculation */
 }
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(100%);
+  cursor: pointer; /* Optional: change cursor to pointer for better UX */
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(100%);
+  cursor: pointer; /* Optional: change cursor to pointer for better UX */
+}

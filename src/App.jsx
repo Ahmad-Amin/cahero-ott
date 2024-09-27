@@ -22,6 +22,7 @@ import Profile from "./pages/Admin Pages/Profile";
 import Notifications from "./pages/Admin Pages/Notifications";
 import AdminHomepage from "./pages/Admin Pages/Homepage";
 import CreateWebinar from "./pages/Admin Pages/CreateWebinar";
+import ManageWebinar from "./pages/Admin Pages/ManageWebinar";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
         <Route index element={<AdminHomepage />} />
           <Route path="/dashboard/webinars" element={<Webinars />} />
           <Route path="/dashboard/webinars/create-webinar" element={<CreateWebinar/>} />
+          <Route path="/dashboard/webinars/manage-webinar" element={<ManageWebinar/>} />
           <Route path="/dashboard/video-lecture" element={<VideoLecture />} />
           <Route path="/dashboard/recordings" element={<Recordings />} />
           <Route path="/dashboard/subscription" element={<Subscription />} />

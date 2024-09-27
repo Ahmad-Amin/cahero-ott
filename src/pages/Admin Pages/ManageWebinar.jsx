@@ -1,12 +1,20 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { Link } from "react-router-dom";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import ConfirmDelete from "../../components/Admin Components/ConfirmDelete"; // Import the DeleteConfirmation component
 
-const CreateWebinars = () => {
+const ManageWebinars = () => {
   const [paymentType, setPaymentType] = useState("unpaid"); // State to track payment type
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
   const handlePaymentTypeChange = (event) => {
     setPaymentType(event.target.value);
+  };
+
+  const handleDeleteConfirm = () => {
+    console.log("Webinar deleted");
+    setIsModalOpen(false);
   };
 
   return (
@@ -24,15 +32,19 @@ const CreateWebinars = () => {
         }}
       >
         <div className="p-5">
-          <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-semibold text-white py-8">
-              Create Webinars
+          <div className="flex flex-row items-center gap-5">
+            <h1 className="flex-1 text-3xl font-semibold text-white py-8">
+              Manage Webinars
             </h1>
             <Link to="/dashboard/webinars">
               <button className="w-44 h-12 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl ease-in-out transition duration-300">
                 Cancel
               </button>
             </Link>
+            <RiDeleteBin6Line
+              className="w-8 h-8 hover:text-[#b22c2c] text-[#e53939] ease-in-out transition duration-300"
+              onClick={() => setIsModalOpen(true)} // Open modal on click
+            />
           </div>
           <div className="py-8 w-4/6">
             <div>
@@ -108,7 +120,7 @@ const CreateWebinars = () => {
                 required
               />
             </div>
-            
+
             {/* Radio Button Section */}
             <div className="mt-5 flex items-center">
               <label className="text-white font-normal text-lg mr-5 flex items-center">
@@ -156,14 +168,30 @@ const CreateWebinars = () => {
             )}
 
             <div className="flex flex-row gap-6  mt-8">
-              <div className=""> <button className="w-56 h-12 bg-transparent border-2 border-[#6a55ea] hover:border-0 hover:bg-[#6a55ea] ease-in-out transition duration-300 rounded-xl text-white font-semibold text-lg">Share Invite Link</button></div>
-              <div className=""><button className="w-56 h-12 bg-[#6a55ea] hover:bg-[#5242b6] ease-in-out transition duration-300 rounded-xl text-white font-semibold text-lg">Create Webinar</button></div>
+              <div className="">
+                {" "}
+                <button className="w-56 h-12 bg-transparent border-2 border-[#6a55ea] hover:border-0 hover:bg-[#6a55ea] ease-in-out transition duration-300 rounded-xl text-white font-semibold text-lg">
+                  Share Invite Link
+                </button>
+              </div>
+              <div className="">
+                <button className="w-56 h-12 bg-[#6a55ea] hover:bg-[#5242b6] ease-in-out transition duration-300 rounded-xl text-white font-semibold text-lg">
+                  Manage Webinar
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </Box>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmDelete
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)} // Close modal
+        onConfirm={handleDeleteConfirm} // Handle delete confirmation
+      />
     </>
   );
 };
 
-export default CreateWebinars;
+export default ManageWebinars;
