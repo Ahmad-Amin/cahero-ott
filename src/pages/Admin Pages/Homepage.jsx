@@ -132,7 +132,7 @@ const AdminHomepage = () => {
           </div>
           <div className="w-auto h-auto flex justify-end">
             <Link to="/dashboard/webinars/create-webinar">
-              <button className="w-52 h-12 bg-[#6a55ea] text-white rounded-xl text-lg font-semibold hover:bg-[#3b2f83] ease-in-out transition duration-300">
+              <button className="w-52 h-12 bg-[#6a55ea] text-white rounded-lg text-lg font-semibold hover:bg-[#3b2f83] ease-in-out transition duration-300">
                 Create Webinar
               </button>
             </Link>

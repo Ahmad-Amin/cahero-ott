@@ -91,7 +91,7 @@ export default function AdminPanelLayout() {
 
           return (
             <ListItem key={item.text} disablePadding>
-              <Link to={item.link} className="w-full mx-5">
+              <Link to={item.link} className="w-full h-auto mx-5">
                 <ListItemButton
                   sx={{
                     backgroundColor: isActive ? "#6a55ea" : "transparent",

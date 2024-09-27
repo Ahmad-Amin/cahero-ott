@@ -25,7 +25,7 @@ const Webinars = () => {
               Manage Webinars
             </h1>
             <Link to="/dashboard/webinars/create-webinar">
-            <button className="w-44 h-12 hover:bg-[#5242b6] bg-[#6a55ea] text-white text-lg font-semibold rounded-xl ease-in-out transition duration-300">
+            <button className="w-44 h-12 hover:bg-[#5242b6] bg-[#6a55ea] text-white text-lg font-semibold rounded-lg ease-in-out transition duration-300">
               Create Webinar
             </button>
             </Link>

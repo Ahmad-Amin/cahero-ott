@@ -14,7 +14,6 @@ import ReadBook from "./pages/ReadBook";
 import AdminPanelLayout from "./pages/Admin Pages/Dashboard";
 import Webinars from "./pages/Admin Pages/Webinar";
 import VideoLecture from "./pages/Admin Pages/VideoLecture";
-import Recordings from "./pages/Admin Pages/Recordings";
 import Subscription from "./pages/Admin Pages/Subscription";
 import Users from "./pages/Admin Pages/Users";
 import BookCreation from "./pages/Admin Pages/BookCreation";
@@ -23,6 +22,7 @@ import Notifications from "./pages/Admin Pages/Notifications";
 import AdminHomepage from "./pages/Admin Pages/Homepage";
 import CreateWebinar from "./pages/Admin Pages/CreateWebinar";
 import ManageWebinar from "./pages/Admin Pages/ManageWebinar";
+import RecordedWebinars from "./pages/Admin Pages/RecordedWebinars";
 
 function App() {
   return (
@@ -47,7 +47,7 @@ function App() {
           <Route path="/dashboard/webinars/create-webinar" element={<CreateWebinar/>} />
           <Route path="/dashboard/webinars/manage-webinar" element={<ManageWebinar/>} />
           <Route path="/dashboard/video-lecture" element={<VideoLecture />} />
-          <Route path="/dashboard/recordings" element={<Recordings />} />
+          <Route path="/dashboard/recordings" element={<RecordedWebinars />} />
           <Route path="/dashboard/subscription" element={<Subscription />} />
           <Route path="/dashboard/users" element={<Users />} />
           <Route path="/dashboard/book-creation" element={<BookCreation />} />
