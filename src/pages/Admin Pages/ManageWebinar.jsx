@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { Link } from "react-router-dom";
-import { RiDeleteBin6Line } from "react-icons/ri";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ConfirmDelete from "../../components/Admin Components/ConfirmDelete"; // Import the DeleteConfirmation component
 
 const ManageWebinars = () => {
@@ -41,7 +41,7 @@ const ManageWebinars = () => {
                 Cancel
               </button>
             </Link>
-            <RiDeleteBin6Line
+            <DeleteOutlineIcon
               className="w-8 h-8 hover:text-[#b22c2c] text-[#e53939] ease-in-out transition duration-300"
               onClick={() => setIsModalOpen(true)} // Open modal on click
             />

@@ -13,12 +13,14 @@ import {
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-import TuneIcon from "@mui/icons-material/Tune";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { PiChalkboardTeacherBold } from "react-icons/pi";
 import AdminNavbar from "../../components/Admin Components/Navbar";
-
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import GroupIcon from '@mui/icons-material/Group';
+import LaptopIcon from '@mui/icons-material/Laptop';
+import VideocamIcon from '@mui/icons-material/Videocam';
+import PaymentsIcon from '@mui/icons-material/Payments';
 const drawerWidth = 280;
 
 export default function AdminPanelLayout() {
@@ -52,7 +54,7 @@ export default function AdminPanelLayout() {
       case "users":
         return "Users";
       case "book-creation":
-        return "Book Creation";
+        return "Book Management";
       case "profile":
         return "Profile";
       case "notifications":
@@ -64,14 +66,14 @@ export default function AdminPanelLayout() {
 
   const menuItems = [
     { text: "Dashboard", icon: <DashboardIcon />, link: "/dashboard" },
-    { text: "Webinar", icon: <PiChalkboardTeacherBold />, link: "/dashboard/webinars" },
-    { text: "Video Lectures", icon: <LibraryBooksIcon />, link: "/dashboard/video-lecture" },
+    { text: "Webinar", icon: <LaptopIcon />, link: "/dashboard/webinars" },
+    { text: "Video Lectures", icon: <VideocamIcon />, link: "/dashboard/video-lecture" },
     { text: "Recording", icon: <VideoLibraryIcon />, link: "/dashboard/recordings" },
-    { text: "Subscription", icon: <TuneIcon />, link: "/dashboard/subscription" },
+    { text: "Subscription", icon: <PaymentsIcon />, link: "/dashboard/subscription" },
     { text: "Users", icon: <CalendarTodayIcon />, link: "/dashboard/users" },
-    { text: "Book Creation", icon: <CalendarTodayIcon />, link: "/dashboard/book-creation" },
-    { text: "Profile", icon: <CalendarTodayIcon />, link: "/dashboard/profile" },
-    { text: "Notifications", icon: <CalendarTodayIcon />, link: "/dashboard/notifications" },
+    { text: "Book Creation", icon: <LibraryBooksIcon />, link: "/dashboard/book-creation" },
+    { text: "Profile", icon: <GroupIcon />, link: "/dashboard/profile" },
+    { text: "Notifications", icon: <NotificationsNoneIcon />, link: "/dashboard/notifications" },
   ];
 
   const drawer = (

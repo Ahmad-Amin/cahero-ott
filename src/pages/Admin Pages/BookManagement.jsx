@@ -1,7 +1,6 @@
 import React from 'react'
 import { Box } from '@mui/material'
 
-const drawerWidth = 280;
 
 const BookManagement = () => {
   return (
@@ -19,7 +18,6 @@ const BookManagement = () => {
         }}
       >
 
-       
       </Box>
     </>
   )

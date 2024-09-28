@@ -24,6 +24,11 @@ import CreateWebinar from "./pages/Admin Pages/CreateWebinar";
 import ManageWebinar from "./pages/Admin Pages/ManageWebinar";
 import RecordedWebinars from "./pages/Admin Pages/RecordedWebinars";
 import CreateLecture from "./pages/Admin Pages/CreateLecture";
+import CreateNewPlan from "./pages/Admin Pages/CreateNewPlan";
+import ManagePlans from "./pages/Admin Pages/ManagePlans";
+import CreateBook from "./pages/Admin Pages/CreateBook";
+import ManageBook from "./pages/Admin Pages/ManageBook";
+import CreateNotifications from "./pages/Admin Pages/CreateNotifications";
 
 
 function App() {
@@ -52,10 +57,15 @@ function App() {
           <Route path="/dashboard/video-lecture" element={<VideoLecture />} />
           <Route path="/dashboard/recordings" element={<RecordedWebinars />} />
           <Route path="/dashboard/subscription" element={<Subscription />} />
+          <Route path="/dashboard/subscription/create-new-plan" element={<CreateNewPlan/>} />
+          <Route path="/dashboard/subscription/manage-plan" element={<ManagePlans/>} />
           <Route path="/dashboard/users" element={<Users />} />
           <Route path="/dashboard/book-creation" element={<BookCreation />} />
+          <Route path="/dashboard/book-creation/create-new-book" element={<CreateBook/>} />
+          <Route path="/dashboard/book-creation/manage-book" element={<ManageBook/>} />
           <Route path="/dashboard/profile" element={<Profile />} />
           <Route path="/dashboard/notifications" element={<Notifications />} />
+          <Route path="/dashboard/notifications/create-notification" element={<CreateNotifications />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -23,7 +23,7 @@ const Subscription = () => {
           <h1 className="flex-1 text-3xl font-semibold text-white py-8">
             Manage Subscription plans
           </h1>
-          <Link to="/dashboard/video-lecture/create-lecture">
+          <Link to="/dashboard/subscription/create-new-plan">
             <button className="w-44 h-12 hover:bg-[#5242b6] bg-[#6a55ea] text-white text-lg font-semibold rounded-lg ease-in-out transition duration-300">
               Create New
             </button>

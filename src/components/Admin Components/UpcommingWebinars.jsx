@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
@@ -9,9 +9,10 @@ import ConfirmDelete from "../../components/Admin Components/ConfirmDelete"; // 
 
 const UpcomingWebinars = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const [itemToDelete, setItemToDelete] = useState(null); // State to store the selected item for deletion
 
   const handleDeleteConfirm = () => {
-    console.log("Webinar deleted");
+    console.log("Deleted:", itemToDelete); // Log or perform deletion for the selected item
     setIsModalOpen(false);
   };
 
@@ -64,6 +65,11 @@ const UpcomingWebinars = () => {
     },
   ];
 
+  const handleDeleteClick = (webinar) => {
+    setItemToDelete(webinar); // Set the selected item to be deleted
+    setIsModalOpen(true); // Open the modal
+  };
+
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
@@ -73,23 +79,23 @@ const UpcomingWebinars = () => {
             className="bg-transparent rounded-3xl p-4 shadow-md h-auto border-2 relative mb-6"
           >
             <div className="flex flex-row gap-3">
-            <div className="flex-1"> 
-            <h2 className="font-bold text-lg md:text-xl lg:text-2xl text-white mt-1">
-              {webinar.title}
-            </h2>
-            </div>
+              <div className="flex-1">
+                <h2 className="font-bold text-lg md:text-xl lg:text-2xl text-white mt-1">
+                  {webinar.title}
+                </h2>
+              </div>
 
-            <div>
-              <Link to="/dashboard/webinars/manage-webinar">
-                <ModeEditIcon className="text-[#05c283] cursor-pointer hover:text-[#038f60] ease-in-out transition-colors duration-300" />
-              </Link>
-            </div>
-            <div>
-            <DeleteIcon
-                className="text-[#e53939] cursor-pointer hover:text-[#b22c2c] ease-in-out transition-colors duration-300"
-                onClick={() => setIsModalOpen(true)} // Open modal on click
-              />
-            </div>
+              <div>
+                <Link to="/dashboard/webinars/manage-webinar">
+                  <ModeEditIcon className="text-[#05c283] cursor-pointer hover:text-[#038f60] ease-in-out transition-colors duration-300" />
+                </Link>
+              </div>
+              <div>
+                <DeleteOutlineIcon
+                  className="text-[#e53939] cursor-pointer hover:text-[#b22c2c] ease-in-out transition-colors duration-300"
+                  onClick={() => handleDeleteClick(webinar)} // Open modal on click
+                />
+              </div>
             </div>
 
             <p className="text-[#808080] mt-2 text-sm md:text-base">
@@ -130,6 +136,7 @@ const UpcomingWebinars = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)} // Close modal
         onConfirm={handleDeleteConfirm} // Handle delete confirmation
+        itemType={"Webinar"}
       />
     </>
   );

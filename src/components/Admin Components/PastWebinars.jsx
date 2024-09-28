@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlineIcon from "@mui/icons-material/Delete";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
@@ -9,12 +9,12 @@ import ConfirmDelete from "../../components/Admin Components/ConfirmDelete"; // 
 const PastWebinars = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const [itemToDelete, setItemToDelete] = useState(null); // State to store the selected item for deletion
 
-const handleDeleteConfirm = () => {
-  console.log("Webinar deleted");
-  setIsModalOpen(false);
-};
-
+  const handleDeleteConfirm = () => {
+    console.log("Deleted:", itemToDelete); // Log or perform deletion for the selected item
+    setIsModalOpen(false);
+  };
 
   const pastWebinars = [
     {
@@ -68,6 +68,10 @@ const handleDeleteConfirm = () => {
       engagement: 200,
     },
   ];
+  const handleDeleteClick = (webinar) => {
+    setItemToDelete(webinar); // Set the selected item to be deleted
+    setIsModalOpen(true); // Open the modal
+  };
 
   return (
     <>
@@ -82,9 +86,9 @@ const handleDeleteConfirm = () => {
           <h2 className="font-bold text-xl text-white mt-1">{webinar.title}</h2>
           </div>
           <div>
-          <DeleteIcon
+          <DeleteOutlineIcon
             className="text-[#e53939] hover:text-[#b22c2c] ease-in-out transition-colors duration-300 cursor-pointer"
-            onClick={() => setIsModalOpen(true)} // Open modal on click
+            onClick={() => handleDeleteClick(webinar)}            // Open modal on click
           />
           </div>
           </div>
@@ -135,6 +139,7 @@ const handleDeleteConfirm = () => {
     isOpen={isModalOpen}
     onClose={() => setIsModalOpen(false)} // Close modal
     onConfirm={handleDeleteConfirm} // Handle delete confirmation
+    itemType={'Webinar'}
   />
     </>
 
