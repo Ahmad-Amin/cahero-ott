@@ -54,7 +54,7 @@ const ProfileSettings = () => {
                   alt="Profile"
                   className="w-full md:w-auto h-auto"
                 />
-                <button className="text-[#6a55ea] font-medium text-base mt-4">
+                <button className="text-[#6a55ea] hover:text-[#5242b6]  ease-in-out transition duration-300 font-medium text-base mt-4">
                   Change image
                 </button>
               </div>
@@ -64,7 +64,7 @@ const ProfileSettings = () => {
                     Star Shah
                   </h1>
                   <div className=" whitespace-nowrap">
-                    <button className="text-[#6a55ea] text-base font-medium">
+                    <button className="text-[#6a55ea] hover:text-[#5242b6]  ease-in-out transition duration-300 text-base font-medium">
                       Edit Profile
                     </button>
                   </div>
@@ -90,7 +90,7 @@ const ProfileSettings = () => {
               <div className="text-white mt-10 mx-4 md:mx-8 text-base font-normal flex justify-between w-auto">
                 <h1 className="text-xl font-semibold">Bio</h1>
                 <div className=" whitespace-nowrap">
-                  <button className="text-[#6a55ea] font-medium">
+                  <button className="text-[#6a55ea] hover:text-[#5242b6]  ease-in-out transition duration-300 font-medium">
                     Edit Bio
                   </button>
                 </div>
@@ -118,7 +118,7 @@ const ProfileSettings = () => {
                   starshah1@gmail.com
                 </h1>
                 <div className=" whitespace-nowrap">
-                  <button className="text-[#6a55ea] font-medium">
+                  <button className="text-[#6a55ea] hover:text-[#5242b6]  ease-in-out transition duration-300 font-medium">
                     Edit Email
                   </button>
                 </div>
@@ -126,7 +126,7 @@ const ProfileSettings = () => {
               <div className="text-white mt-10 mx-4 md:mx-8 text-base font-normal flex justify-between w-auto">
                 <h1 className="text-lg opacity-85 font-thin">+44 765 1342</h1>
                 <div className=" whitespace-nowrap">
-                  <button className="text-[#6a55ea] font-medium">
+                  <button className="text-[#6a55ea] hover:text-[#5242b6]  ease-in-out transition duration-300 font-medium">
                     Edit Phone
                   </button>
                 </div>

@@ -3,7 +3,7 @@ import React from 'react';
 function WebinarCard({ title, year, genre, image, height, author }) {
   return (
     <div
-      className="rounded-xl shadow-lg bg-[#1c1c1e] text-white border-2 border-gray-400 relative overflow-hidden"
+      className="rounded-xl shadow-lg bg-[#1c1c1e] text-white border-2 border-gray-400 relative overflow-hidden hover:scale-[1.05]  ease-in-out transition duration-300"
       style={{ height: height || '400px' }} // Default height is 400px
     >
       <img

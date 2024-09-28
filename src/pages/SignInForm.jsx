@@ -117,17 +117,17 @@ function SignInForm({ onClose, toggleSignUp }) {
               }
               label="Remember me"
             />
-            <button className="text-[#6A55EA] font-bold">Forgot Password?</button>
+            <button className="text-[#6A55EA] hover:text-[#5242b6]  ease-in-out transition duration-300 font-bold">Forgot Password?</button>
           </div>
           <div className="mx-10 my-5">
-            <button className="text-black font-semibold w-full bg-[#6A55EA] rounded-md h-10" type="submit">
+            <button className="text-black font-semibold w-full bg-[#6A55EA] hover:bg-[#5242b6] ease-in-out transition duration-300 rounded-md h-10" type="submit">
               Login
             </button>
           </div>
           <div className="flex justify-center my-5">
             <p className="text-[#313131] text-sm font-semibold">
               Don't have an account?{" "}
-              <button className="text-[#6A55EA]" onClick={toggleSignUp}>
+              <button className="text-[#6A55EA] hover:text-[#5242b6]  ease-in-out transition duration-300" onClick={toggleSignUp}>
                 Sign up
               </button>
             </p>

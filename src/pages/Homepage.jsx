@@ -57,12 +57,12 @@ export default function Homepage({ window }) {
 
           return (
             <ListItem key={item.text} disablePadding>
-              <Link to={item.link} className="w-full">
+              <Link to={item.link} className="w-full mx-5">
                 <ListItemButton
                   sx={{
-                    backgroundColor: isActive ? "#ffffff1a" : "transparent",
+                    backgroundColor: isActive ? "#6a55ea" : "transparent",
                     borderRadius: "12px",
-                    "&:hover": { backgroundColor: "#ffffff33" },
+                    "&:hover": { backgroundColor: "#5242b6" },
                   }}
                 >
                   <ListItemIcon

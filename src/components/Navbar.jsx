@@ -44,10 +44,10 @@ function Navbar() {
 
       <div className="flex items-center justify-end">
         <div className="h-18 w-20 text-white flex items-center">
-          <button onClick={toggleSignIn} className="text-white">Sign in</button>
+          <button onClick={toggleSignIn} className="text-white hover:font-semibold hover:scale-[1.05] ease-in-out transition duration-300">Sign in</button>
         </div>
         <div className="h-18 w-20 text-white flex items-center">
-          <button onClick={toggleSignUp} className="text-white">Sign up</button>
+          <button onClick={toggleSignUp} className="text-white hover:font-semibold hover:scale-[1.05] ease-in-out transition duration-300">Sign up</button>
         </div>
       </div>
 

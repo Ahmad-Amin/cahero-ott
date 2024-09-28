@@ -153,15 +153,15 @@ function SignUpForm({ onClose, toggleSignIn }) {
               label={
                 <span className="font-extrabold text-sm">
                   I agree to all the{" "}
-                  <button className="text-[#6A55EA]">terms</button> and{" "}
-                  <button className="text-[#6A55EA]">privacy policies</button>
+                  <button className="text-[#6A55EA] hover:text-[#5242b6]  ease-in-out transition duration-300">terms</button> and{" "}
+                  <button className="text-[#6A55EA] hover:text-[#5242b6]  ease-in-out transition duration-300">privacy policies</button>
                 </span>
               }
             />
           </div>
           <div className="my-5">
             <button
-              className="text-black font-semibold w-full bg-[#6A55EA] rounded-md h-10"
+              className="text-black font-semibold w-full bg-[#6A55EA] hover:bg-[#5242b6]  ease-in-out transition duration-300 rounded-md h-10"
               type="submit"
             >
               Create Account
@@ -170,7 +170,7 @@ function SignUpForm({ onClose, toggleSignIn }) {
           <div className="flex justify-center my-5">
             <p className="text-[#313131] text-sm font-semibold">
               Already have an account?{" "}
-              <button className="text-[#6A55EA]" onClick={toggleSignIn}>
+              <button className="text-[#6A55EA] hover:text-[#5242b6]  ease-in-out transition duration-300" onClick={toggleSignIn}>
                 Sign in
               </button>
             </p>

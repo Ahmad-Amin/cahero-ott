@@ -86,7 +86,7 @@ const SubscriptionPlans = () => {
                 >
                   Get Started
                 </button>
-                <button className="text-white mt-2 mb-4 text-sm underline hover:text-[#6a55ea] ease-in-out transition duration-300">
+                <button className="text-white mt-2 mb-4 text-sm underline font-semibold hover:text-[#6a55ea] ease-in-out transition duration-300">
                   Start Your 30 Day Free Trial
                 </button>
               </div>
@@ -137,7 +137,7 @@ const SubscriptionPlans = () => {
                 >
                   Get Started
                 </button>
-                <button className="text-white mt-2 mb-4 text-sm underline hover:text-[#6a55ea] ease-in-out transition duration-300">
+                <button className="text-white mt-2 mb-4 text-sm underline font-semibold hover:text-[#6a55ea] ease-in-out transition duration-300">
                   Start Your 30 Day Free Trial
                 </button>
               </div>
@@ -188,7 +188,7 @@ const SubscriptionPlans = () => {
                 >
                   Get Started
                 </button>
-                <button className="text-white mt-2 mb-4 text-sm underline hover:text-[#6a55ea] ease-in-out transition duration-300">
+                <button className="text-white mt-2 mb-4 font-semibold text-sm underline hover:text-[#6a55ea] ease-in-out transition duration-300">
                   Start Your 30 Day Free Trial
                 </button>
               </div>
