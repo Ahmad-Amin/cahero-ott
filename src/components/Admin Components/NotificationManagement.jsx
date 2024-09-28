@@ -40,7 +40,7 @@ const NotificationManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div
         ref={modalRef}
-        className="bg-[#101011] border border-white rounded-2xl p-6 w-2/5 h-auto flex flex-col items-start justify-center py-20"
+        className="bg-[#101011] border border-white rounded-2xl p-6 w-2/5 h-auto flex flex-col items-start justify-center py-10"
       >
         <div className="flex flex-row w-full gap-2 items-center">
           <div className="flex-1 text-start w-auto h-auto">

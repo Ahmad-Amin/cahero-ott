@@ -16,11 +16,11 @@ import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import AdminNavbar from "../../components/Admin Components/Navbar";
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import GroupIcon from '@mui/icons-material/Group';
-import LaptopIcon from '@mui/icons-material/Laptop';
-import VideocamIcon from '@mui/icons-material/Videocam';
-import PaymentsIcon from '@mui/icons-material/Payments';
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import GroupIcon from "@mui/icons-material/Group";
+import LaptopIcon from "@mui/icons-material/Laptop";
+import VideocamIcon from "@mui/icons-material/Videocam";
+import PaymentsIcon from "@mui/icons-material/Payments";
 const drawerWidth = 280;
 
 export default function AdminPanelLayout() {
@@ -67,13 +67,33 @@ export default function AdminPanelLayout() {
   const menuItems = [
     { text: "Dashboard", icon: <DashboardIcon />, link: "/dashboard" },
     { text: "Webinar", icon: <LaptopIcon />, link: "/dashboard/webinars" },
-    { text: "Video Lectures", icon: <VideocamIcon />, link: "/dashboard/video-lecture" },
-    { text: "Recording", icon: <VideoLibraryIcon />, link: "/dashboard/recordings" },
-    { text: "Subscription", icon: <PaymentsIcon />, link: "/dashboard/subscription" },
+    {
+      text: "Video Lectures",
+      icon: <VideocamIcon />,
+      link: "/dashboard/video-lecture",
+    },
+    {
+      text: "Recording",
+      icon: <VideoLibraryIcon />,
+      link: "/dashboard/recordings",
+    },
+    {
+      text: "Subscription",
+      icon: <PaymentsIcon />,
+      link: "/dashboard/subscription",
+    },
     { text: "Users", icon: <CalendarTodayIcon />, link: "/dashboard/users" },
-    { text: "Book Creation", icon: <LibraryBooksIcon />, link: "/dashboard/book-creation" },
+    {
+      text: "Book Creation",
+      icon: <LibraryBooksIcon />,
+      link: "/dashboard/book-creation",
+    },
     { text: "Profile", icon: <GroupIcon />, link: "/dashboard/profile" },
-    { text: "Notifications", icon: <NotificationsNoneIcon />, link: "/dashboard/notifications" },
+    {
+      text: "Notifications",
+      icon: <NotificationsNoneIcon />,
+      link: "/dashboard/notifications",
+    },
   ];
 
   const drawer = (
@@ -88,8 +108,10 @@ export default function AdminPanelLayout() {
       <List className="mx-6 space-y-2">
         {menuItems.map((item) => {
           const isActive =
-            (location.pathname === "/dashboard" && item.link === "/dashboard") ||
-            (location.pathname.startsWith(item.link) && item.link !== "/dashboard");
+            (location.pathname === "/dashboard" &&
+              item.link === "/dashboard") ||
+            (location.pathname.startsWith(item.link) &&
+              item.link !== "/dashboard");
 
           return (
             <ListItem key={item.text} disablePadding>
@@ -133,13 +155,14 @@ export default function AdminPanelLayout() {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
-        position="fixed"
+        position="fixed" // Change to fixed
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
           zIndex: 1100,
           backgroundColor: "transparent",
           boxShadow: "none",
+          height: "auto",
         }}
       >
         <AdminNavbar pageTitle={getPageTitle(location.pathname)} />
@@ -174,7 +197,7 @@ export default function AdminPanelLayout() {
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,
-              backgroundColor: "#131213",
+              backgroundColor: "#000000",
             },
           }}
           open
@@ -183,21 +206,20 @@ export default function AdminPanelLayout() {
         </Drawer>
       </Box>
 
-
       <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          mt: 15, 
-          p: 2,
-          backgroundColor: "#101011",
-          minHeight: "100vh",
-          overflow: "hidden", 
-        }}
-      >
-        <Outlet />
-      </Box>
+  component="main"
+  sx={{
+    flexGrow: 1,
+    width: { sm: `calc(100% - ${drawerWidth}px)` },
+    p: 2,
+    backgroundColor: "#101011",
+    minHeight: "100vh",
+    pt: { xs: 12, sm: 14 }, // Increase padding-top here (12 or 14 as per your need)
+  }}
+>
+  <Outlet />
+</Box>
+
     </Box>
   );
 }

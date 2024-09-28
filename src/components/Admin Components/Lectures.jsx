@@ -5,7 +5,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ConfirmDelete from "../../components/Admin Components/ConfirmDelete"; // Import the DeleteConfirmation component
 import { FaPlay } from "react-icons/fa"; // Import the play icon
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-
+import { Link } from "react-router-dom";
 const Lectures = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const [itemToDelete, setItemToDelete] = useState(null); // State to store the selected item for deletion
@@ -97,10 +97,12 @@ const Lectures = () => {
               </div>
 
               <div className="flex justify-start mt-6 gap-3">
+                <Link to={"/dashboard/video-lecture/edit-lecture"}>
                 <ModeEditIcon className="text-[#05c283] cursor-pointer hover:text-[#038f60] ease-in-out transition-colors duration-300" />
+                </Link>
                 <DeleteOutlineIcon
                   className="text-[#e53939] cursor-pointer hover:text-[#b22c2c] ease-in-out transition-colors duration-300"
-                  onClick={() => handleDeleteClick(lecture)} // Open modal on click
+                  onClick={() => handleDeleteClick(lecture)} 
                 />
               </div>
             </div>

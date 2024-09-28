@@ -29,6 +29,7 @@ import ManagePlans from "./pages/Admin Pages/ManagePlans";
 import CreateBook from "./pages/Admin Pages/CreateBook";
 import ManageBook from "./pages/Admin Pages/ManageBook";
 import CreateNotifications from "./pages/Admin Pages/CreateNotifications";
+import EditLecture from "./pages/Admin Pages/EditLecture";
 
 
 function App() {
@@ -53,8 +54,9 @@ function App() {
           <Route path="/dashboard/webinars" element={<Webinars />} />
           <Route path="/dashboard/webinars/create-webinar" element={<CreateWebinar/>} />
           <Route path="/dashboard/webinars/manage-webinar" element={<ManageWebinar/>} />
-          <Route path="/dashboard/video-lecture/create-lecture" element={<CreateLecture/>} />
           <Route path="/dashboard/video-lecture" element={<VideoLecture />} />
+          <Route path="/dashboard/video-lecture/create-lecture" element={<CreateLecture/>} />
+          <Route path="/dashboard/video-lecture/edit-lecture" element={<EditLecture />} />
           <Route path="/dashboard/recordings" element={<RecordedWebinars />} />
           <Route path="/dashboard/subscription" element={<Subscription />} />
           <Route path="/dashboard/subscription/create-new-plan" element={<CreateNewPlan/>} />
