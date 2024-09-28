@@ -57,11 +57,13 @@ export default function Homepage({ window }) {
 
           return (
             <ListItem key={item.text} disablePadding>
-              <Link to={item.link} className="w-full mx-5">
+              <Link to={item.link} className="w-full h-auto mx-5">
                 <ListItemButton
                   sx={{
                     backgroundColor: isActive ? "#6a55ea" : "transparent",
                     borderRadius: "12px",
+                    marginBottom: "12px",
+                    paddingLeft: "16px",
                     "&:hover": { backgroundColor: "#5242b6" },
                   }}
                 >
@@ -93,7 +95,6 @@ export default function Homepage({ window }) {
 
   const container = window !== undefined ? () => window().document.body : undefined;
 
-  // Conditionally render sidebar based on the route
   const shouldHideSidebar = location.pathname.includes('/lectures/');
 
   return (

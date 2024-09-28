@@ -100,7 +100,7 @@ export default function AdminPanelLayout() {
                     borderRadius: "12px",
                     paddingLeft: "16px",
                     marginBottom: "12px",
-                    "&:hover": { backgroundColor: "#3b2f83" },
+                    "&:hover": { backgroundColor: "#5242b6" },
                   }}
                 >
                   <ListItemIcon
