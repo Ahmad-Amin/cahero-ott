@@ -36,7 +36,7 @@ const Users = () => {
             <h1 className="flex-1 text-3xl font-semibold text-white pt-8 pb-5">
               User Management
             </h1>
-            <div className="flex items-center mx-3">
+            <div className="flex items-center mx-5">
               <label htmlFor="sort" className="text-white text-lg font-semibold mr-2">
                 Sort
               </label>

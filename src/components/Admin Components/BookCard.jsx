@@ -48,7 +48,7 @@ const BookCardGrid = () => {
           {books.map((book, index) => (
             <div
               key={index}
-              className="bg-transparent rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-110"
+              className="bg-transparent rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105"
             >
               <img
                 src={book.image}

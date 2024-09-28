@@ -28,7 +28,7 @@ const RecordedWebinars = () => {
             </button>
           </Link>
           <div className="flex items-center">
-            <label htmlFor="sort" className="text-white text-lg font-semibold mr-2">
+            <label htmlFor="sort" className="text-white text-lg font-semibold mr-4">
               Sort
             </label>
             <select
