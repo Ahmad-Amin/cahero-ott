@@ -1,19 +1,46 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { Link } from "react-router-dom";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const CreateNewPlan = () => {
-  // State to store the current input and the list of added content
   const [description, setDescription] = useState("");
   const [addedContent, setAddedContent] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editingText, setEditingText] = useState(""); // Now used for editing
 
-  // Handle adding content to the list
+  // Handle adding new content or saving edited content
   const handleAddContent = () => {
-    if (description.trim()) {
+    if (isEditing) {
+      // Update the edited content
+      const updatedContent = addedContent.map((content, index) =>
+        index === editingIndex ? editingText : content
+      );
+      setAddedContent(updatedContent);
+      setIsEditing(false);
+      setEditingText("");
+      setEditingIndex(null);
+    } else if (description.trim()) {
+      // Add new content
       setAddedContent([...addedContent, description]);
-      setDescription(""); // Clear the input after adding
+      setDescription("");
     }
+  };
+
+  // Handle content editing
+  const handleEditContent = (index) => {
+    setIsEditing(true);
+    setEditingIndex(index);
+    setEditingText(addedContent[index]);
+  };
+
+  // Handle content deletion
+  const handleDeleteContent = (index) => {
+    const updatedContent = addedContent.filter((_, i) => i !== index);
+    setAddedContent(updatedContent);
   };
 
   return (
@@ -77,16 +104,16 @@ const CreateNewPlan = () => {
                     <option className="bg-[#101011] text-white" value="weekly">
                       Weekly
                     </option>
-                    <option
-                      className="bg-[#101011] text-white"
-                      value="monthly"
-                    >
+                    <option className="bg-[#101011] text-white" value="monthly">
                       Monthly
                     </option>
                     <option className="bg-[#101011] text-white" value="yearly">
                       Yearly
                     </option>
-                    <option className="bg-[#101011] text-white" value="lifetime">
+                    <option
+                      className="bg-[#101011] text-white"
+                      value="lifetime"
+                    >
                       Lifetime
                     </option>
                   </select>
@@ -119,9 +146,22 @@ const CreateNewPlan = () => {
                 {/* Display added content */}
                 <div className="space-y-2 mb-4">
                   {addedContent.map((content, index) => (
-                    <p key={index} className="text-white opacity-60">
-                      {content}
-                    </p>
+                    <div
+                      key={index}
+                      className="flex items-center justify-between text-white opacity-60"
+                    >
+                      <p>{content}</p>
+                      <div className="flex space-x-2">
+                        <EditIcon
+                          className="cursor-pointer text-[#05c283] hover:text-[#038f60] ease-in-out transition duration-300"
+                          onClick={() => handleEditContent(index)}
+                        />
+                        <DeleteIcon
+                          className="text-[#e53939] hover:text-[#b22c2c] cursor-pointer ease-in-out transition duration-300"
+                          onClick={() => handleDeleteContent(index)}
+                        />
+                      </div>
+                    </div>
                   ))}
                 </div>
 
@@ -132,13 +172,17 @@ const CreateNewPlan = () => {
                     name="description"
                     className="bg-transparent text-white placeholder-gray-400 w-full h-full border-none outline-none"
                     placeholder="About the Subscription Plan"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)} // Update state on input change
+                    value={isEditing ? editingText : description} // Display text depending on edit state
+                    onChange={(e) =>
+                      isEditing
+                        ? setEditingText(e.target.value)
+                        : setDescription(e.target.value)
+                    }
                     required
                   />
                   <div
                     className="bg-[#6a55ea] p-2 rounded-lg cursor-pointer"
-                    onClick={handleAddContent} // Add content on click
+                    onClick={handleAddContent} // Add content or save edits on click
                   >
                     <AddIcon
                       fill="none"

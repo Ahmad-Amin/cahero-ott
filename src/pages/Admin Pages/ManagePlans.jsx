@@ -2,22 +2,41 @@ import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
-import ConfirmDelete from "../../components/Admin Components/ConfirmDelete"; // Import the DeleteConfirmation component
+import ConfirmDelete from "../../components/Admin Components/ConfirmDelete"; 
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const ManagePlans = () => {
   const [description, setDescription] = useState("");
   const [addedContent, setAddedContent] = useState([]);
+  const [editingIndex, setEditingIndex] = useState(null); // Track which content is being edited
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAddContent = () => {
     if (description.trim()) {
-      setAddedContent([...addedContent, description]);
-      setDescription(""); // Clear the input after adding
+      if (editingIndex !== null) {
+        // If editing, update the content
+        const updatedContent = [...addedContent];
+        updatedContent[editingIndex] = description;
+        setAddedContent(updatedContent);
+        setEditingIndex(null); // Reset editing mode
+      } else {
+        setAddedContent([...addedContent, description]); // Add new content
+      }
+      setDescription(""); // Clear input after adding or editing
     }
   };
 
+  const handleEditContent = (index) => {
+    setDescription(addedContent[index]); // Set the content to be edited in the input
+    setEditingIndex(index); // Track the index of the content being edited
+  };
 
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const handleDeleteContent = (index) => {
+    const updatedContent = addedContent.filter((_, i) => i !== index);
+    setAddedContent(updatedContent); // Remove the selected content
+  };
 
   const handleDeleteConfirm = () => {
     console.log("Webinar deleted");
@@ -44,9 +63,9 @@ const ManagePlans = () => {
               Edit Subscription Plan
             </h1>
             <DeleteOutlineIcon
-            className="text-[#e53939] hover:text-[#b22c2c] ease-in-out transition-colors duration-300 cursor-pointer"
-            onClick={() => setIsModalOpen(true)} // Open modal on click
-          />
+              className="text-[#e53939] hover:text-[#b22c2c] ease-in-out transition-colors duration-300 cursor-pointer"
+              onClick={() => setIsModalOpen(true)} 
+            />
           </div>
 
           {/* Flexbox for 60% form and 40% image upload */}
@@ -125,9 +144,19 @@ const ManagePlans = () => {
 
                 <div className="space-y-2 mb-4">
                   {addedContent.map((content, index) => (
-                    <p key={index} className="text-white opacity-60">
-                      {content}
-                    </p>
+                    <div key={index} className="flex justify-between items-center">
+                      <p className="text-white opacity-60">{content}</p>
+                      <div className="flex gap-2">
+                        <EditIcon 
+                          className="cursor-pointer text-[#05c283] hover:text-[#038f60] ease-in-out transition duration-300"
+                          onClick={() => handleEditContent(index)} // Edit content
+                        />
+                        <DeleteIcon 
+                          className="text-[#e53939] hover:text-[#b22c2c] cursor-pointer ease-in-out transition duration-300"
+                          onClick={() => handleDeleteContent(index)} // Delete content
+                        />
+                      </div>
+                    </div>
                   ))}
                 </div>
 
@@ -181,10 +210,10 @@ const ManagePlans = () => {
         </div>
       </Box>
       <ConfirmDelete
-    isOpen={isModalOpen}
-    onClose={() => setIsModalOpen(false)} // Close modal
-    onConfirm={handleDeleteConfirm} // Handle delete confirmation
-  />
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)} 
+        onConfirm={handleDeleteConfirm} 
+      />
     </>
   );
 };

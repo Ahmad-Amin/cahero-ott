@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import CloseIcon from "@mui/icons-material/Close"; // Import Close Icon
 
 const NotificationManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
   const modalRef = useRef();
@@ -40,9 +41,17 @@ const NotificationManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div
         ref={modalRef}
-        className="bg-[#101011] border border-white rounded-2xl p-6 w-2/5 h-auto flex flex-col items-start justify-center py-10"
+        className="relative bg-[#101011] border border-white rounded-2xl p-6 w-2/5 h-auto flex flex-col items-start justify-center py-10"
       >
-        <div className="flex flex-row w-full gap-2 items-center">
+        {/* Cross Button */}
+        <button
+          className="absolute top-4 right-4 text-white text-lg font-bold hover:text-gray-400"
+          onClick={onClose}
+        >
+          <CloseIcon />
+          </button>
+
+        <div className="flex flex-row w-full gap-2 items-center mt-5">
           <div className="flex-1 text-start w-auto h-auto">
             <h2 className="text-white text-xl font-semibold">
               Notifications Management
@@ -55,6 +64,7 @@ const NotificationManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
             Resend
           </button>
         </div>
+
         <div className="bg-black rounded-lg w-full h-auto my-3">
           <div className="flex flex-row">
             <div className="flex-1">
@@ -64,9 +74,10 @@ const NotificationManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
             </div>
             <h2 className="text-white text-base px-4 py-1">{itemType.timeSent}</h2>
           </div>
-          <h3 className="text-white text-base px-4 py-1">User:{itemType.Recipient}</h3>
-          <p className="text-white text-base px-4 pt-4 pb-2 opacity-60">Notification Descriptiion</p>
+          <h3 className="text-white text-base px-4 py-1">User: {itemType.Recipient}</h3>
+          <p className="text-white text-base px-4 pt-4 pb-2 opacity-60">Notification Description</p>
         </div>
+
         <div className="w-full">
           <div className="flex flex-row w-full h-auto mb-4">
             <h1 className="flex-1 text-white text-base font-medium opacity-70">

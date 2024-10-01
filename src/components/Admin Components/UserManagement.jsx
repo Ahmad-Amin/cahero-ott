@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import CloseIcon from "@mui/icons-material/Close"; // Import Close Icon
 
 const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
   const modalRef = useRef();
@@ -27,17 +28,27 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div
         ref={modalRef}
-        className="bg-[#101011] border border-white rounded-2xl p-6 w-1/3 h-auto flex flex-col items-start justify-center py-10"
+        className="relative bg-[#101011] border border-white rounded-2xl p-6 w-1/3 h-auto flex flex-col items-start justify-center py-10"
       >
-        <div className="flex flex-row w-full">
-        <div className="flex-1 text-start mb-10">
-          <h2 className="text-white text-xl font-semibold">User Management</h2>
-          <p className="text-white">Manage Participants and Hosts</p>
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-white hover:text-gray-400 transition ease-in-out"
+        >
+          <CloseIcon />
+        </button>
+
+        {/* Modal Content */}
+        <div className="flex flex-row w-full mt-5">
+          <div className="flex-1 text-start mb-10">
+            <h2 className="text-white text-xl font-semibold">User Management</h2>
+            <p className="text-white">Manage Participants and Hosts</p>
+          </div>
+          <button className="border border-[#6a55ea] text-[#6a55ea] hover:bg-[#6a55ea] hover:text-white ease-in-out transition duration-300 w-36 h-12 px-3 rounded-lg">
+            Edit
+          </button>
         </div>
-        <button className="border border-[#6a55ea] text-[#6a55ea] hover:bg-[#6a55ea] hover:text-white ease-in-out transition duration-300 w-36 h-12 px-3 rounded-lg">
-                Edit
-              </button>
-        </div>
+
         <div className="flex flex-row w-full h-auto mb-4">
           <h1 className="flex-1 text-white text-base font-medium opacity-70">Full Name</h1>
           <p className="text-white text-base font-medium">{itemType.fullName}</p>
@@ -58,8 +69,8 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
           <h1 className="flex-1 text-white text-base font-medium opacity-70">Current Status</h1>
           <p className="text-white text-base font-medium">Active</p> {/* Status is hardcoded as active */}
         </div>
+
         <div className="w-full flex justify-center space-x-5 pt-10">
-        
           <button
             className="border border-[#6a55ea] text-[#6a55ea] w-44 h-12 rounded-lg hover:bg-[#6a55ea] hover:text-white transition duration-200"
             onClick={onClose}
