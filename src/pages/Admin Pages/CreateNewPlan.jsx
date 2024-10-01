@@ -4,40 +4,50 @@ import { Link } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
 
 const CreateNewPlan = () => {
   const [description, setDescription] = useState("");
   const [addedContent, setAddedContent] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
-  const [editingText, setEditingText] = useState(""); // Now used for editing
+  const [editingText, setEditingText] = useState("");
 
-  // Handle adding new content or saving edited content
+  // Add new content or update existing content
   const handleAddContent = () => {
-    if (isEditing) {
-      // Update the edited content
-      const updatedContent = addedContent.map((content, index) =>
-        index === editingIndex ? editingText : content
-      );
-      setAddedContent(updatedContent);
-      setIsEditing(false);
-      setEditingText("");
-      setEditingIndex(null);
-    } else if (description.trim()) {
-      // Add new content
+    if (description.trim()) {
       setAddedContent([...addedContent, description]);
       setDescription("");
     }
   };
 
-  // Handle content editing
+  // Trigger edit mode
   const handleEditContent = (index) => {
     setIsEditing(true);
     setEditingIndex(index);
     setEditingText(addedContent[index]);
   };
 
-  // Handle content deletion
+  // Save edited content
+  const handleSaveEdit = () => {
+    const updatedContent = addedContent.map((content, index) =>
+      index === editingIndex ? editingText : content
+    );
+    setAddedContent(updatedContent);
+    setIsEditing(false);
+    setEditingIndex(null);
+    setEditingText("");
+  };
+
+  // Cancel editing
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditingIndex(null);
+    setEditingText("");
+  };
+
+  // Delete content
   const handleDeleteContent = (index) => {
     const updatedContent = addedContent.filter((_, i) => i !== index);
     setAddedContent(updatedContent);
@@ -69,9 +79,9 @@ const CreateNewPlan = () => {
             </Link>
           </div>
 
-          {/* Flexbox for 60% form and 40% image upload */}
+          {/* Form and Content Section */}
           <div className="flex flex-col md:flex-row gap-10 w-3/5">
-            {/* Form Section - 60% */}
+            {/* Form Section */}
             <div className="flex-1 w-full md:w-4/6 py-8">
               <div>
                 <label
@@ -148,19 +158,40 @@ const CreateNewPlan = () => {
                   {addedContent.map((content, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between text-white opacity-60"
+                      className="flex items-center justify-between text-white gap-2"
                     >
-                      <p>{content}</p>
-                      <div className="flex space-x-2">
-                        <EditIcon
-                          className="cursor-pointer text-[#05c283] hover:text-[#038f60] ease-in-out transition duration-300"
-                          onClick={() => handleEditContent(index)}
-                        />
-                        <DeleteIcon
-                          className="text-[#e53939] hover:text-[#b22c2c] cursor-pointer ease-in-out transition duration-300"
-                          onClick={() => handleDeleteContent(index)}
-                        />
-                      </div>
+                      {isEditing && editingIndex === index ? (
+                        <>
+                          <input
+                            className="text-white bg-transparent border-2 border-white rounded-lg p-2 w-full"
+                            value={editingText}
+                            onChange={(e) => setEditingText(e.target.value)}
+                          />
+                          <CheckIcon
+                            className="cursor-pointer text-[#05c283] hover:text-[#038f60] ease-in-out transition duration-300 ml-2"
+                            onClick={handleSaveEdit}
+                          />
+                          <CloseIcon
+                            className="cursor-pointer text-[#e53939] hover:text-[#b22c2c] ease-in-out transition duration-300"
+                            onClick={handleCancelEdit}
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <span className="opacity-60">{content}</span>{" "}
+                          {/* Wrap content in span for opacity */}
+                          <div className="flex space-x-2">
+                            <EditIcon
+                              className="cursor-pointer text-[#05c283] hover:text-[#038f60] ease-in-out transition duration-300"
+                              onClick={() => handleEditContent(index)}
+                            />
+                            <DeleteIcon
+                              className="text-[#e53939] hover:text-[#b22c2c] cursor-pointer ease-in-out transition duration-300"
+                              onClick={() => handleDeleteContent(index)}
+                            />
+                          </div>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -172,17 +203,13 @@ const CreateNewPlan = () => {
                     name="description"
                     className="bg-transparent text-white placeholder-gray-400 w-full h-full border-none outline-none"
                     placeholder="About the Subscription Plan"
-                    value={isEditing ? editingText : description} // Display text depending on edit state
-                    onChange={(e) =>
-                      isEditing
-                        ? setEditingText(e.target.value)
-                        : setDescription(e.target.value)
-                    }
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                     required
                   />
                   <div
                     className="bg-[#6a55ea] p-2 rounded-lg cursor-pointer"
-                    onClick={handleAddContent} // Add content or save edits on click
+                    onClick={handleAddContent}
                   >
                     <AddIcon
                       fill="none"
@@ -203,7 +230,7 @@ const CreateNewPlan = () => {
             </div>
           </div>
 
-          {/* Image Upload Section - 40% */}
+          {/* Button Section */}
           <div className="flex flex-row justify-end gap-6 mt-5 w-3/5">
             <div className="">
               <button className="w-auto px-3 h-12 bg-[#6a55ea] hover:bg-[#5242b6] ease-in-out transition duration-300 rounded-xl text-white font-semibold text-lg">

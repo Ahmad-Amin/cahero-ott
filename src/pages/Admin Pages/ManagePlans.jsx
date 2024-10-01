@@ -6,31 +6,40 @@ import ConfirmDelete from "../../components/Admin Components/ConfirmDelete";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 
 const ManagePlans = () => {
+
+  const [itemToDelete, setItemToDelete] = useState(null); // State to store the selected item for deletion
+
   const [description, setDescription] = useState("");
   const [addedContent, setAddedContent] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null); // Track which content is being edited
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tempContent, setTempContent] = useState(""); // Temporary content for editing
 
   const handleAddContent = () => {
     if (description.trim()) {
-      if (editingIndex !== null) {
-        // If editing, update the content
-        const updatedContent = [...addedContent];
-        updatedContent[editingIndex] = description;
-        setAddedContent(updatedContent);
-        setEditingIndex(null); // Reset editing mode
-      } else {
-        setAddedContent([...addedContent, description]); // Add new content
-      }
-      setDescription(""); // Clear input after adding or editing
+      setAddedContent([...addedContent, description]); // Add new content
+      setDescription(""); // Clear input after adding
     }
   };
 
   const handleEditContent = (index) => {
-    setDescription(addedContent[index]); // Set the content to be edited in the input
     setEditingIndex(index); // Track the index of the content being edited
+    setTempContent(addedContent[index]); // Set the content to be edited in the temp state
+  };
+
+  const handleConfirmEdit = (index) => {
+    const updatedContent = [...addedContent];
+    updatedContent[index] = tempContent; // Update the content with the edited value
+    setAddedContent(updatedContent);
+    setEditingIndex(null); // Reset editing mode
+  };
+
+  const handleCancelEdit = () => {
+    setEditingIndex(null); // Cancel editing mode
   };
 
   const handleDeleteContent = (index) => {
@@ -39,10 +48,15 @@ const ManagePlans = () => {
   };
 
   const handleDeleteConfirm = () => {
-    console.log("Webinar deleted");
+    console.log("Deleted:", itemToDelete); // Log or perform deletion for the selected item
     setIsModalOpen(false);
   };
 
+
+  const handleDeleteClick = (index) => {
+    setItemToDelete(index); // Set the selected item to be deleted
+    setIsModalOpen(true); // Open the modal
+  };
   return (
     <>
       <Box
@@ -64,7 +78,7 @@ const ManagePlans = () => {
             </h1>
             <DeleteOutlineIcon
               className="text-[#e53939] hover:text-[#b22c2c] ease-in-out transition-colors duration-300 cursor-pointer"
-              onClick={() => setIsModalOpen(true)} 
+              onClick={() => handleDeleteClick(itemToDelete)} // Open modal on click
             />
           </div>
 
@@ -145,16 +159,39 @@ const ManagePlans = () => {
                 <div className="space-y-2 mb-4">
                   {addedContent.map((content, index) => (
                     <div key={index} className="flex justify-between items-center">
-                      <p className="text-white opacity-60">{content}</p>
+                      {editingIndex === index ? (
+                        <input
+                          className="text-white bg-transparent border-2 border-white rounded-lg p-2 w-full"
+                          value={tempContent}
+                          onChange={(e) => setTempContent(e.target.value)}
+                        />
+                      ) : (
+                        <p className="text-white opacity-60">{content}</p>
+                      )}
                       <div className="flex gap-2">
-                        <EditIcon 
-                          className="cursor-pointer text-[#05c283] hover:text-[#038f60] ease-in-out transition duration-300"
-                          onClick={() => handleEditContent(index)} // Edit content
-                        />
-                        <DeleteIcon 
-                          className="text-[#e53939] hover:text-[#b22c2c] cursor-pointer ease-in-out transition duration-300"
-                          onClick={() => handleDeleteContent(index)} // Delete content
-                        />
+                        {editingIndex === index ? (
+                          <>
+                            <CheckIcon
+                              className="cursor-pointer text-[#05c283] hover:text-[#038f60] ease-in-out transition duration-300 ml-2"
+                              onClick={() => handleConfirmEdit(index)} // Confirm edit
+                            />
+                            <CloseIcon
+                              className="cursor-pointer text-[#e53939] hover:text-[#b22c2c] ease-in-out transition duration-300"
+                              onClick={handleCancelEdit} // Cancel edit
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <EditIcon
+                              className="cursor-pointer text-[#05c283] hover:text-[#038f60] ease-in-out transition duration-300"
+                              onClick={() => handleEditContent(index)} // Edit content
+                            />
+                            <DeleteIcon
+                              className="text-[#e53939] hover:text-[#b22c2c] cursor-pointer ease-in-out transition duration-300"
+                              onClick={() => handleDeleteContent(index)} // Delete content
+                            />
+                          </>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -201,18 +238,21 @@ const ManagePlans = () => {
                 Update Subscription Plan
               </button>
             </div>
-            <Link to="/dashboard/subscription">
-              <button className="w-44 h-12 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl ease-in-out transition duration-300">
-                Cancel
-              </button>
-            </Link>
+            <div className="">
+              <Link to={"/dashboard/subscription"}>
+                <button className="w-auto px-3 h-12 bg-[#e53939] hover:bg-[#b22c2c] ease-in-out transition duration-300 rounded-xl text-white font-semibold text-lg">
+                  Cancel
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
       </Box>
       <ConfirmDelete
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)} 
-        onConfirm={handleDeleteConfirm} 
+        onClose={() => setIsModalOpen(false)} // Close modal
+        onConfirm={handleDeleteConfirm} // Handle delete confirmation
+        itemType={"Plan"}
       />
     </>
   );
