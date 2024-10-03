@@ -30,11 +30,16 @@ import CreateBook from "./pages/Admin Pages/CreateBook";
 import ManageBook from "./pages/Admin Pages/ManageBook";
 import CreateNotifications from "./pages/Admin Pages/CreateNotifications";
 import EditLecture from "./pages/Admin Pages/EditLecture";
-
+import AdminHome from "./pages/Stream/admin";
+import Stream from "./pages/Stream/AdminRoom";
+import UserHome from "./pages/Stream/user";
+import { SocketProvider } from "./Context/Socket";
 
 function App() {
+
   return (
-    <BrowserRouter>
+    <SocketProvider>
+      <BrowserRouter>
       <Routes>
         <Route path="/" element={<Homepage />}>
           <Route index element={<Dashboard />} />
@@ -47,6 +52,8 @@ function App() {
           <Route path="/lectures/:id" element={<VideoPlayer />} />
           <Route path="/profile-settings" element={<ProfileSettings />} />
           <Route path="/subscription-plans" element={<SubscriptionPlans />} />
+          <Route path="/user-lobby" element={<UserHome />} />
+          <Route path="/user-lobby/:roomId" element={<Stream/>} />
         </Route>
 
         <Route path="/dashboard" element={<AdminPanelLayout />}>
@@ -54,6 +61,8 @@ function App() {
           <Route path="/dashboard/webinars" element={<Webinars />} />
           <Route path="/dashboard/webinars/create-webinar" element={<CreateWebinar/>} />
           <Route path="/dashboard/webinars/manage-webinar" element={<ManageWebinar/>} />
+          <Route path="/dashboard/webinars/webinar-lobby" element={<AdminHome/>} />
+          <Route path="/dashboard/webinars/webinar-lobby/:roomId" element={<Stream/>} />
           <Route path="/dashboard/video-lecture" element={<VideoLecture />} />
           <Route path="/dashboard/video-lecture/create-lecture" element={<CreateLecture/>} />
           <Route path="/dashboard/video-lecture/edit-lecture" element={<EditLecture />} />
@@ -71,6 +80,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </SocketProvider>
   );
 }
 
