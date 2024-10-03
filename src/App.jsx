@@ -34,15 +34,21 @@ import AdminHome from "./pages/Stream/admin";
 import Stream from "./pages/Stream/AdminRoom";
 import UserHome from "./pages/Stream/user";
 import { SocketProvider } from "./Context/Socket";
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from './store';
 
 function App() {
 
   return (
+    <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
     <SocketProvider>
       <BrowserRouter>
       <Routes>
         <Route path="/" element={<Homepage />}>
           <Route index element={<Dashboard />} />
+          <Route path="/homepage" element={<Homepage />} />
           <Route path="/all-books" element={<Allbooks />} />
           <Route path="/all-books/:id" element={<BookDetails />} />
           <Route path="/all-books/:id/read-book" element={<ReadBook />} />
@@ -81,6 +87,8 @@ function App() {
       </Routes>
     </BrowserRouter>
     </SocketProvider>
+    </PersistGate>
+  </Provider>
   );
 }
 
