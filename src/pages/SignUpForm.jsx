@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -7,26 +10,30 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify"; 
+import Cookies from 'js-cookie'; 
 import { login } from "../Slice/AuthSlice";
+import axiosInstance from "../lib/axiosInstance";
+import { HashLoader } from "react-spinners"; 
 
 function SignUpForm({ onClose, toggleSignIn }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState(false); 
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
     password: "",
     confirmPassword: "",
     agreeToTerms: false,
   });
+  
+  const [loading, setLoading] = useState(false); 
 
   const dispatch = useDispatch();
-  const navigate = useNavigate(); 
-
+  const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.user);
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
@@ -40,26 +47,54 @@ function SignUpForm({ onClose, toggleSignIn }) {
     }));
   };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
+  
+    const { firstName, lastName, email, phoneNumber, password, confirmPassword } = formData;
+  
+    if (password !== confirmPassword) {
+      setPasswordError(true);
+      return; 
+    }
+  
+    setPasswordError(false);
+    setLoading(true); 
+  
+    try {
+      const response = await axiosInstance.post("/auth/register", {
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        password,
+      });
+  
+      const { token } = response.data;
+  
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      Cookies.set('token', token, { expires: 7 });
+      dispatch(login({ user: response.data.user, token }));
+      navigate("/");
+      toast.success("Account created successfully!");
 
-    const { firstName, lastName, email, phone, password, confirmPassword, agreeToTerms } = formData;
-    const token = 'mock-token-123'; 
-
-    console.log("Dispatching login with:", { user: { firstName, lastName, email, phone, password, confirmPassword, agreeToTerms }, token });
-    dispatch(login({ user: { firstName, lastName, email, phone, password, confirmPassword, agreeToTerms }, token }));
-
-    navigate("/"); 
-    
-
-    
-    
+      onClose();
+  
+    } catch (error) {
+      if (error.response && error.response.status === 409) {
+        toast.error("Email already exists. Please use a different email.");
+        console.log("Email Already Exists");
+      } else {
+        const errorMessage = error.response?.data?.message || "An error occurred during signup";
+        toast.error(errorMessage);
+      }
+    } finally {
+      setLoading(false); 
+    }
   };
-
+  
   useEffect(() => {
     console.log("User Data from Redux Store: ", userData);
   }, [userData]);
-  
 
   const textfieldStyles = {
     "& .MuiOutlinedInput-root": {
@@ -96,6 +131,11 @@ function SignUpForm({ onClose, toggleSignIn }) {
         <p className="text-md font-normal mb-5 opacity-60">
           Let’s get you all set up so you can access your personal account.
         </p>
+        {loading ? ( 
+          <div className="flex justify-center items-center h-48">
+            <HashLoader color="#6A55EA" loading={loading} size={40} />
+          </div>
+        ) : (
         <form onSubmit={handleSignup}>
           <div className="mb-5 gap-4 flex flex-col sm:flex-row">
             <TextField
@@ -106,7 +146,7 @@ function SignUpForm({ onClose, toggleSignIn }) {
               variant="outlined"
               value={formData.firstName}
               onChange={handleChange}
-              sx={textfieldStyles} // Using textfieldStyles here
+              sx={textfieldStyles}
             />
             <TextField
               className="w-full sm:w-1/2"
@@ -116,7 +156,7 @@ function SignUpForm({ onClose, toggleSignIn }) {
               variant="outlined"
               value={formData.lastName}
               onChange={handleChange}
-              sx={textfieldStyles} // Using textfieldStyles here
+              sx={textfieldStyles}
             />
           </div>
           <div className="mb-5 gap-4 flex flex-col sm:flex-row">
@@ -129,18 +169,18 @@ function SignUpForm({ onClose, toggleSignIn }) {
               type="email"
               value={formData.email}
               onChange={handleChange}
-              sx={textfieldStyles} // Using textfieldStyles here
+              sx={textfieldStyles}
             />
             <TextField
               className="w-full sm:w-1/2"
-              id="phone"
-              name="phone"
+              id="phoneNumber"
+              name="phoneNumber"
               label="Phone Number"
               variant="outlined"
               type="tel"
-              value={formData.phone}
+              value={formData.phoneNumber}
               onChange={handleChange}
-              sx={textfieldStyles} // Using textfieldStyles here
+              sx={textfieldStyles}
             />
           </div>
           <div className="mb-5">
@@ -153,7 +193,7 @@ function SignUpForm({ onClose, toggleSignIn }) {
               type={showPassword ? "text" : "password"}
               value={formData.password}
               onChange={handleChange}
-              sx={textfieldStyles} // Using textfieldStyles here
+              sx={textfieldStyles}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -180,7 +220,7 @@ function SignUpForm({ onClose, toggleSignIn }) {
               type={showConfirmPassword ? "text" : "password"}
               value={formData.confirmPassword}
               onChange={handleChange}
-              sx={textfieldStyles} // Using textfieldStyles here
+              sx={textfieldStyles}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -196,6 +236,11 @@ function SignUpForm({ onClose, toggleSignIn }) {
                 ),
               }}
             />
+            {passwordError && (
+              <p className="text-red-500 text-sm mt-2">
+                Password and Confirm Password do not match.
+              </p>
+            )}
           </div>
           <div className="mb-5 flex items-center">
             <FormControlLabel
@@ -213,6 +258,7 @@ function SignUpForm({ onClose, toggleSignIn }) {
                       color: "white",
                     },
                   }}
+                  required
                 />
               }
               className="text-[#313131]"
@@ -227,21 +273,19 @@ function SignUpForm({ onClose, toggleSignIn }) {
           </div>
           <div className="my-5">
             <button
-              className="text-black font-semibold w-full bg-[#6A55EA] hover:bg-[#5242b6] ease-in-out transition duration-300 rounded-md h-10"
+              className="text-black font-semibold w-full bg-[#6A55EA] hover:bg-[#5242b6] ease-in-out transition duration-300 py-3 rounded-lg"
               type="submit"
             >
-              Create Account
+              Sign Up
             </button>
           </div>
-          <div className="flex justify-center my-5">
-            <p className="text-[#313131] text-sm font-semibold">
-              Already have an account?{" "}
-              <button className="text-[#6A55EA] hover:text-[#5242b6] ease-in-out transition duration-300" onClick={toggleSignIn}>
-                Sign in
-              </button>
-            </p>
-          </div>
-        </form>
+        <p className="mt-4 text-sm text-center">
+          Already have an account?{" "}
+          <button onClick={toggleSignIn} className="font-bold text-[#6A55EA] hover:text-[#5242b6] ease-in-out transition duration-300">
+            Sign In
+          </button>
+        </p>
+        </form>)}
       </div>
     </div>
   );

@@ -10,15 +10,20 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../Slice/AuthSlice";
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import axiosInstance from "../lib/axiosInstance";
+import { HashLoader } from "react-spinners"; 
+
+
 
 function SignInForm({ onClose, toggleSignUp }) {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  
+  const [loading, setLoading] = useState(false); // State to control loading
   const dispatch = useDispatch();
-  const navigate = useNavigate(); 
-
+  const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.user);
 
   const handleChange = (e) => {
@@ -31,35 +36,51 @@ function SignInForm({ onClose, toggleSignUp }) {
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true); 
 
-    const { email, password } = credentials;
-    const token = 'mock-token-123'; 
-
-    console.log("Dispatching login with:", { user: { email, password }, token });
-    dispatch(login({ user: { email, password }, token }));
-
-    const mockUser = {
-      email,
-      role: email === "admin@example.com" ? "admin" : "user",
-    };
-
-    if (mockUser.role === "admin") {
-      navigate("/dashboard");
-    } else {
-      navigate("/"); 
-    }
-
-    if (rememberMe) {
-      localStorage.setItem("email", email);
-    }
     
+    const { email, password } = credentials;
+
+    try {
+      const response = await axiosInstance.post('/auth/login', { email, password });
+      const { token } = response.data;
+
+      
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      if (rememberMe) {
+        Cookies.set("token", token, { expires: 7 });
+      }
+
+      // Dispatch login action
+      dispatch(login({ user: { email, role: email === "admin@example.com" ? "admin" : "user" }, token }));
+
+      console.log("Login action dispatched with payload:", { user: { email, role: email === "admin@example.com" ? "admin" : "user" }, token });
+
+      // Navigate based on role
+      const mockUser = {
+        email,
+        role: email === "admin@example.com" ? "admin" : "user",
+      };
+
+      if (mockUser.role === "admin") {
+        navigate("/dashboard");
+      } else {
+        navigate("/");
+      }
+      onClose();
+    } catch (error) {
+      console.error("Login error:", error.response?.data || error.message);
+    } finally {
+      setLoading(false); 
+    }
   };
 
   useEffect(() => {
     console.log("User Data from Redux Store: ", userData);
   }, [userData]);
+
 
   return (
     <div className="modal-overlay">
@@ -73,121 +94,136 @@ function SignInForm({ onClose, toggleSignUp }) {
         <p className="text-md font-normal mx-10 mb-5 opacity-60">
           Login to access your account
         </p>
-        <form onSubmit={handleLogin}>
-          <div className="mx-10 mb-5">
-            <TextField
-              className="w-full"
-              id="outlined-basic"
-              label="Email"
-              variant="outlined"
-              type="email"
-              name="email" // Add name attribute
-              value={credentials.email} // Access email from credentials
-              onChange={handleChange} // Use the combined handler
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#79747E",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white",
-                  },
-                },
-                "& .MuiInputLabel-root": {
-                  color: "white",
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "white",
-                },
-                "& .MuiOutlinedInput-input": {
-                  color: "white",
-                },
-              }}
-            />
+        
+        {loading ? ( 
+          <div className="flex justify-center items-center h-48">
+            <HashLoader color="#6A55EA" loading={loading} size={40} />
           </div>
-          <div className="mx-10">
-            <TextField
-              className="w-full"
-              id="outlined-basic"
-              label="Password"
-              variant="outlined"
-              type={showPassword ? "text" : "password"}
-              name="password" // Add name attribute
-              value={credentials.password} // Access password from credentials
-              onChange={handleChange} // Use the combined handler
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#79747E",
+        ) : (
+          <form onSubmit={handleLogin}>
+            <div className="mx-10 mb-5">
+              <TextField
+                className="w-full"
+                id="email"
+                label="Email"
+                variant="outlined"
+                type="email"
+                name="email"
+                value={credentials.email}
+                onChange={handleChange}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#79747E",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "white",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "white",
+                    },
                   },
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white",
-                  },
-                },
-                "& .MuiInputLabel-root": {
-                  color: "white",
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "white",
-                },
-                "& .MuiOutlinedInput-input": {
-                  color: "white",
-                },
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      edge="end"
-                      sx={{ color: "white" }} 
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </div>
-          <div className="mx-10 mt-5 flex justify-between items-center">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  sx={{
+                  "& .MuiInputLabel-root": {
                     color: "white",
-                    "&.Mui-checked": {
-                      color: "white",
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "white",
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    color: "white",
+                  },
+                }}
+              />
+            </div>
+            <div className="mx-10">
+              <TextField
+                className="w-full"
+                id="password"
+                label="Password"
+                variant="outlined"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={credentials.password}
+                onChange={handleChange}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#79747E",
                     },
-                    "&:hover": {
-                      color: "white",
+                    "&:hover fieldset": {
+                      borderColor: "white",
                     },
-                  }}
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                />
-              }
-              label="Remember me"
-            />
-            <button className="text-[#6a55ea]" onClick={toggleSignUp}>
-              Sign Up
-            </button>
-          </div>
-          <div className="mx-10 mt-5 mb-10">
-            <button
-              className="bg-[#6a55ea] text-white rounded-lg py-2 w-full"
-              type="submit"
-            >
-              Login
-            </button>
-          </div>
-        </form>
+                    "&.Mui-focused fieldset": {
+                      borderColor: "white",
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "white",
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "white",
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    color: "white",
+                  },
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        edge="end"
+                        sx={{ color: "white" }}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
+            <div className="mx-10 mt-5 flex justify-between items-center">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    sx={{
+                      color: "white",
+                      "&.Mui-checked": {
+                        color: "white",
+                      },
+                      "&:hover": {
+                        color: "white",
+                      },
+                    }}
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  />
+                }
+                label="Remember me"
+              />
+              <button className="text-[#6A55EA] hover:text-[#5242b6] ease-in-out transition duration-300 text-base font-semibold">
+                Forgot Password
+              </button>
+            </div>
+            <div className="mx-10 mt-5 mb-10">
+              <button
+                className="bg-[#6a55ea] text-white rounded-lg py-2 w-full"
+                type="submit"
+              >
+                Login
+              </button>
+            </div>
+            <div className="flex justify-center my-5">
+              <p className="text-[#313131] text-sm font-semibold">
+                Don't have an Account?{" "}
+                <button className="text-[#6A55EA] hover:text-[#5242b6] ease-in-out transition duration-300" onClick={toggleSignUp}>
+                  Sign up
+                </button>
+              </p>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

@@ -33,18 +33,20 @@ import EditLecture from "./pages/Admin Pages/EditLecture";
 import AdminHome from "./pages/Stream/admin";
 import Stream from "./pages/Stream/AdminRoom";
 import UserHome from "./pages/Stream/user";
-import { SocketProvider } from "./Context/Socket";
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './store';
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
 
   return (
     <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-    <SocketProvider>
       <BrowserRouter>
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<Homepage />}>
           <Route index element={<Dashboard />} />
@@ -86,7 +88,6 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
-    </SocketProvider>
     </PersistGate>
   </Provider>
   );
