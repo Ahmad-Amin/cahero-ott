@@ -52,7 +52,7 @@ function SignInForm({ onClose, toggleSignUp }) {
         Cookies.set("token", token, { expires: 7 });
       }
 
-      dispatch(login({ user: { email, role: email === "admin@example.com" ? "admin" : "user" }, token }));
+      dispatch(login(response.data))
 
       const mockUser = {
         email,
