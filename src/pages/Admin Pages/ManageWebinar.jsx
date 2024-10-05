@@ -1,20 +1,83 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import ConfirmDelete from "../../components/Admin Components/ConfirmDelete"; // Import the DeleteConfirmation component
+import ConfirmDelete from "../../components/Admin Components/ConfirmDelete";
+import axiosInstance from "../../lib/axiosInstance";
 
 const ManageWebinars = () => {
-  const [paymentType, setPaymentType] = useState("unpaid"); // State to track payment type
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const { id } = useParams(); // Get webinar ID from route params
+  const [paymentType, setPaymentType] = useState("unpaid");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [webinarData, setWebinarData] = useState({
+    title: "",
+    startTime: "",
+    endTime: "",
+    startDate: "",
+    description: "",
+    price: 0,
+  });
+
+  useEffect(() => {
+    const fetchWebinar = async () => {
+      try {
+        const response = await axiosInstance.get(`/webinars/${id}`);
+        const data = response.data;
+        console.log("Webinar ID:", id);
+        console.log("Webinar Data: ", response.data);
+        setWebinarData({
+          title: data.title,
+          startTime: data.startTime,
+          endTime: data.endTime,
+          startDate: formatDate(data.startDate), // Format the date here
+          description: data.description,
+          price: data.price || 0,
+        });
+        setPaymentType(data.price ? "paid" : "unpaid");
+      } catch (error) {
+        console.error("Error fetching webinar data:", error);
+      }
+    };
+
+    fetchWebinar();
+  }, [id]);
+
+  // Helper function to format date from '2024-10-06T00:00:00.000Z' to 'mm/dd/yyyy'
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
 
   const handlePaymentTypeChange = (event) => {
     setPaymentType(event.target.value);
   };
 
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setWebinarData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   const handleDeleteConfirm = () => {
     console.log("Webinar deleted");
     setIsModalOpen(false);
+  };
+
+  const handleUpdateWebinar = async () => {
+    try {
+      await axiosInstance.put(`/webinars/${id}`, {
+        ...webinarData,
+        price: paymentType === "paid" ? webinarData.price : null,
+      });
+      console.log("Webinar updated successfully!");
+    } catch (error) {
+      console.error("Error updating webinar:", error);
+    }
   };
 
   return (
@@ -43,7 +106,7 @@ const ManageWebinars = () => {
             </Link>
             <DeleteOutlineIcon
               className="w-8 h-8 hover:text-[#b22c2c] text-[#e53939] ease-in-out transition duration-300"
-              onClick={() => setIsModalOpen(true)} // Open modal on click
+              onClick={() => setIsModalOpen(true)}
             />
           </div>
           <div className="py-8 w-4/6">
@@ -57,6 +120,9 @@ const ManageWebinars = () => {
               <input
                 type="text"
                 id="webinar_title"
+                name="title"
+                value={webinarData.title}
+                onChange={handleInputChange}
                 className="w-full h-16 rounded-xl border-2 border-white focus:border-none bg-transparent px-3 text-white"
                 placeholder="Enter Webinar Title"
                 required
@@ -73,6 +139,9 @@ const ManageWebinars = () => {
                 <input
                   type="time"
                   id="start_time"
+                  name="startTime" // Set name for handling input change
+                  value={webinarData.startTime}
+                  onChange={handleInputChange} // Handle input change
                   className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 appearance-none"
                   required
                 />
@@ -87,6 +156,9 @@ const ManageWebinars = () => {
                 <input
                   type="time"
                   id="end_time"
+                  name="endTime" // Set name for handling input change
+                  value={webinarData.endTime}
+                  onChange={handleInputChange} // Handle input change
                   className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 appearance-none"
                   required
                 />
@@ -100,8 +172,11 @@ const ManageWebinars = () => {
                 Start Date
               </label>
               <input
-                type="date"
+                type="text" // Change this to text to accept formatted date
                 id="start_date"
+                name="startDate" // Set name for handling input change
+                value={webinarData.startDate}
+                onChange={handleInputChange} // Handle input change
                 className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 appearance-none"
                 required
               />
@@ -115,6 +190,9 @@ const ManageWebinars = () => {
               </label>
               <textarea
                 id="description"
+                name="description"
+                value={webinarData.description}
+                onChange={handleInputChange}
                 className="w-full h-32 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 pt-4 resize-none"
                 placeholder="Enter Description"
                 required
@@ -159,36 +237,31 @@ const ManageWebinars = () => {
                 <input
                   type="number"
                   id="webinar_price"
+                  name="price" // Set name for handling input change
                   min="0" // Prevent number input below 0
-                  className="w-full h-16 rounded-xl border-2 border-white focus:border-none bg-transparent px-3 text-white"
-                  placeholder="Enter Webinar Price"
+                  value={webinarData.price}
+                  onChange={handleInputChange} // Handle input change
+                  className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3"
                   required
                 />
               </div>
             )}
 
-            <div className="flex flex-row gap-6  mt-8">
-              <div className="">
-                {" "}
-                <button className="w-56 h-12 bg-transparent border-2 border-[#6a55ea] hover:border-0 hover:bg-[#6a55ea] ease-in-out transition duration-300 rounded-xl text-white font-semibold text-lg">
-                  Share Invite Link
-                </button>
-              </div>
-              <div className="">
-                <button className="w-56 h-12 bg-[#6a55ea] hover:bg-[#5242b6] ease-in-out transition duration-300 rounded-xl text-white font-semibold text-lg">
-                  Manage Webinar
-                </button>
-              </div>
+            <div className="flex justify-between mt-5">
+              <button
+                onClick={handleUpdateWebinar}
+                className="w-48 h-12 bg-[#6a55ea] text-white text-lg font-semibold rounded-xl hover:bg-[#5a4bcf] ease-in-out transition duration-300"
+              >
+                Update Webinar
+              </button>
             </div>
           </div>
         </div>
       </Box>
-
-      {/* Delete Confirmation Modal */}
       <ConfirmDelete
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)} // Close modal
-        onConfirm={handleDeleteConfirm} // Handle delete confirmation
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleDeleteConfirm}
       />
     </>
   );

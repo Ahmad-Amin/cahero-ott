@@ -30,59 +30,93 @@ import CreateBook from "./pages/Admin Pages/CreateBook";
 import ManageBook from "./pages/Admin Pages/ManageBook";
 import CreateNotifications from "./pages/Admin Pages/CreateNotifications";
 import EditLecture from "./pages/Admin Pages/EditLecture";
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import { store, persistor } from './store';
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persistor } from "./store";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-
   return (
     <Provider store={store}>
-    <PersistGate loading={null} persistor={persistor}>
-      <BrowserRouter>
-      <ToastContainer />
-      <Routes>
-        <Route path="/" element={<Homepage />}>
-          <Route index element={<Dashboard />} />
-          <Route path="/homepage" element={<Homepage />} />
-          <Route path="/all-books" element={<Allbooks />} />
-          <Route path="/all-books/:id" element={<BookDetails />} />
-          <Route path="/all-books/:id/read-book" element={<ReadBook />} />
-          <Route path="/webinar" element={<Webinar />} />
-          <Route path="/webinar/:id" element={<WebinarDetails />} />
-          <Route path="/lectures" element={<Lectures />} />
-          <Route path="/lectures/:id" element={<VideoPlayer />} />
-          <Route path="/profile-settings" element={<ProfileSettings />} />
-          <Route path="/subscription-plans" element={<SubscriptionPlans />} />
-        </Route>
+      <PersistGate loading={null} persistor={persistor}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Homepage />}>
+              <Route index element={<Dashboard />} />
+              <Route path="/homepage" element={<Homepage />} />
+              <Route path="/all-books" element={<Allbooks />} />
+              <Route path="/all-books/:id" element={<BookDetails />} />
+              <Route path="/all-books/:id/read-book" element={<ReadBook />} />
+              <Route path="/webinar" element={<Webinar />} />
+              <Route path="/webinar/:id" element={<WebinarDetails />} />
+              <Route path="/lectures" element={<Lectures />} />
+              <Route path="/lectures/:id" element={<VideoPlayer />} />
+              <Route path="/profile-settings" element={<ProfileSettings />} />
+              <Route
+                path="/subscription-plans"
+                element={<SubscriptionPlans />}
+              />
+            </Route>
 
-        <Route path="/dashboard" element={<AdminPanelLayout />}>
-        <Route index element={<AdminHomepage />} />
-          <Route path="/dashboard/webinars" element={<Webinars />} />
-          <Route path="/dashboard/webinars/create-webinar" element={<CreateWebinar/>} />
-          <Route path="/dashboard/webinars/manage-webinar" element={<ManageWebinar/>} />
-          <Route path="/dashboard/video-lecture" element={<VideoLecture />} />
-          <Route path="/dashboard/video-lecture/create-lecture" element={<CreateLecture/>} />
-          <Route path="/dashboard/video-lecture/edit-lecture" element={<EditLecture />} />
-          <Route path="/dashboard/recordings" element={<RecordedWebinars />} />
-          <Route path="/dashboard/subscription" element={<Subscription />} />
-          <Route path="/dashboard/subscription/create-new-plan" element={<CreateNewPlan/>} />
-          <Route path="/dashboard/subscription/manage-plan" element={<ManagePlans/>} />
-          <Route path="/dashboard/users" element={<Users />} />
-          <Route path="/dashboard/book-creation" element={<BookCreation />} />
-          <Route path="/dashboard/book-creation/create-new-book" element={<CreateBook/>} />
-          <Route path="/dashboard/book-creation/manage-book" element={<ManageBook/>} />
-          <Route path="/dashboard/profile" element={<Profile />} />
-          <Route path="/dashboard/notifications" element={<Notifications />} />
-          <Route path="/dashboard/notifications/create-notification" element={<CreateNotifications />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-    </PersistGate>
-  </Provider>
+            <Route
+              path="/dashboard/*"
+              element={
+                <ProtectedRoute>
+                  <AdminPanelLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<AdminHomepage />} />
+              <Route path="webinars" element={<Webinars />} />
+              <Route
+                path="webinars/create-webinar"
+                element={<CreateWebinar />}
+              />
+              <Route
+                path="webinars/:id/manage-webinar"
+                element={<ManageWebinar />}
+              />
+              <Route path="video-lecture" element={<VideoLecture />} />
+              <Route
+                path="video-lecture/create-lecture"
+                element={<CreateLecture />}
+              />
+              <Route
+                path="video-lecture/edit-lecture"
+                element={<EditLecture />}
+              />
+              <Route path="recordings" element={<RecordedWebinars />} />
+              <Route path="subscription" element={<Subscription />} />
+              <Route
+                path="subscription/create-new-plan"
+                element={<CreateNewPlan />}
+              />
+              <Route
+                path="subscription/manage-plan"
+                element={<ManagePlans />}
+              />
+              <Route path="users" element={<Users />} />
+              <Route path="book-creation" element={<BookCreation />} />
+              <Route
+                path="book-creation/create-new-book"
+                element={<CreateBook />}
+              />
+              <Route
+                path="book-creation/manage-book"
+                element={<ManageBook />}
+              />
+              <Route path="profile" element={<Profile />} />
+              <Route path="notifications" element={<Notifications />} />
+              <Route
+                path="notifications/create-notification"
+                element={<CreateNotifications />}
+              />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </PersistGate>
+    </Provider>
   );
 }
 

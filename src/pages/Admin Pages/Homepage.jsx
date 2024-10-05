@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
 import DescriptionIcon from "@mui/icons-material/Description";
@@ -7,9 +7,30 @@ import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import { Link } from "react-router-dom";
 import UpcommingWebinars from "../../components/Admin Components/UpcommingWebinars";
 import PastWebinars from "../../components/Admin Components/PastWebinars";
+import CountUp from "react-countup";
+import axiosInstance from "../../lib/axiosInstance";
+
 
 const AdminHomepage = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
+  const [stats, setStats] = useState({
+    totalSales: 0,
+    activeUsers: 0,
+    totalSubscribers: 0,
+    upcomingWebinars: 0,
+  });
+
+  useEffect(() => {
+
+    axiosInstance.get("/stats")
+      .then(response => {
+        const { totalSales, activeUsers, totalSubscribers, upcomingWebinars } = response.data;
+        setStats({ totalSales, activeUsers, totalSubscribers, upcomingWebinars });
+      })
+      .catch(error => {
+        console.error("Error fetching stats data:", error);
+      });
+  }, []);
 
   return (
     <Box
@@ -35,7 +56,13 @@ const AdminHomepage = () => {
             <div className="w-auto justify-start items-center mx-7 my-5">
               <div className="space-y-3">
                 <h1 className="text-[#151d48] font-bold text-2xl md:text-4xl">
-                  $ 1K
+                  <CountUp
+                    start={0}
+                    end={stats.totalSales}
+                    duration={1}
+                    prefix="$"
+                    separator=","
+                  />
                 </h1>
                 <h1 className="text-[#425166] font-bold text-lg md:text-2xl">
                   Total Sales
@@ -55,7 +82,11 @@ const AdminHomepage = () => {
             <div className="w-auto justify-start items-center mx-7 my-5">
               <div className="space-y-3">
                 <h1 className="text-[#151d48] font-bold text-2xl md:text-4xl">
-                  120
+                  <CountUp
+                    start={0}
+                    end={stats.activeUsers}
+                    duration={2}
+                  />
                 </h1>
                 <h1 className="text-[#425166] font-bold text-lg md:text-2xl">
                   Active Users
@@ -75,7 +106,11 @@ const AdminHomepage = () => {
             <div className="w-auto justify-start items-center mx-7 my-5">
               <div className="space-y-3">
                 <h1 className="text-[#151d48] font-bold text-2xl md:text-4xl">
-                  357
+                  <CountUp
+                    start={0}
+                    end={stats.totalSubscribers}
+                    duration={2}
+                  />
                 </h1>
                 <h1 className="text-[#425166] font-bold text-lg md:text-2xl">
                   Total Subscribers
@@ -95,7 +130,11 @@ const AdminHomepage = () => {
             <div className="w-auto justify-start items-center mx-7 my-5">
               <div className="space-y-3">
                 <h1 className="text-[#151d48] font-bold text-2xl lg:text-4xl md:text-2xl">
-                  8
+                  <CountUp
+                    start={0}
+                    end={stats.upcomingWebinars}
+                    duration={2}
+                  />
                 </h1>
                 <h1 className="text-[#425166] font-bold text-lg lg:text-2xl md:text-xl w-32">
                   Upcoming Webinars
@@ -130,12 +169,12 @@ const AdminHomepage = () => {
               </button>
             </div>
             <div className="w-auto h-auto flex justify-end">
-            <Link to="/dashboard/webinars/create-webinar">
-              <button className="w-52 h-12 bg-[#6a55ea] text-white rounded-lg text-lg font-semibold hover:bg-[#3b2f83] ease-in-out transition duration-300">
-                Create Webinar
-              </button>
-            </Link>
-          </div>
+              <Link to="/dashboard/webinars/create-webinar">
+                <button className="w-52 h-12 bg-[#6a55ea] text-white rounded-lg text-lg font-semibold hover:bg-[#3b2f83] ease-in-out transition duration-300">
+                  Create Webinar
+                </button>
+              </Link>
+            </div>
             <div className="py-4 w-full">
               {activeTab === "upcoming" ? (
                 <UpcommingWebinars />

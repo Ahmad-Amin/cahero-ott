@@ -64,7 +64,7 @@ function SignInForm({ onClose, toggleSignUp }) {
       if (mockUser.role === "admin") {
         navigate("/dashboard");
       } else {
-        navigate("/");
+        navigate("/dashboard");
       }
       onClose();
     } catch (error) {

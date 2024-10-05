@@ -14,32 +14,45 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import LogoutIcon from "@mui/icons-material/Logout"; // Import Logout Icon
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import AdminNavbar from "../../components/Admin Components/Navbar";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import GroupIcon from "@mui/icons-material/Group";
 import LaptopIcon from "@mui/icons-material/Laptop";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import PaymentsIcon from "@mui/icons-material/Payments";
+import { logout } from "../../Slice/AuthSlice"; // Import your logout action
+import {  useDispatch } from "react-redux"; // Import useSelector and useDispatch
+
 const drawerWidth = 280;
 
 export default function AdminPanelLayout() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const location = useLocation();
+  const navigate = useNavigate(); // For redirection
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+  const dispatch = useDispatch(); // Create a dispatch function
+
+  const handleLogout = async () => {
+    try {
+
+      dispatch(logout());
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   // Updated getPageTitle function
   const getPageTitle = (path) => {
-    // Split the path by "/" and filter out any empty strings
     const segments = path.split("/").filter(Boolean);
 
-    // Check if there are at least two segments in the path
-    if (segments.length < 2) return "Dashboard"; // Default title if no second segment
+    if (segments.length < 2) return "Dashboard";
 
-    // Get the second segment to decide the title
     const secondSegment = segments[1];
 
     switch (secondSegment) {
@@ -60,7 +73,7 @@ export default function AdminPanelLayout() {
       case "notifications":
         return "Notifications";
       default:
-        return "Dashboard"; // Fallback title
+        return "Dashboard";
     }
   };
 
@@ -97,57 +110,92 @@ export default function AdminPanelLayout() {
   ];
 
   const drawer = (
-    <div className="bg-[#000000] text-white h-full">
-      <div className="p-2 flex items-center">
-        <img
-          src={`${process.env.PUBLIC_URL}/images/Cahero.png`}
-          alt="Logo"
-          className="h-auto w-auto"
-        />
-      </div>
-      <List className="mx-6 space-y-2">
-        {menuItems.map((item) => {
-          const isActive =
-            (location.pathname === "/dashboard" &&
-              item.link === "/dashboard") ||
-            (location.pathname.startsWith(item.link) &&
-              item.link !== "/dashboard");
+    <div className="bg-[#000000] text-white h-full flex flex-col justify-between">
+      <div>
+        <div className="p-2 flex items-center">
+          <img
+            src={`${process.env.PUBLIC_URL}/images/Cahero.png`}
+            alt="Logo"
+            className="h-auto w-auto"
+          />
+        </div>
+        <List className="mx-6 space-y-2">
+          {menuItems.map((item) => {
+            const isActive =
+              (location.pathname === "/dashboard" &&
+                item.link === "/dashboard") ||
+              (location.pathname.startsWith(item.link) &&
+                item.link !== "/dashboard");
 
-          return (
-            <ListItem key={item.text} disablePadding>
-              <Link to={item.link} className="w-full h-auto mx-5">
-                <ListItemButton
-                  sx={{
-                    backgroundColor: isActive ? "#6a55ea" : "transparent",
-                    borderRadius: "12px",
-                    paddingLeft: "16px",
-                    marginBottom: "12px",
-                    "&:hover": { backgroundColor: "#5242b6" },
-                  }}
-                >
-                  <ListItemIcon
+            return (
+              <ListItem key={item.text} disablePadding>
+                <Link to={item.link} className="w-full h-auto mx-5">
+                  <ListItemButton
                     sx={{
-                      color: "white",
-                      minWidth: "30px",
+                      backgroundColor: isActive ? "#6a55ea" : "transparent",
+                      borderRadius: "12px",
+                      paddingLeft: "16px",
+                      marginBottom: "12px",
+                      "&:hover": { backgroundColor: "#5242b6" },
                     }}
                   >
-                    {item.icon}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={item.text}
-                    primaryTypographyProps={{
-                      fontSize: 16,
-                      fontWeight: isActive ? "bold" : "normal",
-                      color: "white",
-                      marginLeft: "8px",
-                    }}
-                  />
-                </ListItemButton>
-              </Link>
-            </ListItem>
-          );
-        })}
-      </List>
+                    <ListItemIcon
+                      sx={{
+                        color: "white",
+                        minWidth: "30px",
+                      }}
+                    >
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={item.text}
+                      primaryTypographyProps={{
+                        fontSize: 16,
+                        fontWeight: isActive ? "bold" : "normal",
+                        color: "white",
+                        marginLeft: "8px",
+                      }}
+                    />
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+            );
+          })}
+        </List>
+      </div>
+
+      {/* Logout Button added at the bottom */}
+      <div className="mx-6 mb-4">
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={handleLogout} // Trigger logout on click
+            sx={{
+              backgroundColor: "transparent",
+              borderRadius: "12px",
+              paddingLeft: "16px",
+              "&:hover": { backgroundColor: "#fe3e3e" },
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                color: "white",
+                minWidth: "30px",
+              }}
+            >
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Logout"
+              primaryTypographyProps={{
+                fontSize: 16,
+                fontWeight: "normal",
+                color: "white",
+                marginLeft: "8px",
+              }}
+            />
+          </ListItemButton>
+        </ListItem>
+      </div>
     </div>
   );
 
@@ -155,7 +203,7 @@ export default function AdminPanelLayout() {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
-        position="fixed" // Change to fixed
+        position="fixed"
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
@@ -207,19 +255,18 @@ export default function AdminPanelLayout() {
       </Box>
 
       <Box
-  component="main"
-  sx={{
-    flexGrow: 1,
-    width: { sm: `calc(100% - ${drawerWidth}px)` },
-    p: 2,
-    backgroundColor: "#101011",
-    minHeight: "100vh",
-    pt: { xs: 12, sm: 14 }, // Increase padding-top here (12 or 14 as per your need)
-  }}
->
-  <Outlet />
-</Box>
-
+        component="main"
+        sx={{
+          flexGrow: 1,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          p: 2,
+          backgroundColor: "#101011",
+          minHeight: "100vh",
+          pt: { xs: 12, sm: 14 },
+        }}
+      >
+        <Outlet />
+      </Box>
     </Box>
   );
 }

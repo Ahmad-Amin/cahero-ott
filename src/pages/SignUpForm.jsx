@@ -74,7 +74,7 @@ function SignUpForm({ onClose, toggleSignIn }) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       Cookies.set('token', token, { expires: 7 });
       dispatch(login({ user: response.data.user, token }));
-      navigate("/");
+      navigate("/dashboard");
       toast.success("Account created successfully!");
 
       onClose();

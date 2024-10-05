@@ -1,19 +1,24 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useSelector } from "react-redux"; // Import useSelector to access Redux store
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { FaBell, FaEnvelope, FaUserCheck } from "react-icons/fa"; // Example icons
-const AdminNavbar = ({ pageTitle }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to manage dropdown visibility
-  const dropdownRef = useRef(null); // Ref for the dropdown menu
+import { FaBell, FaEnvelope, FaUserCheck } from "react-icons/fa";
 
+const AdminNavbar = ({ pageTitle }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
+  const dropdownRef = useRef(null); 
+
+
+  const user = useSelector((state) => state.auth.user);
+  console.log(user);
+  
   const toggleDropdown = () => {
-    setIsDropdownOpen((prev) => !prev); // Toggle dropdown visibility
+    setIsDropdownOpen((prev) => !prev); 
   };
 
   const handleClickOutside = (event) => {
-    // Check if the click was outside the dropdown
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setIsDropdownOpen(false); // Close the dropdown
+      setIsDropdownOpen(false); 
     }
   };
 
@@ -23,6 +28,7 @@ const AdminNavbar = ({ pageTitle }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
   const [selectedLanguage, setSelectedLanguage] = useState({
     name: "English",
     flag: `${process.env.PUBLIC_URL}/images/flags/flag.png`,
@@ -146,24 +152,6 @@ const AdminNavbar = ({ pageTitle }) => {
                     icon: <FaUserCheck className="w-6 h-6 mr-4" />,
                     time: "15 mins ago",
                   },
-                  {
-                    title: "Notification Title 4",
-                    description: "This is a description of notification 4.",
-                    icon: <FaBell className="w-6 h-6 mr-4" />,
-                    time: "20 mins ago",
-                  },
-                  {
-                    title: "Notification Title 5",
-                    description: "This is a description of notification 5.",
-                    icon: <FaEnvelope className="w-6 h-6 mr-4" />,
-                    time: "25 mins ago",
-                  },
-                  {
-                    title: "Notification Title 6",
-                    description: "This is a description of notification 6.",
-                    icon: <FaUserCheck className="w-6 h-6 mr-4" />,
-                    time: "30 mins ago",
-                  },
                 ].map((notification, index) => (
                   <li
                     key={index}
@@ -171,7 +159,9 @@ const AdminNavbar = ({ pageTitle }) => {
                   >
                     {notification.icon}
                     <div className="flex flex-col justify-center flex-grow overflow-hidden">
-                      <div className="font-semibold">{notification.title}</div>
+                      <div className="font-semibold">
+                        {notification.title}
+                      </div>
                       <div className="text-sm text-gray-400 overflow-hidden text-ellipsis whitespace-nowrap">
                         {notification.description}
                       </div>
@@ -196,8 +186,8 @@ const AdminNavbar = ({ pageTitle }) => {
             className="w-10 h-10"
           />
           <div>
-            <h1>Musfiq</h1>
-            <p className="text-sm opacity-70">Admin</p>
+            <h1>{user.firstName || "User"}</h1>
+            <p className="text-sm opacity-70">{user?.role || "Role"}</p>
           </div>
           <KeyboardArrowDownIcon />
         </div>
