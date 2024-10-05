@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -8,11 +8,12 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { login } from "../Slice/AuthSlice";
 import Cookies from 'js-cookie';
 import axiosInstance from "../lib/axiosInstance";
 import { HashLoader } from "react-spinners"; 
+import { toast } from "react-toastify";
 
 
 
@@ -23,7 +24,6 @@ function SignInForm({ onClose, toggleSignUp }) {
   const [loading, setLoading] = useState(false); 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userData = useSelector((state) => state.auth.user);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,8 +54,6 @@ function SignInForm({ onClose, toggleSignUp }) {
 
       dispatch(login({ user: { email, role: email === "admin@example.com" ? "admin" : "user" }, token }));
 
-      console.log("Login action dispatched with payload:", { user: { email, role: email === "admin@example.com" ? "admin" : "user" }, token });
-
       const mockUser = {
         email,
         role: email === "admin@example.com" ? "admin" : "user",
@@ -68,16 +66,13 @@ function SignInForm({ onClose, toggleSignUp }) {
       }
       onClose();
     } catch (error) {
+      console.log(error.response.data.message)
+      toast.error(error?.response?.data?.message || 'Error Logging in')
       console.error("Login error:", error.response?.data || error.message);
     } finally {
       setLoading(false); 
     }
   };
-
-  useEffect(() => {
-    console.log("User Data from Redux Store: ", userData);
-  }, [userData]);
-
 
   return (
     <div className="modal-overlay">

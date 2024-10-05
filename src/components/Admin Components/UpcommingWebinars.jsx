@@ -8,8 +8,9 @@ import { Link, useLocation } from "react-router-dom";
 import axiosInstance from "../../lib/axiosInstance";
 import { HashLoader } from "react-spinners";
 import WebinarDelete from "./webinarDelete";
+import LoadingWrapper from "../ui/LoadingWrapper";
 
-const UpcomingWebinars = () => {
+const UpcomingWebinars = ({ limit }) => {
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
@@ -22,8 +23,11 @@ const UpcomingWebinars = () => {
       try {
         setLoading(true);
         const response = await axiosInstance.get("/webinars");
-        setUpcomingWebinars(response.data.results);
-        console.log("data: ", response.data.results);
+        if (limit) {
+          setUpcomingWebinars(response.data.results.slice(0, limit));
+        } else {
+          setUpcomingWebinars(response.data.results);
+        }
       } catch (error) {
         console.error("Error fetching webinars:", error);
       } finally {
@@ -32,7 +36,7 @@ const UpcomingWebinars = () => {
     };
 
     fetchWebinars();
-  }, []);
+  }, [limit]);
 
   const handleDeleteConfirm = async () => {
     if (itemToDelete) {
@@ -54,20 +58,11 @@ const UpcomingWebinars = () => {
     setIsModalOpen(true);
   };
 
-  const webinarsToShow =
-    location.pathname === "/dashboard"
-      ? upcomingWebinars.slice(0, 4)
-      : upcomingWebinars;
-
   return (
     <>
-      {loading ? (
-        <div className="flex justify-center items-center h-48">
-          <HashLoader color="#6A55EA" loading={loading} size={40} />
-        </div>
-      ) : (
+      <LoadingWrapper loading={loading} >
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
-          {webinarsToShow.map((webinar, index) => (
+          {upcomingWebinars.length !== 0 && upcomingWebinars.map((webinar, index) => (
             <div
               key={index}
               className="bg-transparent rounded-3xl p-4 shadow-md h-auto border-2 relative mb-6"
@@ -100,7 +95,8 @@ const UpcomingWebinars = () => {
                 <CalendarTodayIcon className="text-[#6a55ea] mr-1" />
                 <p className="text-white mr-2">Date:</p>
                 <p className="text-[#b2b2b2]">
-                  {new Date(webinar.startDate).toLocaleDateString()} {/* Format the date */}
+                  {new Date(webinar.startDate).toLocaleDateString()}{" "}
+                  {/* Format the date */}
                 </p>
               </div>
               <div className="flex items-center mt-2 text-sm md:text-base">
@@ -127,7 +123,8 @@ const UpcomingWebinars = () => {
             </div>
           ))}
         </div>
-      )}
+        {upcomingWebinars.length === 0 && !loading && <h1 className=" text-white font-semibold text-2xl text-center w-full" >There is no Upcoming Webinars</h1>}
+      </LoadingWrapper>
       <WebinarDelete
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -139,4 +136,3 @@ const UpcomingWebinars = () => {
 };
 
 export default UpcomingWebinars;
-  

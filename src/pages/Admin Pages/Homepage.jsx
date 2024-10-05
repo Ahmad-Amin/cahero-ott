@@ -9,10 +9,11 @@ import UpcommingWebinars from "../../components/Admin Components/UpcommingWebina
 import PastWebinars from "../../components/Admin Components/PastWebinars";
 import CountUp from "react-countup";
 import axiosInstance from "../../lib/axiosInstance";
-
+import LoadingWrapper from "../../components/ui/LoadingWrapper";
 
 const AdminHomepage = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
+  const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState({
     totalSales: 0,
     activeUsers: 0,
@@ -21,15 +22,24 @@ const AdminHomepage = () => {
   });
 
   useEffect(() => {
-
-    axiosInstance.get("/stats")
-      .then(response => {
-        const { totalSales, activeUsers, totalSubscribers, upcomingWebinars } = response.data;
-        setStats({ totalSales, activeUsers, totalSubscribers, upcomingWebinars });
-      })
-      .catch(error => {
+    (async () => {
+      try {
+        setLoading(true);
+        const response = await axiosInstance.get("/stats");
+        const { totalSales, activeUsers, totalSubscribers, upcomingWebinars } =
+          response.data;
+        setStats({
+          totalSales,
+          activeUsers,
+          totalSubscribers,
+          upcomingWebinars,
+        });
+      } catch (error) {
         console.error("Error fetching stats data:", error);
-      });
+      } finally{
+        setLoading(false);
+      }
+    })();
   }, []);
 
   return (
@@ -46,103 +56,101 @@ const AdminHomepage = () => {
       }}
     >
       <div className="px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-10 items-center">
-          <div className="bg-[#ffe2e5] rounded-3xl shadow-md h-full">
-            <div className="w-full flex justify-start items-center">
-              <div className="bg-[#fa5a7d] rounded-full w-20 h-20 mx-6 my-7 flex justify-center items-center text-white">
-                <AnalyticsIcon fontSize="large" />
+        <LoadingWrapper loading={loading}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-10 items-center">
+            <div className="bg-[#ffe2e5] rounded-3xl shadow-md h-full">
+              <div className="w-full flex justify-start items-center">
+                <div className="bg-[#fa5a7d] rounded-full w-20 h-20 mx-6 my-7 flex justify-center items-center text-white">
+                  <AnalyticsIcon fontSize="large" />
+                </div>
+              </div>
+              <div className="w-auto justify-start items-center mx-7 my-5">
+                <div className="space-y-3">
+                  <h1 className="text-[#151d48] font-bold text-2xl md:text-4xl">
+                    <CountUp
+                      start={0}
+                      end={stats.totalSales}
+                      duration={1}
+                      prefix="$"
+                      separator=","
+                    />
+                  </h1>
+                  <h1 className="text-[#425166] font-bold text-lg md:text-2xl">
+                    Total Sales
+                  </h1>
+                  <h1 className="text-[#4079ed] font-bold text-lg md:text-xl">
+                    +8% from Last Month
+                  </h1>
+                </div>
               </div>
             </div>
-            <div className="w-auto justify-start items-center mx-7 my-5">
-              <div className="space-y-3">
-                <h1 className="text-[#151d48] font-bold text-2xl md:text-4xl">
-                  <CountUp
-                    start={0}
-                    end={stats.totalSales}
-                    duration={1}
-                    prefix="$"
-                    separator=","
-                  />
-                </h1>
-                <h1 className="text-[#425166] font-bold text-lg md:text-2xl">
-                  Total Sales
-                </h1>
-                <h1 className="text-[#4079ed] font-bold text-lg md:text-xl">
-                  +8% from Last Month
-                </h1>
+            <div className="bg-[#fff4de] rounded-3xl shadow-md h-full">
+              <div className="w-full flex justify-start items-center">
+                <div className="bg-[#ff947a] rounded-full w-20 h-20 mx-6 my-7 flex justify-center items-center text-white">
+                  <DescriptionIcon fontSize="large" />
+                </div>
+              </div>
+              <div className="w-auto justify-start items-center mx-7 my-5">
+                <div className="space-y-3">
+                  <h1 className="text-[#151d48] font-bold text-2xl md:text-4xl">
+                    <CountUp start={0} end={stats.activeUsers} duration={2} />
+                  </h1>
+                  <h1 className="text-[#425166] font-bold text-lg md:text-2xl">
+                    Active Users
+                  </h1>
+                  <h1 className="text-[#4079ed] font-bold text-lg md:text-xl">
+                    +5% from Yesterday
+                  </h1>
+                </div>
+              </div>
+            </div>
+            <div className="bg-[#dcfce7] rounded-3xl shadow-md h-full">
+              <div className="w-full flex justify-start items-center">
+                <div className="bg-[#3cd856] rounded-full w-20 h-20 mx-6 my-7 flex justify-center items-center text-white">
+                  <LocalOfferIcon fontSize="large" />
+                </div>
+              </div>
+              <div className="w-auto justify-start items-center mx-7 my-5">
+                <div className="space-y-3">
+                  <h1 className="text-[#151d48] font-bold text-2xl md:text-4xl">
+                    <CountUp
+                      start={0}
+                      end={stats.totalSubscribers}
+                      duration={2}
+                    />
+                  </h1>
+                  <h1 className="text-[#425166] font-bold text-lg md:text-2xl">
+                    Total Subscribers
+                  </h1>
+                  <h1 className="text-[#4079ed] font-bold text-lg md:text-xl">
+                    +1.2% from Yesterday
+                  </h1>
+                </div>
+              </div>
+            </div>
+            <div className="bg-[#f3e8ff] rounded-3xl shadow-md h-full">
+              <div className="w-full flex justify-start items-center">
+                <div className="bg-[#bf83ff] rounded-full w-20 h-20 mx-6 my-7 flex justify-center items-center text-white">
+                  <PersonAddAlt1Icon fontSize="large" />
+                </div>
+              </div>
+              <div className="w-auto justify-start items-center mx-7 my-5">
+                <div className="space-y-3">
+                  <h1 className="text-[#151d48] font-bold text-2xl lg:text-4xl md:text-2xl">
+                    <CountUp
+                      start={0}
+                      end={stats.upcomingWebinars}
+                      duration={2}
+                    />
+                  </h1>
+                  <h1 className="text-[#425166] font-bold text-lg lg:text-2xl md:text-xl w-32">
+                    Upcoming Webinars
+                  </h1>
+                </div>
               </div>
             </div>
           </div>
-          <div className="bg-[#fff4de] rounded-3xl shadow-md h-full">
-            <div className="w-full flex justify-start items-center">
-              <div className="bg-[#ff947a] rounded-full w-20 h-20 mx-6 my-7 flex justify-center items-center text-white">
-                <DescriptionIcon fontSize="large" />
-              </div>
-            </div>
-            <div className="w-auto justify-start items-center mx-7 my-5">
-              <div className="space-y-3">
-                <h1 className="text-[#151d48] font-bold text-2xl md:text-4xl">
-                  <CountUp
-                    start={0}
-                    end={stats.activeUsers}
-                    duration={2}
-                  />
-                </h1>
-                <h1 className="text-[#425166] font-bold text-lg md:text-2xl">
-                  Active Users
-                </h1>
-                <h1 className="text-[#4079ed] font-bold text-lg md:text-xl">
-                  +5% from Yesterday
-                </h1>
-              </div>
-            </div>
-          </div>
-          <div className="bg-[#dcfce7] rounded-3xl shadow-md h-full">
-            <div className="w-full flex justify-start items-center">
-              <div className="bg-[#3cd856] rounded-full w-20 h-20 mx-6 my-7 flex justify-center items-center text-white">
-                <LocalOfferIcon fontSize="large" />
-              </div>
-            </div>
-            <div className="w-auto justify-start items-center mx-7 my-5">
-              <div className="space-y-3">
-                <h1 className="text-[#151d48] font-bold text-2xl md:text-4xl">
-                  <CountUp
-                    start={0}
-                    end={stats.totalSubscribers}
-                    duration={2}
-                  />
-                </h1>
-                <h1 className="text-[#425166] font-bold text-lg md:text-2xl">
-                  Total Subscribers
-                </h1>
-                <h1 className="text-[#4079ed] font-bold text-lg md:text-xl">
-                  +1.2% from Yesterday
-                </h1>
-              </div>
-            </div>
-          </div>
-          <div className="bg-[#f3e8ff] rounded-3xl shadow-md h-full">
-            <div className="w-full flex justify-start items-center">
-              <div className="bg-[#bf83ff] rounded-full w-20 h-20 mx-6 my-7 flex justify-center items-center text-white">
-                <PersonAddAlt1Icon fontSize="large" />
-              </div>
-            </div>
-            <div className="w-auto justify-start items-center mx-7 my-5">
-              <div className="space-y-3">
-                <h1 className="text-[#151d48] font-bold text-2xl lg:text-4xl md:text-2xl">
-                  <CountUp
-                    start={0}
-                    end={stats.upcomingWebinars}
-                    duration={2}
-                  />
-                </h1>
-                <h1 className="text-[#425166] font-bold text-lg lg:text-2xl md:text-xl w-32">
-                  Upcoming Webinars
-                </h1>
-              </div>
-            </div>
-          </div>
-        </div>
+        </LoadingWrapper>
 
         <div className="bg-black rounded-2xl p-10 mt-10 flex flex-row gap-8">
           <div className="flex-1">
@@ -177,7 +185,7 @@ const AdminHomepage = () => {
             </div>
             <div className="py-4 w-full">
               {activeTab === "upcoming" ? (
-                <UpcommingWebinars />
+                <UpcommingWebinars limit={4} />
               ) : (
                 <PastWebinars />
               )}

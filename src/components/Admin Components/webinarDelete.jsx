@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
+import LoadingWrapper from "../ui/LoadingWrapper";
 
 const WebinarDelete = ({ isOpen, onClose, onConfirm, itemType }) => {
   const modalRef = useRef();
@@ -47,28 +48,35 @@ const WebinarDelete = ({ isOpen, onClose, onConfirm, itemType }) => {
         role="dialog"
         aria-labelledby="modal-title"
       >
-        <div>
-          <div className="text-center mb-10">
-            <h2 id="modal-title" className="text-white text-2xl font-semibold">
-              Do you really want to delete this {itemType}?
-            </h2>
+        <LoadingWrapper loading={loading} >
+          <div>
+            <div className="text-center mb-10">
+              <h2
+                id="modal-title"
+                className="text-white text-2xl font-semibold"
+              >
+                Do you really want to delete this {itemType}?
+              </h2>
+            </div>
+            <div className="flex justify-around mx-10 gap-6">
+              <button
+                className="border border-[#6a55ea] text-[#6a55ea] w-44 h-12 rounded-lg hover:bg-[#6a55ea] hover:text-white transition duration-200"
+                onClick={onClose}
+              >
+                No
+              </button>
+              <button
+                className={`bg-[#6a55ea] text-white rounded-lg w-44 h-12 ${
+                  loading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                onClick={handleConfirm}
+                disabled={loading}
+              >
+                Yes
+              </button>
+            </div>
           </div>
-          <div className="flex justify-around mx-10 gap-6">
-            <button
-              className="border border-[#6a55ea] text-[#6a55ea] w-44 h-12 rounded-lg hover:bg-[#6a55ea] hover:text-white transition duration-200"
-              onClick={onClose}
-            >
-              No
-            </button>
-            <button
-              className={`bg-[#6a55ea] text-white rounded-lg w-44 h-12 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-              onClick={handleConfirm}
-              disabled={loading}
-            >
-              {loading ? 'Loading...' : 'Yes'}
-            </button>
-          </div>
-        </div>
+        </LoadingWrapper>
       </div>
     </div>
   );

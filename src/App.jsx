@@ -35,11 +35,14 @@ import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./store";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
+      <ToastContainer />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Homepage />}>

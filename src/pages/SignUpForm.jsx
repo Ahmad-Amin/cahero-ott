@@ -56,9 +56,22 @@ function SignUpForm({ onClose, toggleSignIn }) {
       setPasswordError(true);
       return; 
     }
-  
+
+    
+    if(password.length < 6){
+      toast.error("Password must be at least 6 characters long.");
+      return;
+    }
+    
+    const phoneNumberRegex = /^\d{10,15}$/;
+
+    if (!phoneNumberRegex.test(phoneNumber)) {
+      toast.error("Invalid phone number. Please enter a valid 10-15 digit phone number.");
+      return;
+    }
+
     setPasswordError(false);
-    setLoading(true); 
+    setLoading(true);
   
     try {
       const response = await axiosInstance.post("/auth/register", {
@@ -80,6 +93,7 @@ function SignUpForm({ onClose, toggleSignIn }) {
       onClose();
   
     } catch (error) {
+      console.log(error)
       if (error.response && error.response.status === 409) {
         toast.error("Email already exists. Please use a different email.");
         console.log("Email Already Exists");
