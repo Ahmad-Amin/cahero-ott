@@ -10,7 +10,6 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../Slice/AuthSlice";
-import axios from 'axios';
 import Cookies from 'js-cookie';
 import axiosInstance from "../lib/axiosInstance";
 import { HashLoader } from "react-spinners"; 
@@ -21,7 +20,7 @@ function SignInForm({ onClose, toggleSignUp }) {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [loading, setLoading] = useState(false); // State to control loading
+  const [loading, setLoading] = useState(false); 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.user);
@@ -48,17 +47,15 @@ function SignInForm({ onClose, toggleSignUp }) {
       const { token } = response.data;
 
       
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       if (rememberMe) {
         Cookies.set("token", token, { expires: 7 });
       }
 
-      // Dispatch login action
       dispatch(login({ user: { email, role: email === "admin@example.com" ? "admin" : "user" }, token }));
 
       console.log("Login action dispatched with payload:", { user: { email, role: email === "admin@example.com" ? "admin" : "user" }, token });
 
-      // Navigate based on role
       const mockUser = {
         email,
         role: email === "admin@example.com" ? "admin" : "user",

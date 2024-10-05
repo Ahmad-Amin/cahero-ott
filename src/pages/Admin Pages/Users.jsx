@@ -54,7 +54,7 @@ const Users = () => {
           </div>
           <p className="font-normal text-base text-white opacity-60">Manage Admins, Hosts, and Participants</p>
         </div>
-        <div>
+        <div>  
           <UsersTable onViewUser={handleViewUser} /> {/* Pass the handler to UsersTable */}
         </div>
         

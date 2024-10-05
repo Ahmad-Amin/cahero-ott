@@ -1,64 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axiosInstance from  "../../lib/axiosInstance"; 
+import { HashLoader } from "react-spinners"; 
 
 const UsersTable = ({ onViewUser }) => {
-  const users = [
-    {
-      id: 1,
-      fullName: 'John Doe',
-      userType: 'Admin',
-      phoneNumber: '123-456-7890',
-      email: 'john.doe@example.com',
-      status: 'Active',
-    },
-    {
-      id: 2,
-      fullName: 'Jane Smith',
-      userType: 'Participant',
-      phoneNumber: '234-567-8901',
-      email: 'jane.smith@example.com',
-      status: 'Active',
-    },
-    {
-      id: 3,
-      fullName: 'Alice Johnson',
-      userType: 'Host',
-      phoneNumber: '345-678-9012',
-      email: 'alice.johnson@example.com',
-      status: 'Active',
-    },
-    {
-      id: 4,
-      fullName: 'Bob Brown',
-      userType: 'Participant',
-      phoneNumber: '456-789-0123',
-      email: 'bob.brown@example.com',
-      status: 'Active',
-    },
-    {
-      id: 5,
-      fullName: 'Charlie Black',
-      userType: 'Admin',
-      phoneNumber: '567-890-1234',
-      email: 'charlie.black@example.com',
-      status: 'Active',
-    },
-  ];
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState(null);     
 
-  const getUserTypeColor = (userType) => {
-    switch (userType) {
-      case 'Host':
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        const response = await axiosInstance.get("/users");
+        setUsers(response.data.results); 
+        console.log("Fetched users:", response.data.results); 
+      } catch (err) {
+        setError('Failed to fetch users');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  const getUserTypeColor = (role) => {
+    switch (role.toLowerCase()) {  
+      case 'host':
         return '#FFEA00';
-      case 'Admin':
+      case 'admin':
         return '#46d133';
-      case 'Participant':
+      case 'participant':
         return '#6a55ea';
       default:
         return 'white';
     }
   };
+  
+
+  if (error) {
+    return <div className="font-semibold text-xl text-white">{error}</div>; 
+  }
 
   return (
     <div className="relative overflow-x-auto shadow-md ml-10">
+      {loading ? ( 
+          <div className="flex justify-center items-center h-48">
+            <HashLoader color="#6A55EA" loading={loading} size={40} />
+          </div>
+        ) : ( 
       <table className="w-full text-base text-left rtl:text-right text-white">
         <thead className="text-lg text-white uppercase bg-transparent">
           <tr>
@@ -76,18 +67,18 @@ const UsersTable = ({ onViewUser }) => {
             <tr key={user.id} className="bg-transparent border-b border-[#878788]">
               <td className="px-6 py-4">{index + 1}</td>
               <th scope="row" className="px-6 py-4 font-medium text-white whitespace-nowrap">
-                {user.fullName}
+                {user.firstName}&nbsp;{user.LastName}
               </th>
-              <td className="px-6 py-4" style={{ color: getUserTypeColor(user.userType) }}>
-                {user.userType}
+              <td className="px-6 py-4" style={{ color: getUserTypeColor(user.role) }}>
+                {user.role}
               </td>
               <td className="px-6 py-4">{user.phoneNumber}</td>
               <td className="px-6 py-4">{user.email}</td>
-              <td className="px-6 py-4">{user.status}</td>
+              <td className="px-6 py-4">Active</td>
               <td className="px-6 py-4">
                 <button 
                   className="font-medium text-white bg-[#6a55ea] hover:bg-[#5242b6] rounded-lg h-8 w-auto px-5 ease-in-out transition duration-200"
-                  onClick={() => onViewUser(user)} // Call the handler with the user
+                  onClick={() => onViewUser(user)} 
                 >
                   View
                 </button>
@@ -95,7 +86,7 @@ const UsersTable = ({ onViewUser }) => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table>)}
     </div>
   );
 };

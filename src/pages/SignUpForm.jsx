@@ -170,6 +170,7 @@ function SignUpForm({ onClose, toggleSignIn }) {
               value={formData.email}
               onChange={handleChange}
               sx={textfieldStyles}
+              required
             />
             <TextField
               className="w-full sm:w-1/2"
@@ -181,6 +182,7 @@ function SignUpForm({ onClose, toggleSignIn }) {
               value={formData.phoneNumber}
               onChange={handleChange}
               sx={textfieldStyles}
+              required
             />
           </div>
           <div className="mb-5">
@@ -194,6 +196,9 @@ function SignUpForm({ onClose, toggleSignIn }) {
               value={formData.password}
               onChange={handleChange}
               sx={textfieldStyles}
+              pattern=".{6,}" 
+              title="6 or more Character"
+              required
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -217,10 +222,13 @@ function SignUpForm({ onClose, toggleSignIn }) {
               name="confirmPassword"
               label="Confirm Password"
               variant="outlined"
+              pattern=".{6,}" 
+              title="6 or more Character"
               type={showConfirmPassword ? "text" : "password"}
               value={formData.confirmPassword}
               onChange={handleChange}
               sx={textfieldStyles}
+              required
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
