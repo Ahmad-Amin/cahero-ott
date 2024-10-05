@@ -6,9 +6,8 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import { Link, useLocation } from "react-router-dom";
 import axiosInstance from "../../lib/axiosInstance";
-import { HashLoader } from "react-spinners";
-import WebinarDelete from "./webinarDelete";
 import LoadingWrapper from "../ui/LoadingWrapper";
+import ConfirmDelete from "./ConfirmDelete";
 
 const UpcomingWebinars = ({ limit }) => {
   const [loading, setLoading] = useState(false);
@@ -125,7 +124,7 @@ const UpcomingWebinars = ({ limit }) => {
         </div>
         {upcomingWebinars.length === 0 && !loading && <h1 className=" text-white font-semibold text-2xl text-center w-full" >There is no Upcoming Webinars</h1>}
       </LoadingWrapper>
-      <WebinarDelete
+      <ConfirmDelete
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleDeleteConfirm}

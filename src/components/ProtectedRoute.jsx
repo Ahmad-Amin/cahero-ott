@@ -18,15 +18,24 @@ const ProtectedRoute = ({ children }) => {
         progress: undefined,
         theme: "colored",
       });
+    } else if (user.role !== "admin") {
+      toast.error("Access restricted to administrators only.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   }, [user, token]);
 
-  // If no user or token, redirect to the home page
-  if (!user || !token) {
+  if (!user || !token || user.role !== "admin") {
     return <Navigate to="/" replace />;
   }
 
-  // Otherwise, render the children (the protected page)
   return children;
 };
 

@@ -6,12 +6,16 @@ import ConfirmDelete from "../../components/Admin Components/ConfirmDelete";
 import axiosInstance from "../../lib/axiosInstance";
 import { toast } from "react-toastify";
 import LoadingWrapper from "../../components/ui/LoadingWrapper";
+import { useNavigate } from "react-router-dom";
 
 const ManageWebinars = () => {
   const { id } = useParams(); // Get webinar ID from route params
+  const navigate = useNavigate();
   const [paymentType, setPaymentType] = useState("unpaid");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [upcomingWebinars, setUpcomingWebinars] = useState([]);
   const [webinarData, setWebinarData] = useState({
     title: "",
     startTime: "",
@@ -19,6 +23,7 @@ const ManageWebinars = () => {
     startDate: "",
     description: "",
     price: 0,
+    id: ""
   });
 
   useEffect(() => {
@@ -30,7 +35,6 @@ const ManageWebinars = () => {
         
         const formattedStartDate = new Date(data.startDate).toISOString().split("T")[0];
 
-
         setWebinarData({
           title: data.title,
           startTime: data.startTime,
@@ -38,6 +42,7 @@ const ManageWebinars = () => {
           startDate: formattedStartDate, // Format the date here
           description: data.description,
           price: data.price || 0,
+          id: data.id
         });
         setPaymentType(data.price ? "paid" : "unpaid");
       } catch (error) {
@@ -71,9 +76,26 @@ const ManageWebinars = () => {
     }));
   };
 
-  const handleDeleteConfirm = () => {
-    console.log("Webinar deleted");
+  const handleDeleteConfirm = async () => {
+    if (itemToDelete) {
+      try {
+        await axiosInstance.delete(`/webinars/${itemToDelete.id}`);
+        navigate("/dashboard/webinars")
+      } catch (error) {
+        console.error("Error deleting webinar:", error);
+      }
+    }
     setIsModalOpen(false);
+  };
+
+  useEffect(() => {
+console.log('itemsToDelete->', itemToDelete)
+  }, [itemToDelete])
+
+  const handleDeleteClick = (webinar) => {
+    console.log('oiqweu')
+    setItemToDelete(webinar);
+    setIsModalOpen(true);
   };
 
   const handleUpdateWebinar = async () => {
@@ -118,9 +140,9 @@ const ManageWebinars = () => {
               </button>
             </Link>
             <DeleteOutlineIcon
-              className="w-8 h-8 hover:text-[#b22c2c] text-[#e53939] ease-in-out transition duration-300"
-              onClick={() => setIsModalOpen(true)}
-            />
+                    className="text-[#e53939] cursor-pointer hover:text-[#b22c2c] ease-in-out transition-colors duration-300"
+                    onClick={() => handleDeleteClick(webinarData)}
+                  />
           </div>
           <div className="py-8 w-4/6">
             <div>
@@ -272,9 +294,10 @@ const ManageWebinars = () => {
         </div>
       </Box>
       <ConfirmDelete
-        open={isModalOpen}
+        isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleDeleteConfirm}
+        itemType={"Webinar"}
       />
     </LoadingWrapper>
   );

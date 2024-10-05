@@ -52,17 +52,13 @@ function SignInForm({ onClose, toggleSignUp }) {
         Cookies.set("token", token, { expires: 7 });
       }
 
-      dispatch(login(response.data))
+      console.log(response.data.user, token);
+      dispatch(login({user: response.data.user, token: token}))
 
-      const mockUser = {
-        email,
-        role: email === "admin@example.com" ? "admin" : "user",
-      };
-
-      if (mockUser.role === "admin") {
+      if (response.data.user.role === "admin") {
         navigate("/dashboard");
       } else {
-        navigate("/dashboard");
+        navigate("/");
       }
       onClose();
     } catch (error) {

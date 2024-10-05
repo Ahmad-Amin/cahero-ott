@@ -29,7 +29,6 @@ export default function Homepage({ window }) {
     setMobileOpen(!mobileOpen);
   };
 
-  // List of menu items
   const menuItems = [
     { text: "Dashboard", icon: <DashboardIcon />, link: "/" },
     { text: "Webinar", icon: <VideoLibraryIcon />, link: "/webinar" },
@@ -39,7 +38,6 @@ export default function Homepage({ window }) {
     { text: "Subscription Plans", icon: <CalendarTodayIcon />, link: "/subscription-plans" },
   ];
 
-  // Sidebar Drawer
   const drawer = (
     <div className="bg-[#101011] text-white h-full">
       <div className="p-2 flex items-center">
@@ -70,7 +68,7 @@ export default function Homepage({ window }) {
                   <ListItemIcon
                     sx={{
                       color: "white",
-                      minWidth: "30px", // Consistent space between icon and text
+                      minWidth: "30px", 
                     }}
                   >
                     {item.icon}

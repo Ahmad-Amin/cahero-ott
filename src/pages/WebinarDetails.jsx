@@ -1,13 +1,30 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import LoginedNavbar from "../components/LoginedNavbar";
 import { FaRegHeart } from "react-icons/fa";
 import { FaStar } from "react-icons/fa6";
 import WebinarCard from "../pages/WebinarCard";
+import { useParams } from "react-router-dom";
+import axiosInstance from "../lib/axiosInstance";
 
 const drawerWidth = 280;
 
 const WebinarDetails = () => {
+
+  const {id}  = useParams()
+  const [webinar, setWebinar] = useState()
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await axiosInstance.get(`/webinars/${id}`);
+        setWebinar(response.data);
+      } catch (error) {
+        console.log("Error fetching the webinars");
+      }
+    })();
+  }, []);
+
+
   return (
     <>
       <Box
@@ -49,22 +66,18 @@ const WebinarDetails = () => {
           />
           <div className="mt-10 mx-5 w-full lg:w-2/4">
             <div className="flex justify-between items-center">
-              <h1 className="text-white text-3xl font-semibold">Life in Paris</h1>
+              <h1 className="text-white text-3xl font-semibold">{webinar.title}</h1>
               <div className="mx-0 flex items-center gap-1">
                 <FaStar className="text-[#FFC01E]" />
                 <p className="text-white text-lg font-medium">7.8/10</p>
               </div>
             </div>
             <div className="flex justify-between mt-2 flex-wrap">
-              <p className="text-white text-lg font-medium mr-4">2023&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climate Change&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2h 38m</p>
+              <p className="text-white text-lg font-medium mr-4">{webinar.startDate.split('-')[0]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climate Change&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2h 38m</p>
             </div>
             <div className="mt-5 mr-0">
               <p className="text-white text-base">
-                The webinar follows the lives of a wealthy family, the Johnsons,
-                who appear to have it all: a grand mansion, luxurious cars, and
-                expensive designer clothing. However, behind the facade of their
-                lavish lifestyle, there are deep-seated tensions and secrets
-                that threaten to tear the family apart.
+                {webinar.description}
               </p>
             </div>
             <div className="flex flex-col md:flex-row items-center">
