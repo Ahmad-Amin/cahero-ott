@@ -37,6 +37,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import WebinarStream from "./pages/Admin Pages/stream/WebinarStream";
+import JoinStream from "./pages/stream/JoinStream";
 
 function App() {
   return (
@@ -56,6 +58,7 @@ function App() {
               <Route path="/lectures" element={<Lectures />} />
               <Route path="/lectures/:id" element={<VideoPlayer />} />
               <Route path="/profile-settings" element={<ProfileSettings />} />
+              <Route path="/user-lobby" element={<JoinStream />} />
               <Route
                 path="/subscription-plans"
                 element={<SubscriptionPlans />}
@@ -114,6 +117,10 @@ function App() {
               <Route
                 path="notifications/create-notification"
                 element={<CreateNotifications />}
+              />
+              <Route
+                path="webinars/webinar-lobby"
+                element={<WebinarStream />}
               />
             </Route>
           </Routes>
