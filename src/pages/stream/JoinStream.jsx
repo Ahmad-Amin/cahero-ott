@@ -48,9 +48,11 @@ const JoinStream = () => {
           };
         }
       });
+      console.log("Call initiated:", call); // Log when call is initiated
 
       // Handle remote stream closure from the admin
       call.on("close", () => {
+        console.log("The stream has been ended by the admin.");
         alert("The stream has been ended by the admin.");
         handleStreamEnd(); // Handle UI and state reset when stream ends
       });

@@ -152,13 +152,7 @@ const WebinarStream = () => {
       <div className="space-y-5 mt-5">
       
       <div className="flex justify-center">
-        <video 
-          className="w-1/2 border-2 border-white rounded-xl" 
-          ref={currentUserVideoRef} 
-          playsInline 
-          autoPlay 
-          muted 
-        />
+        
       </div>
       <div className="flex justify-center">
       <h1 className="border-2 border-white rounded-lg w-2/5 flex items-center justify-center h-16 text-xl ">
@@ -174,6 +168,13 @@ const WebinarStream = () => {
       <p className="text-white font-medium text-base opacity-65">You can Simply Copy your Stream ID to invite or add someone</p>
       </div>
     </div>}
+    <video 
+          className="w-1/2 border-2 border-white rounded-xl" 
+          ref={currentUserVideoRef} 
+          playsInline 
+          autoPlay 
+          muted 
+        />
     </div>
   );
 };

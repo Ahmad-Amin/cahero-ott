@@ -22,13 +22,15 @@ const UpcomingWebinars = ({ limit }) => {
       try {
         setLoading(true);
         const response = await axiosInstance.get("/webinars");
+        const webinars = response.data?.results || []; // Ensure webinars is always an array
         if (limit) {
-          setUpcomingWebinars(response.data.results.slice(0, limit));
+          setUpcomingWebinars(webinars.slice(0, limit)); // Limit the webinars if `limit` is passed
         } else {
-          setUpcomingWebinars(response.data.results);
+          setUpcomingWebinars(webinars);
         }
       } catch (error) {
         console.error("Error fetching webinars:", error);
+        setUpcomingWebinars([]); // Set to an empty array on error
       } finally {
         setLoading(false);
       }
@@ -59,9 +61,9 @@ const UpcomingWebinars = ({ limit }) => {
 
   return (
     <>
-      <LoadingWrapper loading={loading} >
+      <LoadingWrapper loading={loading}>
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
-          {upcomingWebinars.length !== 0 && upcomingWebinars.map((webinar, index) => (
+          {upcomingWebinars?.length > 0 && upcomingWebinars.map((webinar, index) => (
             <div
               key={index}
               className="bg-transparent rounded-3xl p-4 shadow-md h-auto border-2 relative mb-6"
@@ -95,7 +97,6 @@ const UpcomingWebinars = ({ limit }) => {
                 <p className="text-white mr-2">Date:</p>
                 <p className="text-[#b2b2b2]">
                   {new Date(webinar.startDate).toLocaleDateString()}{" "}
-                  {/* Format the date */}
                 </p>
               </div>
               <div className="flex items-center mt-2 text-sm md:text-base">
@@ -109,20 +110,28 @@ const UpcomingWebinars = ({ limit }) => {
                 <PeopleAltIcon className="text-[#6a55ea] mr-1" />
                 <p className="text-white mr-2">Joined Users:</p>
                 <div className="flex ml-2">
-                  {webinar.joinedUsers?.map((user, userIndex) => (
-                    <img
-                      key={userIndex}
-                      src={user}
-                      alt={`User ${userIndex + 1}`}
-                      className="inline-block w-6 h-6 md:w-8 md:h-8 rounded-full -ml-2"
-                    />
-                  ))}
+                  {webinar.joinedUsers?.length > 0 ? (
+                    webinar.joinedUsers.map((user, userIndex) => (
+                      <img
+                        key={userIndex}
+                        src={user}
+                        alt={`User ${userIndex + 1}`}
+                        className="inline-block w-6 h-6 md:w-8 md:h-8 rounded-full -ml-2"
+                      />
+                    ))
+                  ) : (
+                    <p className="text-[#b2b2b2]">No users joined</p>
+                  )}
                 </div>
               </div>
             </div>
           ))}
         </div>
-        {upcomingWebinars.length === 0 && !loading && <h1 className=" text-white font-semibold text-2xl text-center w-full" >There is no Upcoming Webinars</h1>}
+        {upcomingWebinars?.length === 0 && !loading && (
+          <h1 className="text-white font-semibold text-2xl text-center w-full">
+            There are no upcoming webinars
+          </h1>
+        )}
       </LoadingWrapper>
       <ConfirmDelete
         isOpen={isModalOpen}

@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const axiosInstance = axios.create({
-  baseURL: "https://1da0-2407-d000-405-db1e-d458-e0f3-4f53-369a.ngrok-free.app/api",
+  baseURL: "http://localhost:3003/api",
 });
 
 axiosInstance.interceptors.request.use(
