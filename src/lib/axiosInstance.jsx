@@ -9,7 +9,7 @@ axiosInstance.interceptors.request.use(
   (config) => {
     const token = Cookies.get("token");
     if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
+      config.headers["Authorization"] = `Bearer ${token}`; // Use backticks here for template literal
     }
     config.headers["ngrok-skip-browser-warning"] = "true";
     return config;
