@@ -9,6 +9,7 @@ const WebinarStream = () => {
   const peerInstance = useRef(null);
   const mediaStreamRef = useRef(null); // Store the media stream reference
   const [streamStarted, setStreamStarted] = useState(false);
+  const [viewersCount, setViewersCount] = useState(0);
 
   useEffect(() => {
     const peer = new Peer();
@@ -21,6 +22,14 @@ const WebinarStream = () => {
       if (mediaStreamRef.current) {
         // Answer the call with the current local stream (sending video/audio to clients)
         call.answer(mediaStreamRef.current);
+
+        // Increment viewer count when a new call is made
+        setViewersCount((prevCount) => prevCount + 1);
+
+        // Listen for when the call ends (viewer leaves)
+        call.on("close", () => {
+          setViewersCount((prevCount) => Math.max(prevCount - 1, 0)); // Ensure it doesn't go below 0
+        });
       }
     });
 
@@ -73,17 +82,17 @@ const WebinarStream = () => {
       currentUserVideoRef.current.srcObject = null;
     }
 
-    // Update stream status
+    // Reset viewer count and update stream status
+    setViewersCount(0);
     setStreamStarted(false);
   };
 
-  //Fuction to copy PeerId to Clipboard
-
+  // Function to copy PeerId to Clipboard
   const copyToClipboard = () => {
     navigator.clipboard
       .writeText(peerId)
       .then(() => {
-        toast.success('Peer ID copied to clipboard!')
+        toast.success("Peer ID copied to clipboard!");
       })
       .catch((err) => {
         console.error("Failed to copy: ", err);
@@ -174,17 +183,21 @@ const WebinarStream = () => {
               />
             </h1>
           </div>
+
+          <div className="flex justify-center">
+            <h2 className="text-white text-xl">
+              Viewers Count: {viewersCount}
+            </h2>
+          </div>
         </div>
       )}
-      {
-        <video
-          className=" mx-auto w-4/6 rounded-xl mt-3"
-          ref={currentUserVideoRef}
-          playsInline
-          autoPlay
-          muted
-        />
-      }
+      <video
+        className=" mx-auto w-4/6 rounded-xl mt-3"
+        ref={currentUserVideoRef}
+        playsInline
+        autoPlay
+        muted
+      />
     </div>
   );
 };

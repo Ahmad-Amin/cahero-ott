@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Peer from "peerjs";
 import { Box } from "@mui/material";
+import { toast } from "react-toastify";
 const JoinStream = () => {
   const [peerId, setPeerId] = useState("");
   const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
@@ -53,7 +54,7 @@ const JoinStream = () => {
       // Handle remote stream closure from the admin
       call.on("close", () => {
         console.log("The stream has been ended by the admin.");
-        alert("The stream has been ended by the admin.");
+        toast.error("The stream has been ended");
         handleStreamEnd(); // Handle UI and state reset when stream ends
       });
 
