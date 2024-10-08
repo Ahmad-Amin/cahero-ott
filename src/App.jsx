@@ -39,6 +39,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import WebinarStream from "./pages/Admin Pages/stream/WebinarStream";
 import JoinStream from "./pages/stream/JoinStream";
+import StreamPage from "./pages/stream/StreamPage";
 
 function App() {
   return (
@@ -59,6 +60,7 @@ function App() {
               <Route path="/lectures/:id" element={<VideoPlayer />} />
               <Route path="/profile-settings" element={<ProfileSettings />} />
               <Route path="/user-lobby" element={<JoinStream />} />
+              <Route path="/user-lobby/:id" element={<StreamPage />} />
               <Route
                 path="/subscription-plans"
                 element={<SubscriptionPlans />}
