@@ -132,25 +132,27 @@ const JoinStream = () => {
           ) : (
             <div className="w-full h-full mt-32 ml-5">
               <div className="space-y-5">
-                <div className="">
-                  <h3 className="text-white text-xl font-semibold">
-                    Welcome to the Stream!
-                  </h3>
-                  <p className="text-white font-medium text-base opacity-65">
-                    You can Leave Any time just by pressing End Stream Button
-                  </p>
-                </div>
+                <div className="flex flex-row items-center justify-between" >
+                  <div className="">
+                    <h3 className="text-white text-xl font-semibold">
+                      Welcome to the Stream!
+                    </h3>
+                    <p className="text-white font-medium text-base opacity-65">
+                      You can Leave Any time just by pressing End Stream Button
+                    </p>
+                  </div>
 
-                <button
-                  onClick={endCall}
-                  className="w-auto h-12 px-5 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl ease-in-out transition duration-300"
-                >
-                  End Stream
-                </button>
+                  <button
+                    onClick={endCall}
+                    className="w-auto h-12 px-5 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl ease-in-out transition duration-300"
+                  >
+                    End Stream
+                  </button>
+                </div>
               </div>
-              <div className="flex justify-center ">
+              <div className="flex justify-center mt-3 ">
                 <video
-                  className="w-1/2 border-2 border-white rounded-xl"
+                  className="w-4/6 rounded-xl"
                   ref={remoteVideoRef}
                   playsInline
                   autoPlay
