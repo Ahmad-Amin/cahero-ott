@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom"; // Import useParams
 import { useNavigate } from "react-router-dom";
+
 const StreamPage = () => {
   const { id } = useParams(); // Destructure the id from the parameters
   const [peerId, setPeerId] = useState("");
@@ -27,6 +28,34 @@ const StreamPage = () => {
     if (id) {
       setRemotePeerIdValue(id); // Set the remote peer ID from URL parameters
     }
+
+    // Handle incoming call requests
+    peer.on("call", (call) => {
+      call.answer(); // Answer the call with an empty stream
+
+      // Handle the incoming remote stream
+      call.on("stream", (remoteStream) => {
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = remoteStream;
+          remoteVideoRef.current.onloadedmetadata = () => {
+            remoteVideoRef.current.play();
+          };
+        }
+      });
+
+      call.on("close", () => {
+        console.log("The stream has been ended by the admin.");
+        toast.error("The stream has been ended");
+        handleStreamEnd(); // Handle UI and state reset when stream ends
+      });
+
+      callInstance.current = call; // Save the call instance
+      setInCall(true); // Mark as in call
+    });
+
+    return () => {
+      peer.disconnect(); // Clean up the peer connection on component unmount
+    };
   }, [id]); // Include id in dependency array to update when it changes
 
   const call = (remotePeerIdValue) => {
@@ -56,16 +85,9 @@ const StreamPage = () => {
           };
         }
       });
-      console.log("Call initiated:", call); // Log when call is initiated
 
-      // Handle remote stream closure from the admin
-      call.on("close", () => {
-        console.log("The stream has been ended by the admin.");
-        toast.error("The stream has been ended");
-        handleStreamEnd(); // Handle UI and state reset when stream ends
-      });
-
-      // Handle call errors
+      // Handle call closure and errors
+      call.on("close", handleStreamEnd);
       call.on("error", (err) => {
         console.error("An error occurred during the call:", err);
         alert("Failed to connect to the stream. Please check the peer ID.");
@@ -82,7 +104,7 @@ const StreamPage = () => {
     if (remoteVideoRef.current) {
       remoteVideoRef.current.srcObject = null; // Clear the video element
     }
-    navigate("/");
+    navigate("/"); // Navigate back to the main page
   };
 
   const endCall = () => {
