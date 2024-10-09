@@ -2,9 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import Peer from "peerjs";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { toast } from "react-toastify";
+import { useParams } from "react-router-dom"; // Import useParams
+import axiosInstance from "../../../lib/axiosInstance";
 
 const WebinarStream = () => {
-  const [peerId, setPeerId] = useState("");
+  const { webinarId } = useParams(); // Get webinarId from URL params
+  const [peerId, setPeerId] = useState(webinarId); // Set the peerId as the webinarId
   const currentUserVideoRef = useRef(null);
   const peerInstance = useRef(null);
   const mediaStreamRef = useRef(null); // Store the media stream reference
@@ -12,29 +15,57 @@ const WebinarStream = () => {
   const [viewersCount, setViewersCount] = useState(0);
 
   useEffect(() => {
-    const peer = new Peer();
+    if (!webinarId) {
+      console.error("No webinar ID found in URL params.");
+      return;
+    }
 
-    peer.on("open", (id) => {
-      setPeerId(id);
-    });
-
-    peer.on("call", (call) => {
-      if (mediaStreamRef.current) {
-        // Answer the call with the current local stream (sending video/audio to clients)
-        call.answer(mediaStreamRef.current);
-
-        // Increment viewer count when a new call is made
-        setViewersCount((prevCount) => prevCount + 1);
-
-        // Listen for when the call ends (viewer leaves)
-        call.on("close", () => {
-          setViewersCount((prevCount) => Math.max(prevCount - 1, 0)); // Ensure it doesn't go below 0
+    // Send POST request to start the stream
+    const startStreamRequest = async () => {
+      try {
+        const response = await axiosInstance.post(`/webinars/${webinarId}/start-stream`, {
+          streamId: peerId // Send peerId as streamId
         });
+        console.log("Stream started:", response.data);
+        return true; // Indicate that the API call was successful
+      } catch (error) {
+        console.error("Error starting stream:", error);
+        return false; // Indicate that the API call failed
       }
-    });
+    };
 
-    peerInstance.current = peer;
-  }, []);
+    // Call the function to send the request
+    const initStream = async () => {
+      const isSuccess = await startStreamRequest(); // Wait for the API response
+      if (isSuccess) {
+        // Only initialize PeerJS and start the stream if the API call was successful
+        const peer = new Peer(webinarId);
+        peer.on("open", (id) => {
+          setPeerId(id);
+        });
+
+        peer.on("call", (call) => {
+          if (mediaStreamRef.current) {
+            // Answer the call with the current local stream (sending video/audio to clients)
+            call.answer(mediaStreamRef.current);
+
+            // Increment viewer count when a new call is made
+            setViewersCount((prevCount) => prevCount + 1);
+
+            // Listen for when the call ends (viewer leaves)
+            call.on("close", () => {
+              setViewersCount((prevCount) => Math.max(prevCount - 1, 0)); // Ensure it doesn't go below 0
+            });
+          }
+        });
+
+        peerInstance.current = peer;
+      }
+    };
+
+    initStream(); // Initialize stream setup after API call
+
+  }, [webinarId, peerId]); // Added peerId as a dependency
 
   const startStream = () => {
     const getUserMedia =

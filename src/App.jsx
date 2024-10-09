@@ -34,10 +34,9 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./store";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import WebinarStream from "./pages/Admin Pages/stream/WebinarStream";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import WebinarStream from "./pages/Admin Pages/stream/WebinarStream";
 import JoinStream from "./pages/stream/JoinStream";
 import StreamPage from "./pages/stream/StreamPage";
 
@@ -59,7 +58,7 @@ function App() {
               <Route path="/lectures" element={<Lectures />} />
               <Route path="/lectures/:id" element={<VideoPlayer />} />
               <Route path="/profile-settings" element={<ProfileSettings />} />
-              <Route path="/user-lobby" element={<JoinStream />} />
+              <Route path="/webinar/:id/user-lobby" element={<JoinStream />} />
               <Route path="/user-lobby/:id" element={<StreamPage />} />
               <Route
                 path="/subscription-plans"
@@ -121,8 +120,8 @@ function App() {
                 element={<CreateNotifications />}
               />
               <Route
-                path="webinars/webinar-lobby"
-                element={<WebinarStream />}
+                path="webinars/:webinarId/webinar-lobby"
+                element={<WebinarStream/>}
               />
             </Route>
           </Routes>

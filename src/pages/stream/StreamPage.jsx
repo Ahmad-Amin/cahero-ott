@@ -82,7 +82,7 @@ const StreamPage = () => {
     if (remoteVideoRef.current) {
       remoteVideoRef.current.srcObject = null; // Clear the video element
     }
-    navigate(`/user-lobby`);
+    navigate("/");
   };
 
   const endCall = () => {

@@ -37,7 +37,7 @@ const JoinStream = () => {
             Enter Room Id to join
           </label>
           <p className="text-white font-medium text-base opacity-65">
-            You can join rooms both as spectator and streamer
+            Please Enter room id to join room
           </p>
         </div>
         <div>

@@ -4,15 +4,16 @@ import LoginedNavbar from "../components/LoginedNavbar";
 import { FaRegHeart } from "react-icons/fa";
 import { FaStar } from "react-icons/fa6";
 import WebinarCard from "../pages/WebinarCard";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
 import axiosInstance from "../lib/axiosInstance";
 
 const drawerWidth = 280;
 
 const WebinarDetails = () => {
+  const { id } = useParams();
+  const navigate = useNavigate(); // Initialize useNavigate
+  const [webinar, setWebinar] = useState(null); // Initialize as null
 
-  const {id}  = useParams()
-  const [webinar, setWebinar] = useState()
   useEffect(() => {
     (async () => {
       try {
@@ -22,8 +23,16 @@ const WebinarDetails = () => {
         console.log("Error fetching the webinars");
       }
     })();
-  }, []);
+  }, [id]); // Added id as dependency to ensure useEffect runs when id changes
 
+  // Check if webinar is null or undefined before rendering
+  if (!webinar) {
+    return <div>Loading...</div>; // Show a loading state while fetching the data
+  }
+
+  const handleWatchNow = () => {
+    navigate(`/webinar/${id}/user-lobby`);
+  };
 
   return (
     <>
@@ -73,7 +82,9 @@ const WebinarDetails = () => {
               </div>
             </div>
             <div className="flex justify-between mt-2 flex-wrap">
-              <p className="text-white text-lg font-medium mr-4">{webinar.startDate.split('-')[0]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climate Change&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2h 38m</p>
+              <p className="text-white text-lg font-medium mr-4">
+                {webinar.startDate.split('-')[0]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climate Change&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2h 38m
+              </p>
             </div>
             <div className="mt-5 mr-0">
               <p className="text-white text-base">
@@ -81,7 +92,10 @@ const WebinarDetails = () => {
               </p>
             </div>
             <div className="flex flex-col md:flex-row items-center">
-              <button className="bg-[#6a55ea] h-16 w-full md:w-36 text-white rounded-2xl mt-3">
+              <button
+                className="bg-[#6a55ea] h-16 w-full md:w-36 text-white rounded-2xl mt-3"
+                onClick={handleWatchNow} // Attach the handleWatchNow function here
+              >
                 Watch Now
               </button>
               <button className="bg-white h-16 w-full md:w-16 text-black mx-0 md:mx-5 rounded-2xl mt-3 flex justify-center items-center">
@@ -102,29 +116,29 @@ const WebinarDetails = () => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mx-4 md:mx-8 my-4"
           >
             <WebinarCard
-          title="Tokyo Train"
-          year="2022"
-          genre="Webinar Genre"
-          image={`${process.env.PUBLIC_URL}/images/Tokyotrain.png`}
-        />
-        <WebinarCard
-          title="Moon Fall"
-          year="2023"
-          genre="Webinar Genre"
-          image={`${process.env.PUBLIC_URL}/images/Moonfall.png`}
-        />
-        <WebinarCard
-          title="Life in Paris"
-          year="2022"
-          genre="Webinar Genre"
-          image={`${process.env.PUBLIC_URL}/images/LifeinParis.png`}
-        />
-        <WebinarCard
-          title="House of Gucci"
-          year="2021"
-          genre="Webinar Genre"
-          image={`${process.env.PUBLIC_URL}/images/HouseofGucci.png`}
-        />
+              title="Tokyo Train"
+              year="2022"
+              genre="Webinar Genre"
+              image={`${process.env.PUBLIC_URL}/images/Tokyotrain.png`}
+            />
+            <WebinarCard
+              title="Moon Fall"
+              year="2023"
+              genre="Webinar Genre"
+              image={`${process.env.PUBLIC_URL}/images/Moonfall.png`}
+            />
+            <WebinarCard
+              title="Life in Paris"
+              year="2022"
+              genre="Webinar Genre"
+              image={`${process.env.PUBLIC_URL}/images/LifeinParis.png`}
+            />
+            <WebinarCard
+              title="House of Gucci"
+              year="2021"
+              genre="Webinar Genre"
+              image={`${process.env.PUBLIC_URL}/images/HouseofGucci.png`}
+            />
           </div>
         </div>
       </Box>

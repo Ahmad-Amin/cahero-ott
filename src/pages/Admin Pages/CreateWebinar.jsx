@@ -50,10 +50,12 @@ const CreateWebinars = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+  
     if (paymentType === "unpaid") {
       try {
         setLoading(true);
-        const response = await axiosInstance.post("/webinars", {
+  
+        const webinarResponse = await axiosInstance.post("/webinars", {
           title: formData.title,
           startTime: formData.startTime,
           endTime: formData.endTime,
@@ -61,11 +63,20 @@ const CreateWebinars = () => {
           description: formData.description,
           price: paymentType === "paid" ? formData.price : undefined,
         });
-        console.log("Webinar created:", response.data);
+  
+        const webinarId = webinarResponse.data.id;
+        console.log("Webinar created:", webinarResponse.data);
+        console.log("Sending webinarId:", webinarId);
+  
+        const emailResponse = await axiosInstance.post(`/webinars/${webinarId}/send-email`);
+  
+        console.log("Emails sent:", emailResponse.data);
+  
         navigate("/dashboard");
+  
       } catch (error) {
-        toast.error(error?.response?.data?.error || "Error creating webinar");
-        console.error("Error creating webinar:", error);
+        console.error("Error creating webinar or sending emails:", error);
+        toast.error(error?.response?.data?.error || "Error creating webinar or sending emails");
       } finally {
         setLoading(false);
       }
@@ -73,6 +84,10 @@ const CreateWebinars = () => {
       alert("Only unpaid webinars are accepted.");
     }
   };
+  
+  
+  
+  
 
   return (
     <LoadingWrapper loading={loading}>
