@@ -58,8 +58,7 @@ function App() {
               <Route path="/lectures" element={<Lectures />} />
               <Route path="/lectures/:id" element={<VideoPlayer />} />
               <Route path="/profile-settings" element={<ProfileSettings />} />
-              <Route path="/webinar/:id/user-lobby" element={<JoinStream />} />
-              <Route path="/user-lobby/:id" element={<StreamPage />} />
+              <Route path="/webinar/:id/user-lobby" element={<StreamPage />} />
               <Route
                 path="/subscription-plans"
                 element={<SubscriptionPlans />}

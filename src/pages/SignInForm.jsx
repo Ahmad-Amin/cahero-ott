@@ -48,9 +48,7 @@ function SignInForm({ onClose, toggleSignUp }) {
 
       
       axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      if (rememberMe) {
-        Cookies.set("token", token, { expires: 7 });
-      }
+      Cookies.set("token", token, { expires: 7 });
 
       console.log(response.data.user, token);
       dispatch(login({user: response.data.user, token: token}))

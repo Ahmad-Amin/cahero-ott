@@ -4,16 +4,19 @@ import LoginedNavbar from "../components/LoginedNavbar";
 import { FaRegHeart } from "react-icons/fa";
 import { FaStar } from "react-icons/fa6";
 import WebinarCard from "../pages/WebinarCard";
-import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
 
 const drawerWidth = 280;
 
 const WebinarDetails = () => {
   const { id } = useParams();
-  const navigate = useNavigate(); // Initialize useNavigate
-  const [webinar, setWebinar] = useState(null); // Initialize as null
+  const navigate = useNavigate();
+  const [webinar, setWebinar] = useState(null);
+  const [webinarLiveStatus, setWebinarLiveStatus] = useState(null); // Track webinar live status
+  const [isWatchNowEnabled, setIsWatchNowEnabled] = useState(false); // 
 
+  // Fetch webinar details
   useEffect(() => {
     (async () => {
       try {
@@ -23,16 +26,33 @@ const WebinarDetails = () => {
         console.log("Error fetching the webinars");
       }
     })();
-  }, [id]); // Added id as dependency to ensure useEffect runs when id changes
+  }, [id]);
 
-  // Check if webinar is null or undefined before rendering
-  if (!webinar) {
-    return <div>Loading...</div>; // Show a loading state while fetching the data
-  }
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await axiosInstance.post(`/webinars/${id}/join`);
+          setWebinarLiveStatus("Webinar is live");
+          setIsWatchNowEnabled(true); 
+      } catch (error) {
+        if (error.response && error.response.status !== 500) {
+          setWebinarLiveStatus("Webinar is not live");
+        } else {
+          setWebinarLiveStatus("Error checking webinar status");
+        }
+      }
+    })();
+  }, [id]);
 
   const handleWatchNow = () => {
-    navigate(`/webinar/${id}/user-lobby`);
+    if (isWatchNowEnabled) {
+      navigate(`/webinar/${id}/user-lobby`);
+    }
   };
+
+  if (!webinar) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -75,7 +95,9 @@ const WebinarDetails = () => {
           />
           <div className="mt-10 mx-5 w-full lg:w-2/4">
             <div className="flex justify-between items-center">
-              <h1 className="text-white text-3xl font-semibold">{webinar.title}</h1>
+              <h1 className="text-white text-3xl font-semibold">
+                {webinar.title}
+              </h1>
               <div className="mx-0 flex items-center gap-1">
                 <FaStar className="text-[#FFC01E]" />
                 <p className="text-white text-lg font-medium">7.8/10</p>
@@ -83,18 +105,29 @@ const WebinarDetails = () => {
             </div>
             <div className="flex justify-between mt-2 flex-wrap">
               <p className="text-white text-lg font-medium mr-4">
-                {webinar.startDate.split('-')[0]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climate Change&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2h 38m
+                {webinar.startDate.split("-")[0]}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climate Change&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2h 38m
               </p>
             </div>
             <div className="mt-5 mr-0">
-              <p className="text-white text-base">
-                {webinar.description}
-              </p>
+              <p className="text-white text-base">{webinar.description}</p>
             </div>
+            <div>
+            {webinarLiveStatus && (
+                <div className="text-white mt-3 border-2 border-white border-dotted w-1/4 rounded-lg flex items-center justify-center py-1 font-semibold">
+                  {webinarLiveStatus}
+                </div>
+              )}
+
+            </div>
+            
             <div className="flex flex-col md:flex-row items-center">
               <button
-                className="bg-[#6a55ea] h-16 w-full md:w-36 text-white rounded-2xl mt-3"
-                onClick={handleWatchNow} // Attach the handleWatchNow function here
+                className={`h-16 w-full md:w-36 text-white rounded-2xl mt-3 ${
+                  isWatchNowEnabled ? "bg-[#6a55ea]" : "bg-gray-500"
+                }`}
+                onClick={handleWatchNow}
+                disabled={!isWatchNowEnabled} // Disable if not live
               >
                 Watch Now
               </button>
