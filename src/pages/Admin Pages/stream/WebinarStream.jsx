@@ -5,6 +5,7 @@
   import { useParams } from "react-router-dom"; // Import useParams
   import axiosInstance from "../../../lib/axiosInstance";
   import LoadingWrapper from "../../../components/ui/LoadingWrapper"; // Import your loader component
+  import { useNavigate } from "react-router-dom";
 
   const WebinarStream = () => {
     const { webinarId } = useParams(); // Get webinarId from URL params
@@ -14,6 +15,8 @@
     const mediaStreamRef = useRef(null); // Store the media stream reference
     const [streamStarted, setStreamStarted] = useState(false);
     const [viewersCount, setViewersCount] = useState(0);
+    const navigate = useNavigate();
+
 const [loading, setloading] = useState(false);
     useEffect(() => {
       if (!webinarId) {
@@ -109,32 +112,57 @@ const [loading, setloading] = useState(false);
     };
     
 
-    const endStream = () => {
-      // Stop all tracks (video and audio)
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-        mediaStreamRef.current = null; // Clear the media stream reference
-      }
+    const endStream = async () => {
+      try {
+        const response = await axiosInstance.get(`/webinars/${webinarId}`);
+        console.log("Fetched webinar details:", response.data);
 
-      // Close all active calls/connections
-      if (peerInstance.current) {
-        const connections = peerInstance.current.connections;
-        Object.keys(connections).forEach((peerId) => {
-          connections[peerId].forEach((call) => {
-            call.close(); // Close the peer-to-peer connection for each client
+      
+
+        await axiosInstance.patch(`/webinars/${webinarId}`,{
+          title: response.data.title,
+          startTime: response.data.startTime,
+          endTime: response.data.endTime,
+          startDate: response.data.startDate,
+          isLive: false,
+        
+        } );
+    
+        if (mediaStreamRef.current) {
+          mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+          mediaStreamRef.current = null; // Clear the media stream reference
+        }
+    
+        // Close all active calls/connections
+        if (peerInstance.current) {
+          const connections = peerInstance.current.connections;
+          Object.keys(connections).forEach((peerId) => {
+            connections[peerId].forEach((call) => {
+              call.close(); 
+            });
           });
-        });
+        }
+    
+        // Clear the video elements
+        if (currentUserVideoRef.current) {
+          currentUserVideoRef.current.srcObject = null;
+        }
+    
+        // Reset viewer count and update stream status
+        setViewersCount(0);
+        setStreamStarted(false);
+        
+      } catch (error) {
+        console.error("Error ending the stream:", error);
+        // Handle the error appropriately (e.g., show a notification)
+        
+      } finally {
+        // Code here will run regardless of success or error
+        console.log("Stream ending process completed.");
+        navigate('/dashboard'); // Replace with your desired path
       }
-
-      // Clear the video elements
-      if (currentUserVideoRef.current) {
-        currentUserVideoRef.current.srcObject = null;
-      }
-
-      // Reset viewer count and update stream status
-      setViewersCount(0);
-      setStreamStarted(false);
     };
+    
 
     // Function to copy PeerId to Clipboard
     const copyToClipboard = () => {
