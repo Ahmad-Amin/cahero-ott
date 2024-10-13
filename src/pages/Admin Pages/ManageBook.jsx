@@ -1,29 +1,121 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate , useParams } from "react-router-dom";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
-import ConfirmDelete from "../../components/Admin Components/ConfirmDelete"; // Import the DeleteConfirmation component
+import ConfirmDelete from "../../components/Admin Components/ConfirmDelete";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-
+import axiosInstance from "../../lib/axiosInstance";
 const ManageBook = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-  const [itemToDelete, setItemToDelete] = useState(null); // State to store the selected item for deletion
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const { id } = useParams();
+  const [BooksData, setBooksData] = useState({
+    title: "",
+    author: "",
+    description: "",
+    coverImageUrl: "",
+    audioFileUrl: "",
+  });
+  const navigate = useNavigate();
+  const handleUpdateBook = async () => {
+    try {
+      await axiosInstance.patch(`/books/${id}`, {
+        ...BooksData
+      })
+      navigate("/dashboard/book-creation"); 
+    } catch (error) {
+      console.error("Error updating book:", error);
+    }
+  };
 
-  const handleDeleteConfirm = () => {
-    console.log("Deleted:", itemToDelete); // Log or perform deletion for the selected item
+  useEffect(() => {
+    const fetchbook = async () => {
+      try {
+        const response = await axiosInstance.get(`/books/${id}`);
+        const data = response.data;
+
+        setBooksData({
+          title: data.title,
+          author: data.author,
+          description: data.description,
+          coverImageUrl: data.coverImageUrl,
+          audioFileUrl: data.audioFileUrl,
+        });
+      } catch (error) {
+        console.error("Error fetching book data:", error);
+      }
+    };
+
+    fetchbook();
+  }, [id]);
+
+  const handleDeleteConfirm = async () => {
+    if (itemToDelete) {
+      try {
+        await axiosInstance.delete(`/books/${itemToDelete.id}`);
+      } catch (error) {
+        console.error("Error deleting book:", error);
+      }
+    }
     setIsModalOpen(false);
   };
 
   const handleDeleteClick = (book) => {
-    setItemToDelete(book); // Set the selected item to be deleted
-    setIsModalOpen(true); // Open the modal
+    setItemToDelete(book);
+    setIsModalOpen(true);
   };
 
   // Handle file upload changes
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       console.log("Uploaded file:", file.name);
+
+      let uploadUrl;
+      if (e.target.id === "audio-upload") {
+        uploadUrl = "/upload/audio";
+        setBooksData((prev) => ({ ...prev, audioFileUrl: file.name })); // temporarily store file name
+      } else if (e.target.id === "cover-upload") {
+        uploadUrl = "/upload/image";
+        setBooksData((prev) => ({ ...prev, coverImageUrl: file.name })); // temporarily store file name
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        // Upload the file
+        const uploadResponse = await axiosInstance.post(uploadUrl, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        // Assuming the response contains the URL of the uploaded file
+        const fileUrl = uploadResponse.data.fileUrl;
+
+        // Now update the book details with the new URLs
+        await updateBookData(
+          fileUrl,
+          e.target.id === "audio-upload" ? "audioFileUrl" : "coverImageUrl"
+        );
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    }
+  };
+
+  const updateBookData = async (fileUrl, field) => {
+    try {
+      const updatedData = {
+        ...BooksData,
+        [field]: fileUrl, // update the specific field with the new URL
+      };
+
+      await axiosInstance.patch(`/books/${id}`, updatedData);
+      console.log("Book updated successfully:", updatedData);
+    } catch (error) {
+      console.error("Error updating book data:", error);
     }
   };
 
@@ -48,8 +140,8 @@ const ManageBook = () => {
             </h1>
             <DeleteOutlineIcon
               className="text-[#e53939] cursor-pointer hover:text-[#b22c2c] ease-in-out transition-colors duration-300 mr-10"
-              onClick={() => handleDeleteClick("Example Book")} 
-              sx={{ fontSize: 40 }} 
+              onClick={() => handleDeleteClick("Example Book")}
+              sx={{ fontSize: 40 }}
             />
           </div>
 
@@ -67,6 +159,10 @@ const ManageBook = () => {
                   id="Book_title"
                   className="w-full h-16 rounded-xl border-2 border-white focus:border-none bg-transparent px-3 text-white"
                   placeholder="Enter Book Title"
+                  value={BooksData.title}
+                  onChange={(e) =>
+                    setBooksData({ ...BooksData, title: e.target.value })
+                  } // Update state
                   required
                 />
               </div>
@@ -82,7 +178,11 @@ const ManageBook = () => {
                     type="text"
                     id="author_name"
                     className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3"
-                    placeholder="Enter Author Name" // Placeholder to indicate the expected format
+                    placeholder="Enter Author Name"
+                    value={BooksData.author}
+                    onChange={(e) =>
+                      setBooksData({ ...BooksData, author: e.target.value })
+                    } // Update state
                     required
                   />
                 </div>
@@ -97,24 +197,43 @@ const ManageBook = () => {
                     id="sort"
                     name="category"
                     className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 appearance-none"
+                    value={BooksData.genre} // Value of the select field
                   >
-                    <option className="bg-[#101011] text-white" value="finance">
-                      Finance
+                    <option className="bg-[#101011] text-white" value="">
+                      Select Genre
+                    </option>
+                    <option className="bg-[#101011] text-white" value="Fiction">
+                      Fiction
                     </option>
                     <option
                       className="bg-[#101011] text-white"
-                      value="technology"
+                      value="Non-Fiction"
                     >
-                      Technology
-                    </option>
-                    <option className="bg-[#101011] text-white" value="health">
-                      Health
+                      Non-Fiction
                     </option>
                     <option
                       className="bg-[#101011] text-white"
-                      value="education"
+                      value="Science-Fiction"
                     >
-                      Education
+                      Science Fiction
+                    </option>
+                    <option className="bg-[#101011] text-white" value="Fantasy">
+                      Fantasy
+                    </option>
+                    <option
+                      className="bg-[#101011] text-white"
+                      value="Biography"
+                    >
+                      Biography
+                    </option>
+                    <option
+                      className="bg-[#101011] text-white"
+                      value="Thriller"
+                    >
+                      Thriller
+                    </option>
+                    <option className="bg-[#101011] text-white" value="Romance">
+                      Romance
                     </option>
                   </select>
                 </div>
@@ -130,11 +249,15 @@ const ManageBook = () => {
                   id="overview"
                   className="w-full h-32 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 pt-4 resize-none"
                   placeholder="Overview"
+                  value={BooksData.description}
+                  onChange={(e) =>
+                    setBooksData({ ...BooksData, description: e.target.value })
+                  } // Update state
                   required
                 />
               </div>
 
-              {/* Video Upload Section */}
+              {/* Audio Upload Section */}
               <div className="mt-5 relative">
                 <label
                   className="text-white font-normal text-lg block mb-2"
@@ -151,7 +274,9 @@ const ManageBook = () => {
                   onChange={handleFileChange}
                 />
                 <div className="w-full h-16 rounded-xl border-2 border-white bg-transparent px-3 text-white flex items-center justify-between">
-                  <span className="text-white">Choose MP3 Audio(Optional)</span>
+                  <span className="text-white">
+                    Choose MP3 Audio (Optional)
+                  </span>
                   <FileUploadIcon
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -167,29 +292,40 @@ const ManageBook = () => {
                     />
                   </FileUploadIcon>
                 </div>
+                {BooksData.audioFileUrl && (
+                  <audio controls className="mt-5" src={BooksData.audioFileUrl}>
+                    Your browser does not support the audio element.
+                  </audio>
+                )}
               </div>
             </div>
 
-            {/* Image Upload Section - 40% */}
+            {/* Image Upload Section */}
             <div className="flex flex-col items-center w-full md:w-1/3 h-full py-8">
               <label className="text-white font-semibold mb-2">
                 Cover Image
               </label>
-              <div className="border-dashed border-2 border-white rounded-lg w-3/4 h-80 flex flex-col items-center justify-center text-white bg-transparent hover:bg-gray-800 transition duration-200">
+              <img src={BooksData.coverImageUrl} alt={BooksData.title} />
+              <div className="mt-10 border-dashed border-2 border-white rounded-lg w-3/4 h-40 flex flex-col items-center justify-center text-white bg-transparent hover:bg-gray-800 transition duration-200">
                 <input
                   type="file"
+                  id="cover-upload" // Add an ID to the file input for the cover image
                   className="opacity-0 absolute"
                   accept="image/*"
-                  onChange={handleFileChange}
+                  onChange={handleFileChange} // Handle file changes
                 />
-                <span className="text-lg">Upload</span>
-                <span className="text-gray-400">or drag and drop</span>
+                <span className="text-lg">Change Image</span>
+                <span className="text-gray-400">Upload Image</span>
               </div>
             </div>
           </div>
           <div className="flex flex-row justify-end gap-6 mt-8 ml-16 w-3/5">
             <div className="">
-              <button className="w-56 h-12 bg-[#6a55ea] hover:bg-[#5242b6] ease-in-out transition duration-300 rounded-xl text-white font-semibold text-lg">
+              <button
+                onClick={handleUpdateBook} // Call handleUpdateBook on button click
+                className="w-56 h-12 bg-[#6a55ea] hover:bg-[#5242b6] ease-in-out transition duration-300 rounded-xl text-white font-semibold text-lg"
+              >
+                {" "}
                 Update Book
               </button>
             </div>
@@ -204,8 +340,8 @@ const ManageBook = () => {
 
       <ConfirmDelete
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)} // Close modal
-        onConfirm={handleDeleteConfirm} // Handle delete confirmation
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleDeleteConfirm}
         itemType={"Book"}
       />
     </>

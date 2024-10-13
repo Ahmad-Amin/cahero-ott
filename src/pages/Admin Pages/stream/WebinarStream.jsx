@@ -24,10 +24,10 @@ const [loading, setloading] = useState(false);
         return;
       }
 
-      // Send POST request to start the stream
       const startStreamRequest = async () => {
         try {
           console.log(webinarId)
+          console.log(peerId)
           const response = await axiosInstance.post(`/webinars/${webinarId}/start-stream`, {
             streamId: peerId // Send peerId as streamId
           });
@@ -43,7 +43,6 @@ const [loading, setloading] = useState(false);
       const initStream = async () => {
         const isSuccess = await startStreamRequest(); 
         if (isSuccess) {
-          // Only initialize PeerJS and start the stream if the API call was successful
           const peer = new Peer(webinarId);
           peer.on("open", (id) => {
             setPeerId(id);
@@ -75,9 +74,7 @@ const [loading, setloading] = useState(false);
     const startStream = async () => {
       try {
         setloading(true);
-        // Make the PATCH request to notify the backend that the stream is starting
         const response = await axiosInstance.patch(`/webinars/${webinarId}/start-stream`);
-        
         console.log("Stream status updated:", response.data);
     
         // If the API call is successful, proceed to start the media stream
@@ -98,6 +95,7 @@ const [loading, setloading] = useState(false);
     
             // Mark the stream as started
             setStreamStarted(true);
+            console.log("Stream has been Started")
           })
           .catch((err) => {
             console.error("Failed to get media stream", err);
@@ -117,8 +115,6 @@ const [loading, setloading] = useState(false);
         const response = await axiosInstance.get(`/webinars/${webinarId}`);
         console.log("Fetched webinar details:", response.data);
 
-      
-
         await axiosInstance.patch(`/webinars/${webinarId}`,{
           title: response.data.title,
           startTime: response.data.startTime,
@@ -133,7 +129,6 @@ const [loading, setloading] = useState(false);
           mediaStreamRef.current = null; // Clear the media stream reference
         }
     
-        // Close all active calls/connections
         if (peerInstance.current) {
           const connections = peerInstance.current.connections;
           Object.keys(connections).forEach((peerId) => {
@@ -143,7 +138,6 @@ const [loading, setloading] = useState(false);
           });
         }
     
-        // Clear the video elements
         if (currentUserVideoRef.current) {
           currentUserVideoRef.current.srcObject = null;
         }
@@ -254,7 +248,7 @@ const [loading, setloading] = useState(false);
             <div className="flex justify-center"></div>
             <div className="flex justify-center">
               <h1 className="border-2 border-white rounded-lg flex items-center justify-center p-2 text-xl ">
-                <strong>Stream ID:</strong>&nbsp; {peerId}
+                <strong>Copy Stream Id</strong>
                 <ContentCopyIcon
                   className="ml-2 cursor-pointer text-white text-opacity-60 hover:text-opacity-100 ease-in-out transition duration-300"
                   onClick={copyToClipboard}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -6,58 +6,62 @@ import ConfirmDelete from "../../components/Admin Components/ConfirmDelete"; // 
 import { FaPlay } from "react-icons/fa"; // Import the play icon
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../lib/axiosInstance"; // Import your Axios instance
+
 const Lectures = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const [itemToDelete, setItemToDelete] = useState(null); // State to store the selected item for deletion
+  const [upcomingLectures, setUpcomingLectures] = useState([]); // State to store the fetched lectures
+  const [error, setError] = useState(null); // State to handle errors
 
-  const handleDeleteConfirm = () => {
-    console.log("Deleted:", itemToDelete); // Log or perform deletion for the selected item
+  useEffect(() => {
+    const fetchLectures = async () => {
+      try {
+        const response = await axiosInstance.get("/lectures");
+        if (Array.isArray(response.data.results)) {
+          console.log(response.data.results);
+          setUpcomingLectures(response.data.results);
+        } else {
+          setError("Unexpected response format."); // Handle unexpected response format
+        }
+      } catch (err) {
+        console.error("Error fetching lectures:", err);
+        setError("Failed to fetch lectures.");
+      }
+    };
+
+    fetchLectures(); // Call the fetch function
+  }, []); // Empty dependency array means this effect runs once on mount
+
+  const handleDeleteConfirm = async () => {
+    if(itemToDelete)
+      try {
+        console.log("Ready to Delete Item-> ", itemToDelete.id)
+        await axiosInstance.delete(`/lectures/${itemToDelete.id}`)
+        console.log("Deleted:", itemToDelete);
+    } catch(error){
+      console.error("Error deleting item:", error);
+    }
+     // Log or perform deletion for the selected item
     setIsModalOpen(false);
   };
-
-  const upcomingLectures = [
-    {
-      title: "Mastering Remote Work: Tips & Tools",
-      date: "September 25, 2024",
-      time: "3:00 PM - 4:30 PM (GMT)",
-      duration: "3 hr 35 min 20 sec",
-      description:
-        "Learn how to effectively manage remote work, collaborate with teams, and boost productivity using the best tools available.",
-      image: `${process.env.PUBLIC_URL}/images/videoprofile.png`,
-    },
-    {
-      title: "Mastering Remote Work: Tips & Tools",
-      date: "September 25, 2024",
-      time: "3:00 PM - 4:30 PM (GMT)",
-      duration: "3 hr 35 min 20 sec",
-      description:
-        "Learn how to effectively manage remote work, collaborate with teams, and boost productivity using the best tools available.",
-      image: `${process.env.PUBLIC_URL}/images/videoprofile.png`,
-    },
-    {
-      title: "Mastering Remote Work: Tips & Tools",
-      date: "September 25, 2024",
-      time: "3:00 PM - 4:30 PM (GMT)",
-      duration: "3 hr 35 min 20 sec",
-      description:
-        "Learn how to effectively manage remote work, collaborate with teams, and boost productivity using the best tools available.",
-      image: `${process.env.PUBLIC_URL}/images/videoprofile.png`,
-    },
-    {
-      title: "Mastering Remote Work: Tips & Tools",
-      date: "September 25, 2024",
-      time: "3:00 PM - 4:30 PM (GMT)",
-      duration: "3 hr 35 min 20 sec",
-      description:
-        "Learn how to effectively manage remote work, collaborate with teams, and boost productivity using the best tools available.",
-      image: `${process.env.PUBLIC_URL}/images/videoprofile.png`,
-    },
-    // Add other lectures here...
-  ];
 
   const handleDeleteClick = (lecture) => {
     setItemToDelete(lecture); // Set the selected item to be deleted
     setIsModalOpen(true); // Open the modal
+  };
+
+  if (error) {
+    return <div>{error}</div>; // Error state
+  }
+  const formatDuration = (duration) => {
+    const [hours, minutes, seconds] = duration.split(":");
+
+    const hrsText = `${parseInt(hours)} hrs`;
+    const minText = `${parseInt(minutes)} min`;
+    const secText = `${parseInt(seconds)} sec`;
+
+    return `${hrsText} ${minText} ${secText}`;
   };
 
   return (
@@ -68,9 +72,9 @@ const Lectures = () => {
             key={index}
             className="bg-[#000000] rounded-3xl p-4 shadow-md h-auto border border-[#ffffff] relative mb-3 flex items-center"
           >
-            <div className="w-1/3 relative">
+            <div className="w-1/3 h-36 relative">
               <img
-                src={lecture.image}
+                src={lecture.coverImageUrl}
                 alt={lecture.title}
                 className="rounded-lg w-full h-full object-cover"
               />
@@ -87,22 +91,28 @@ const Lectures = () => {
               <div className="flex items-center mb-3">
                 <CalendarTodayIcon className="text-[#6a55ea] mr-1" />
                 <p className="text-white mr-2">Date:</p>
-                <p className="text-[#b2b2b2]">{lecture.date}</p>
+                <p className="text-[#b2b2b2]">
+                  {lecture.createdAt.split("T")[0]}
+                </p>
               </div>
 
               <div className="flex items-center mb-4">
                 <AccessTimeIcon className="text-[#6a55ea] mr-1" />
                 <p className="text-white mr-2">Duration:</p>
-                <p className="text-[#b2b2b2]">{lecture.duration}</p>
+                <p className="text-[#b2b2b2]">
+                  {formatDuration(lecture.duration)}
+                </p>
               </div>
 
               <div className="flex justify-start mt-6 gap-3">
-                <Link to={"/dashboard/video-lecture/edit-lecture"}>
-                <ModeEditIcon className="text-[#05c283] cursor-pointer hover:text-[#038f60] ease-in-out transition-colors duration-300" />
+                <Link
+                  to={`/dashboard/video-lecture/${lecture.id}/edit-lecture`}
+                >
+                  <ModeEditIcon className="text-[#05c283] cursor-pointer hover:text-[#038f60] ease-in-out transition-colors duration-300" />
                 </Link>
                 <DeleteOutlineIcon
                   className="text-[#e53939] cursor-pointer hover:text-[#b22c2c] ease-in-out transition-colors duration-300"
-                  onClick={() => handleDeleteClick(lecture)} 
+                  onClick={() => handleDeleteClick(lecture)}
                 />
               </div>
             </div>

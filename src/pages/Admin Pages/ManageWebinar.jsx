@@ -15,7 +15,6 @@ const ManageWebinars = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
-  const [upcomingWebinars, setUpcomingWebinars] = useState([]);
   const [webinarData, setWebinarData] = useState({
     title: "",
     startTime: "",

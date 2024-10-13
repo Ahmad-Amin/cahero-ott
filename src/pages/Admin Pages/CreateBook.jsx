@@ -1,11 +1,100 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import axiosInstance from "../../lib/axiosInstance"; // Import your axios instance
+import { toast, ToastContainer } from "react-toastify"; // Import toast and ToastContainer
+import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for the toast notifications
 
 const CreateBook = () => {
+  const [bookData, setBookData] = useState({
+    title: "",
+    author: "",
+    genre: "",
+    description: "",
+  });
+
+  const [imageFile, setImageFile] = useState(null);
+  const [imageFileName, setImageFileName] = useState(""); // State for image file name
+  const [audioFile, setAudioFile] = useState(null);
+  const [audioFileName, setAudioFileName] = useState(""); // State for audio file name
+
+  const navigate = useNavigate(); // To navigate after successful submission
+
+  const handleInputChange = (e) => {
+    setBookData({ ...bookData, [e.target.id]: e.target.value });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      console.log("Selected image file: ", file); // Debugging log
+      setImageFile(file);
+      setImageFileName(file.name); // Set the image file name
+    } else {
+      console.error("No image file selected!");
+    }
+  };
+
+  const handleAudioChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAudioFile(file);
+      setAudioFileName(file.name); // Set the audio file name
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      let coverImageUrl = "";
+      let audioFileUrl = "";
+
+      // Upload image file
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        console.log("Sending image file:", formData.get("file"));
+        const imageResponse = await axiosInstance.post(
+          "/upload/image",
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+        coverImageUrl = imageResponse.data.fileUrl;
+        console.log("Image uploaded. URL: ", coverImageUrl);
+      }
+
+      if (audioFile) {
+        const formData = new FormData();
+        formData.append("file", audioFile);
+        const audioResponse = await axiosInstance.post(
+          "/upload/audio",
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+        audioFileUrl = audioResponse.data.fileUrl;
+      }
+
+      const response = await axiosInstance.post("/books", {
+        ...bookData,
+        coverImageUrl,
+        audioFileUrl,
+      });
+
+        toast.success("Book uploaded successfully!"); 
+        navigate("/dashboard/book-creation");
+    } catch (error) {
+      console.error("Error creating book:", error);
+      toast.error("Error creating book: " + error.message); 
+    }
+  };
+
   return (
     <>
+      <ToastContainer /> {/* Add ToastContainer to your JSX */}
       <Box
         component="main"
         sx={{
@@ -30,90 +119,114 @@ const CreateBook = () => {
             </Link>
           </div>
 
-          {/* Flexbox for 60% form and 40% image upload */}
           <div className="flex flex-col md:flex-row gap-10">
-            {/* Form Section - 60% */}
             <div className="flex-1 w-full md:w-4/6 py-8">
               <div>
                 <label
-                  htmlFor="Book_title"
+                  htmlFor="title"
                   className="text-white font-normal text-lg block mb-2"
                 >
                   Book Title
                 </label>
                 <input
                   type="text"
-                  id="Book_title"
+                  id="title"
                   className="w-full h-16 rounded-xl border-2 border-white focus:border-none bg-transparent px-3 text-white"
                   placeholder="Enter Book Title"
+                  value={bookData.title}
+                  onChange={handleInputChange}
                   required
                 />
               </div>
               <div className="flex flex-col md:flex-row gap-10 mt-5">
                 <div className="w-full md:w-1/2">
                   <label
-                    htmlFor="author_name"
+                    htmlFor="author"
                     className="text-white font-normal text-lg block mb-2"
                   >
                     Author Name
                   </label>
                   <input
                     type="text"
-                    id="author_name"
+                    id="author"
                     className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3"
-                    placeholder="Enter Author Name" // Placeholder to indicate the expected format
+                    placeholder="Enter Author Name"
+                    value={bookData.author}
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
                 <div className="w-full md:w-1/2">
                   <label
-                    htmlFor="category"
+                    htmlFor="genre"
                     className="text-white font-normal text-lg block mb-2"
                   >
                     Genre
                   </label>
                   <select
-                    id="sort"
-                    name="category"
+                    id="genre"
+                    name="genre"
                     className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 appearance-none"
+                    value={bookData.genre}
+                    onChange={handleInputChange}
                   >
-                    <option className="bg-[#101011] text-white" value="finance">
-                      Finance
+                    <option className="bg-[#101011] text-white" value="">
+                      Select Genre
+                    </option>
+                    <option className="bg-[#101011] text-white" value="Fiction">
+                      Fiction
                     </option>
                     <option
                       className="bg-[#101011] text-white"
-                      value="technology"
+                      value="Non-Fiction"
                     >
-                      Technology
-                    </option>
-                    <option className="bg-[#101011] text-white" value="health">
-                      Health
+                      Non-Fiction
                     </option>
                     <option
                       className="bg-[#101011] text-white"
-                      value="education"
+                      value="Science-Fiction"
                     >
-                      Education
+                      Science Fiction
+                    </option>
+                    <option className="bg-[#101011] text-white" value="Fantasy">
+                      Fantasy
+                    </option>
+                    <option
+                      className="bg-[#101011] text-white"
+                      value="Biography"
+                    >
+                      Biography
+                    </option>
+                    <option
+                      className="bg-[#101011] text-white"
+                      value="Thriller"
+                    >
+                      Thriller
+                    </option>
+                    <option className="bg-[#101011] text-white" value="Romance">
+                      Romance
                     </option>
                   </select>
                 </div>
               </div>
               <div className="mt-5">
                 <label
-                  htmlFor="overview"
+                  htmlFor="description"
                   className="text-white font-normal text-lg block mb-2"
                 >
                   Overview
                 </label>
                 <textarea
-                  id="overview"
+                  id="description"
                   className="w-full h-32 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 pt-4 resize-none"
                   placeholder="Overview"
+                  value={bookData.description}
+                  onChange={handleInputChange}
                   required
                 />
               </div>
 
-              {/* Video Upload Section */}
+              {/* Audio Upload Section */}
               <div className="mt-5 relative">
                 <label
                   className="text-white font-normal text-lg block mb-2"
@@ -127,29 +240,18 @@ const CreateBook = () => {
                   name="audioUpload"
                   accept="audio/mp3"
                   className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
-                  required
+                  onChange={handleAudioChange}
                 />
                 <div className="w-full h-16 rounded-xl border-2 border-white bg-transparent px-3 text-white flex items-center justify-between">
-                  <span className="text-white">Choose MP3 Audio(Optional)</span>
-                  <FileUploadIcon
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="w-6 h-6 text-white"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </FileUploadIcon>
+                  <span className="text-white">
+                    {audioFileName || "Choose MP3 Audio (Optional)"}
+                  </span>
+                  <FileUploadIcon className="w-6 h-6 text-white" />
                 </div>
               </div>
             </div>
 
-            {/* Image Upload Section - 40% */}
+            {/* Image Upload Section */}
             <div className="flex flex-col items-center w-full md:w-1/3 h-full py-8">
               <label className="text-white font-semibold mb-2">
                 Cover Image
@@ -159,15 +261,20 @@ const CreateBook = () => {
                   type="file"
                   className="opacity-0 absolute"
                   accept="image/*"
+                  onChange={handleImageChange}
                 />
-                <span className="text-lg">Upload</span>
-                <span className="text-gray-400">or drag and drop</span>
+                <span className="text-lg">{imageFileName || "Upload"}</span>
+                <span className="text-gray-400">Browse from your local machine</span>
               </div>
             </div>
           </div>
+
           <div className="flex flex-row justify-end gap-6 mt-8 ml-16 w-3/5">
-            <div className="">
-              <button className="w-56 h-12 bg-[#6a55ea] hover:bg-[#5242b6] ease-in-out transition duration-300 rounded-xl text-white font-semibold text-lg">
+            <div>
+              <button
+                onClick={handleSubmit}
+                className="w-56 h-12 bg-[#6a55ea] hover:bg-[#5242b6] ease-in-out transition duration-300 rounded-xl text-white font-semibold text-lg"
+              >
                 Save Book
               </button>
             </div>
