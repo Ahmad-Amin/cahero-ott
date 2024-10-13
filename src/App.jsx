@@ -89,7 +89,7 @@ function App() {
                 element={<CreateLecture />}
               />
               <Route
-                path="video-lecture/edit-lecture"
+                path="video-lecture/:id/edit-lecture"
                 element={<EditLecture />}
               />
               <Route path="recordings" element={<RecordedWebinars />} />
@@ -109,7 +109,7 @@ function App() {
                 element={<CreateBook />}
               />
               <Route
-                path="book-creation/manage-book"
+                path="book-creation/:id/manage-book"
                 element={<ManageBook />}
               />
               <Route path="profile" element={<Profile />} />

@@ -6,8 +6,7 @@ import { useParams } from "react-router-dom"; // Import useParams
 import { useNavigate } from "react-router-dom";
 
 const StreamPage = () => {
-  const { id } = useParams(); // Destructure the id from the parameters
-  const [peerId, setPeerId] = useState("");
+  const {  id: urlId } = useParams(); // Destructure the id from the parameters
   const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
   const [inCall, setInCall] = useState(false); 
   const remoteVideoRef = useRef(null);
@@ -17,20 +16,18 @@ const StreamPage = () => {
 
   useEffect(() => {
     const peer = new Peer();
-
-    peer.on("open", (id) => {
-      setPeerId(id);
-    });
+  
 
     peerInstance.current = peer;
 
     // Set the remotePeerIdValue when the component mounts
-    if (id) {
-      setRemotePeerIdValue(id); // Set the remote peer ID from URL parameters
+    if (urlId) {
+      setRemotePeerIdValue(urlId); // Set the remote peer ID from URL parameters
     }
-
     // Handle incoming call requests
     peer.on("call", (call) => {
+      console.log("Incoming call!");
+
       call.answer(); // Answer the call with an empty stream
 
       // Handle the incoming remote stream
@@ -56,7 +53,7 @@ const StreamPage = () => {
     return () => {
       peer.disconnect(); // Clean up the peer connection on component unmount
     };
-  }, [id]); // Include id in dependency array to update when it changes
+  }, [urlId]); // Include id in dependency array to update when it changes
 
   const call = (remotePeerIdValue) => {
     const emptyStream = new MediaStream();
@@ -76,7 +73,6 @@ const StreamPage = () => {
       callInstance.current = call; // Save the current call instance for later use
       setInCall(true); // Mark as in call
 
-      // Handle the incoming remote stream
       call.on("stream", (remoteStream) => {
         if (remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = remoteStream;
@@ -116,6 +112,7 @@ const StreamPage = () => {
 
   // Add a handler to initiate the call via a button click
   const initiateCall = () => {
+    console.log("Remote Peer ID-> ",remotePeerIdValue)
     if (remotePeerIdValue) {
       call(remotePeerIdValue);
     } else {
@@ -152,7 +149,7 @@ const StreamPage = () => {
 
                 <button
                   onClick={endCall}
-                  className="w-auto h-12 px-5 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl ease-in-out transition duration-300"
+                  className="w-auto h-12 px-5 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl ease-in-out transition duration-300 mr-5"
                 >
                   End Stream
                 </button>

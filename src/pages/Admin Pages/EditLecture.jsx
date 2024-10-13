@@ -1,32 +1,111 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { Box } from "@mui/material";
-import { Link } from "react-router-dom";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import ConfirmDelete from "../../components/Admin Components/ConfirmDelete"; // Import the DeleteConfirmation component
+import ConfirmDelete from "../../components/Admin Components/ConfirmDelete";
+import axiosInstance from "../../lib/axiosInstance"; // Ensure this i
 
 const EditLecture = () => {
+  const { id } = useParams(); // Extract the ID from the route parameters
+  const navigate = useNavigate(); // Navigation hook to redirect after update
+
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-  const [itemToDelete, setItemToDelete] = useState(null); // State to store the selected item for deletion
+  const [itemToDelete, setItemToDelete] = useState(null); // Store selected item for deletion
   const [lecture, setLecture] = useState({
     title: "",
     duration: "",
     category: "",
-    overview: "",
-    video: null,
-    coverImage: null,
+    description: "",
+    videoUrl: "", // This will store the URL of the video
+    coverImageUrl: "", // This will store the URL of the cover image
+    videoFile: null, // For storing the new video file (if changed)
+    coverImageFile: null, // For storing the new cover image file (if changed)
   });
 
-  const handleDeleteConfirm = () => {
-    console.log("Deleted:", itemToDelete); // Log or perform deletion for the selected item
-    setIsModalOpen(false);
+  // Fetch lecture details from /lectures/:id when component mounts
+  useEffect(() => {
+    const fetchLectureDetails = async () => {
+      try {
+        const response = await axiosInstance.get(`/lectures/${id}`);
+        const lectureData = response.data;
+        setLecture({
+          title: lectureData.title,
+          duration: lectureData.duration,
+          category: lectureData.category,
+          description: lectureData.description,
+          videoUrl: lectureData.videoUrl,
+          coverImageUrl: lectureData.coverImageUrl,
+        });
+      } catch (error) {
+        console.error("Error fetching lecture details:", error);
+      }
+    };
+
+    fetchLectureDetails();
+  }, [id]);
+
+  // Upload file helper function (similar to your original code)
+  const uploadFile = async (file, uploadUrl) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axiosInstance.post(uploadUrl, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data.fileUrl;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      return null; // Handle error appropriately
+    }
   };
 
-  const handleDeleteClick = (lecture) => {
-    setItemToDelete(lecture); // Set the selected item to be deleted
-    setIsModalOpen(true); // Open the modal
+  // Handle form submission to update lecture
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    let updatedVideoUrl = lecture.videoUrl;
+    let updatedCoverImageUrl = lecture.coverImageUrl;
+
+    try {
+      if (lecture.videoFile) {
+        // Upload new video if changed
+        console.log("Uploading new video...");
+        updatedVideoUrl = await uploadFile(lecture.videoFile, "/upload/video");
+        console.log("Video uploaded successfully:", updatedVideoUrl);
+      }
+
+      if (lecture.coverImageFile) {
+        // Upload new cover image if changed
+        console.log("Uploading new cover image...");
+        updatedCoverImageUrl = await uploadFile(
+          lecture.coverImageFile,
+          "/upload/image"
+        );
+        console.log("Image uploaded successfully:", updatedCoverImageUrl);
+      }
+
+      const lectureToUpdate = {
+        title: lecture.title,
+        duration: lecture.duration,
+        category: lecture.category,
+        description: lecture.description,
+        videoUrl: updatedVideoUrl,
+        coverImageUrl: updatedCoverImageUrl,
+      };
+
+      await axiosInstance.patch(`/lectures/${id}`, lectureToUpdate);
+      console.log("Lecture updated successfully:", lectureToUpdate);
+      navigate("/dashboard/video-lecture");
+    } catch (error) {
+      console.error("Error updating lecture:", error);
+    }
   };
 
+  // Handle input change for text fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setLecture((prevState) => ({
@@ -35,17 +114,24 @@ const EditLecture = () => {
     }));
   };
 
+  // Handle file changes (video or cover image)
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     setLecture((prevState) => ({
       ...prevState,
-      [name]: files[0], // Capture file for video or cover image
+      [name === "video" ? "videoFile" : "coverImageFile"]: files[0],
     }));
   };
 
-  const handleSubmit = () => {
-    // Handle form submission
-    console.log("Lecture Updated:", lecture);
+  // Handle delete confirmation
+  const handleDeleteConfirm = () => {
+    console.log("Deleted:", itemToDelete); // Log or perform deletion for the selected item
+    setIsModalOpen(false);
+  };
+
+  const handleDeleteClick = () => {
+    setItemToDelete(lecture); // Set the selected item to be deleted
+    setIsModalOpen(true); // Open the modal
   };
 
   return (
@@ -64,17 +150,19 @@ const EditLecture = () => {
       >
         <div className="p-5">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-semibold text-white py-8">Edit Lecture</h1>
+            <h1 className="text-3xl font-semibold text-white py-8">
+              Edit Lecture
+            </h1>
             <div className="space-x-3">
-            <Link to="/dashboard/video-lecture">
-              <button className="w-44 h-12 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl ease-in-out transition duration-300">
-                Cancel
-              </button>
-            </Link>
-            <DeleteOutlineIcon
-              className="text-[#e53939] cursor-pointer hover:text-[#b22c2c]  ease-in-out transition-colors duration-300"
-              onClick={() => handleDeleteClick(lecture)} 
-            />
+              <Link to="/dashboard/video-lecture">
+                <button className="w-44 h-12 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl ease-in-out transition duration-300">
+                  Cancel
+                </button>
+              </Link>
+              <DeleteOutlineIcon
+                className="text-[#e53939] cursor-pointer hover:text-[#b22c2c]  ease-in-out transition-colors duration-300"
+                onClick={() => handleDeleteClick(lecture)}
+              />
             </div>
           </div>
 
@@ -82,7 +170,10 @@ const EditLecture = () => {
             <div className="flex-1 w-full md:w-4/6 py-8">
               {/* Lecture Title */}
               <div>
-                <label htmlFor="lecture_title" className="text-white font-normal text-lg block mb-2">
+                <label
+                  htmlFor="lecture_title"
+                  className="text-white font-normal text-lg block mb-2"
+                >
                   Lecture Title
                 </label>
                 <input
@@ -100,7 +191,10 @@ const EditLecture = () => {
               {/* Duration and Category */}
               <div className="flex flex-col md:flex-row gap-10 mt-5">
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="duration" className="text-white font-normal text-lg block mb-2">
+                  <label
+                    htmlFor="duration"
+                    className="text-white font-normal text-lg block mb-2"
+                  >
                     Duration of Lecture
                   </label>
                   <input
@@ -117,7 +211,10 @@ const EditLecture = () => {
                 </div>
 
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="category" className="text-white font-normal text-lg block mb-2">
+                  <label
+                    htmlFor="category"
+                    className="text-white font-normal text-lg block mb-2"
+                  >
                     Category
                   </label>
                   <select
@@ -130,13 +227,19 @@ const EditLecture = () => {
                     <option className="bg-[#101011] text-white" value="finance">
                       Finance
                     </option>
-                    <option className="bg-[#101011] text-white" value="technology">
+                    <option
+                      className="bg-[#101011] text-white"
+                      value="technology"
+                    >
                       Technology
                     </option>
                     <option className="bg-[#101011] text-white" value="health">
                       Health
                     </option>
-                    <option className="bg-[#101011] text-white" value="education">
+                    <option
+                      className="bg-[#101011] text-white"
+                      value="education"
+                    >
                       Education
                     </option>
                   </select>
@@ -145,13 +248,16 @@ const EditLecture = () => {
 
               {/* Overview */}
               <div className="mt-5">
-                <label htmlFor="overview" className="text-white font-normal text-lg block mb-2">
+                <label
+                  htmlFor="overview"
+                  className="text-white font-normal text-lg block mb-2"
+                >
                   Overview
                 </label>
                 <textarea
                   id="overview"
                   name="overview"
-                  value={lecture.overview}
+                  value={lecture.description}
                   onChange={handleInputChange}
                   className="w-full h-32 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 pt-4 resize-none"
                   placeholder="Overview"
@@ -161,7 +267,10 @@ const EditLecture = () => {
 
               {/* Video Upload */}
               <div className="mt-5 relative">
-                <label className="text-white font-normal text-lg block mb-2" htmlFor="video-upload">
+                <label
+                  className="text-white font-normal text-lg block mb-2"
+                  htmlFor="video-upload"
+                >
                   Video Upload
                 </label>
                 <input
@@ -174,16 +283,25 @@ const EditLecture = () => {
                   required
                 />
                 <div className="w-full h-16 rounded-xl border-2 border-white bg-transparent px-3 text-white flex items-center justify-between">
-                  <span className="text-white">Choose MP4 Video</span>
+                  <span className="text-white">
+                    {lecture.videoFile ? lecture.videoFile.name : "Choose MP4 Video"}
+                  </span>
                   <FileUploadIcon className="w-6 h-6 text-white" />
                 </div>
+                <video controls className="mt-5 rounded-lg border-2 border-[#404040]" src={lecture.videoUrl}></video>
               </div>
             </div>
 
             {/* Cover Image */}
             <div className="flex flex-col items-center w-full md:w-1/3 h-full py-8">
-              <label className="text-white font-semibold mb-2">Cover Image</label>
-              <div className="border-dashed border-2 border-white rounded-lg w-3/4 h-80 flex flex-col items-center justify-center text-white bg-transparent hover:bg-gray-800 transition duration-200">
+            <label
+                  className="text-white font-normal text-lg block mb-2"
+                  htmlFor="image-upload"
+                >
+                  Cover Image
+                </label>
+                <img src={lecture.coverImageUrl} alt={lecture.title} />
+              <div className="border-dashed border-2 border-white rounded-lg w-3/4 h-40 mt-10 flex flex-col items-center justify-center text-white bg-transparent hover:bg-gray-800 transition duration-200">
                 <input
                   type="file"
                   name="coverImage"
@@ -191,8 +309,9 @@ const EditLecture = () => {
                   accept="image/*"
                   onChange={handleFileChange}
                 />
-                <span className="text-lg">Upload</span>
-                <span className="text-gray-400">or drag and drop</span>
+               <span className="text-lg">
+                  {lecture.coverImageFile ? lecture.coverImageFile.name : "Upload"}
+                </span>
               </div>
             </div>
           </div>
