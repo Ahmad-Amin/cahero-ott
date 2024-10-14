@@ -9,6 +9,7 @@ const ManageBook = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const { id } = useParams();
+  const [loading, setLoading] = useState(false);
   const [BooksData, setBooksData] = useState({
     title: "",
     author: "",
@@ -31,6 +32,7 @@ const ManageBook = () => {
   useEffect(() => {
     const fetchbook = async () => {
       try {
+        setLoading(true);
         const response = await axiosInstance.get(`/books/${id}`);
         const data = response.data;
 
@@ -43,6 +45,8 @@ const ManageBook = () => {
         });
       } catch (error) {
         console.error("Error fetching book data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -52,9 +56,12 @@ const ManageBook = () => {
   const handleDeleteConfirm = async () => {
     if (itemToDelete) {
       try {
+        setLoading(true);
         await axiosInstance.delete(`/books/${itemToDelete.id}`);
       } catch (error) {
         console.error("Error deleting book:", error);
+      } finally{
+        setLoading(false);
       }
     }
     setIsModalOpen(false);
@@ -85,6 +92,7 @@ const ManageBook = () => {
 
       try {
         // Upload the file
+        setLoading(true);
         const uploadResponse = await axiosInstance.post(uploadUrl, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -101,11 +109,14 @@ const ManageBook = () => {
         );
       } catch (error) {
         console.error("Error uploading file:", error);
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   const updateBookData = async (fileUrl, field) => {
+    setLoading(true);
     try {
       const updatedData = {
         ...BooksData,
@@ -116,6 +127,8 @@ const ManageBook = () => {
       console.log("Book updated successfully:", updatedData);
     } catch (error) {
       console.error("Error updating book data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -5,6 +5,7 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import axiosInstance from "../../lib/axiosInstance"; // Import your axios instance
 import { toast, ToastContainer } from "react-toastify"; // Import toast and ToastContainer
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for the toast notifications
+import LoadingWrapper from "../../components/ui/LoadingWrapper";
 
 const CreateBook = () => {
   const [bookData, setBookData] = useState({
@@ -18,6 +19,7 @@ const CreateBook = () => {
   const [imageFileName, setImageFileName] = useState(""); // State for image file name
   const [audioFile, setAudioFile] = useState(null);
   const [audioFileName, setAudioFileName] = useState(""); 
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate(); // To navigate after successful submission
 
@@ -46,6 +48,7 @@ const CreateBook = () => {
 
   const handleSubmit = async () => {
     try {
+      setLoading(true);
       let coverImageUrl = "";
       let audioFileUrl = "";
 
@@ -89,11 +92,13 @@ const CreateBook = () => {
     } catch (error) {
       console.error("Error creating book:", error);
       toast.error("Error creating book: " + error.message); 
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <>
+    <LoadingWrapper loading={loading}>
       <ToastContainer /> {/* Add ToastContainer to your JSX */}
       <Box
         component="main"
@@ -281,7 +286,7 @@ const CreateBook = () => {
           </div>
         </div>
       </Box>
-    </>
+    </LoadingWrapper>
   );
 };
 

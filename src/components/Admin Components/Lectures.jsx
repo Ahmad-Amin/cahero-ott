@@ -7,16 +7,19 @@ import { FaPlay } from "react-icons/fa"; // Import the play icon
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../lib/axiosInstance"; // Import your Axios instance
+import LoadingWrapper from "../ui/LoadingWrapper";
 
 const Lectures = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const [itemToDelete, setItemToDelete] = useState(null); // State to store the selected item for deletion
   const [upcomingLectures, setUpcomingLectures] = useState([]); // State to store the fetched lectures
   const [error, setError] = useState(null); // State to handle errors
+  const [loading, setLoading] = useState(false); 
 
   // Fetch lectures function
   const fetchLectures = async () => {
     try {
+      setLoading(true);
       const response = await axiosInstance.get("/lectures");
       if (Array.isArray(response.data.results)) {
         setUpcomingLectures(response.data.results);
@@ -26,6 +29,8 @@ const Lectures = () => {
     } catch (err) {
       console.error("Error fetching lectures:", err);
       setError("Failed to fetch lectures.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,6 +41,7 @@ const Lectures = () => {
   const handleDeleteConfirm = async () => {
     if (itemToDelete) {
       try {
+        setLoading(true);
         console.log("Ready to Delete Item-> ", itemToDelete.id);
         await axiosInstance.delete(`/lectures/${itemToDelete.id}`);
 
@@ -45,6 +51,8 @@ const Lectures = () => {
         console.log("Deleted:", itemToDelete);
       } catch (error) {
         console.error("Error deleting item:", error);
+      } finally {
+        setLoading(false);
       }
     }
     setIsModalOpen(false);
@@ -70,7 +78,7 @@ const Lectures = () => {
   };
 
   return (
-    <>
+    <LoadingWrapper loading={loading}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
         {upcomingLectures.map((lecture, index) => (
           <div
@@ -131,7 +139,7 @@ const Lectures = () => {
         onConfirm={handleDeleteConfirm} // Handle delete confirmation
         itemType={"Lecture"}
       />
-    </>
+    </LoadingWrapper>
   );
 };
 

@@ -4,16 +4,19 @@ import EditIcon from "@mui/icons-material/Edit";
 import ConfirmDelete from "../../components/Admin Components/ConfirmDelete";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../lib/axiosInstance";
+import LoadingWrapper from "../ui/LoadingWrapper";
 
 const BookCardGrid = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [books, setBooks] = useState([]); // Ensure this starts as an array
   const fallbackImageUrl = `${process.env.PUBLIC_URL}/images/book1.png`; // Fallback image URL
+  const [loading, setLoading] = useState(false); 
 
   // Fetch books function
   const fetchBooks = async () => {
     try {
+      setLoading(true);
       const response = await axiosInstance.get("/books");
       console.log(response.data.results); // Log the response data to check the structure
 
@@ -24,6 +27,8 @@ const BookCardGrid = () => {
       }
     } catch (error) {
       console.error("Error fetching books data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -33,7 +38,9 @@ const BookCardGrid = () => {
 
   const handleDeleteConfirm = async () => {
     if (itemToDelete) {
+
       try {
+        setLoading(true);
         await axiosInstance.delete(`/books/${itemToDelete.id}`);
         
         // Remove the deleted book from state
@@ -42,6 +49,8 @@ const BookCardGrid = () => {
         );
       } catch (error) {
         console.error("Error deleting book:", error);
+      } finally {
+        setLoading(false);
       }
     }
     setIsModalOpen(false);
@@ -53,7 +62,7 @@ const BookCardGrid = () => {
   };
 
   return (
-    <>
+    <LoadingWrapper loading={loading}>
       <div className="min-h-screen bg-transparent p-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
           {books.length > 0 ? (
@@ -103,7 +112,7 @@ const BookCardGrid = () => {
         onConfirm={handleDeleteConfirm}
         itemType="book"
       />
-    </>
+    </LoadingWrapper>
   );
 };
 

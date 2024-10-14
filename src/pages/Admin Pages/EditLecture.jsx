@@ -6,6 +6,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ConfirmDelete from "../../components/Admin Components/ConfirmDelete";
 import axiosInstance from "../../lib/axiosInstance"; // Ensure this is correct
 import { toast } from "react-toastify";
+import LoadingWrapper from "../../components/ui/LoadingWrapper";
 
 const EditLecture = () => {
   const { id } = useParams(); // Extract the ID from the route parameters
@@ -13,6 +14,7 @@ const EditLecture = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const [itemToDelete, setItemToDelete] = useState(null); // Store selected item for deletion
+  const [loading, setLoading] = useState(false)
   const [lecture, setLecture] = useState({
     title: "",
     duration: "",
@@ -72,6 +74,7 @@ const EditLecture = () => {
 
     let updatedVideoUrl = lecture.videoUrl;
     let updatedCoverImageUrl = lecture.coverImageUrl;
+    setLoading(true);
 
     try {
       if (lecture.videoFile) {
@@ -103,6 +106,8 @@ const EditLecture = () => {
     } catch (error) {
       console.error("Error updating lecture:", error);
       toast.error("Failed to update lecture.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -136,7 +141,7 @@ const EditLecture = () => {
   };
 
   return (
-    <>
+    <LoadingWrapper loading={loading}>
       <Box
         component="main"
         sx={{
@@ -337,7 +342,7 @@ const EditLecture = () => {
         onConfirm={handleDeleteConfirm}
         itemType={"Lecture"}
       />
-    </>
+    </LoadingWrapper>
   );
 };
 
