@@ -96,144 +96,115 @@ const CreateLecture = () => {
       await axiosInstance.post("/lectures", lectureToSubmit);
       console.log("Lecture created successfully:", lectureToSubmit);
 
-      toast.success("Lecture created successfully");
+      toast.success("Documentary created successfully");
 
-      navigate("/dashboard/video-lecture");
+      navigate("/dashboard/documentaries");
     } catch (error) {
-      console.error("Error creating lecture:", error);
-      toast.error("Error Creating Lecture");
+      console.error("Error creating Documentary:", error);
+      toast.error("Error Creating Documentary");
     } finally{
       setLoading(false);
     }
   };
 
   return (
-    <LoadingWrapper loading={loading} >
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          backgroundColor: "#101011",
-          minHeight: "100vh",
-          padding: 0,
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        <div className="p-5">
-          <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-semibold text-white py-8">
-              Create Lecture
-            </h1>
-            <Link to="/dashboard/video-lecture">
-              <button className="w-44 h-12 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl ease-in-out transition duration-300">
-                Cancel
-              </button>
-            </Link>
-          </div>
+    <Box
+      component="main"
+      sx={{
+        flexGrow: 1,
+        p: 3,
+        backgroundColor: "#101011",
+        minHeight: "100vh",
+        padding: 0,
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <div className="p-5">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-semibold text-white py-8">Create Documentary</h1>
+          <Link to="/dashboard/documentaries">
+            <button className="w-44 h-12 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl ease-in-out transition duration-300">
+              Cancel
+            </button>
+          </Link>
+        </div>
 
-          <form onSubmit={handleSubmit}>
-            {/* Flexbox for 60% form and 40% image upload */}
-            <div className="flex flex-col md:flex-row gap-10">
-              {/* Form Section - 60% */}
-              <div className="flex-1 w-full md:w-4/6 py-8">
-                <div>
-                  <label
-                    htmlFor="webinar_title"
-                    className="text-white font-normal text-lg block mb-2"
-                  >
-                    Lecture Title
+        <form onSubmit={handleSubmit}>
+          {/* Flexbox for 60% form and 40% image upload */}
+          <div className="flex flex-col md:flex-row gap-10">
+            {/* Form Section - 60% */}
+            <div className="flex-1 w-full md:w-4/6 py-8">
+              <div>
+                <label  className="text-white font-normal text-lg block mb-2">
+                Documentary Title
+                </label>
+                <input
+                  type="text"
+                  id="webinar_title"
+                  name="title"
+                  className="w-full h-16 rounded-xl border-2 border-white focus:border-none bg-transparent px-3 text-white"
+                  placeholder="Enter Documentary Title"
+                  value={lectureData.title}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="flex flex-col md:flex-row gap-10 mt-5">
+                <div className="w-full md:w-1/2">
+                  <label htmlFor="time-input" className="text-white font-normal text-lg block mb-2">
+                    Duration of Documentary
                   </label>
-                  <input
-                    type="text"
-                    id="webinar_title"
-                    name="title"
-                    className="w-full h-16 rounded-xl border-2 border-white focus:border-none bg-transparent px-3 text-white"
-                    placeholder="Enter Webinar Title"
-                    value={lectureData.title}
-                    onChange={handleChange}
-                    required
+                  <InputMask
+                    mask="99:99:99"
+                    value={lectureData.duration} // Ensure this uses lectureData.duration
+                    onChange={handleTimeChange}
+                    className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3"
+                    placeholder="HH:MM:SS"
+                    id="time-input"
                   />
                 </div>
-                <div className="flex flex-col md:flex-row gap-10 mt-5">
-                  <div className="w-full md:w-1/2">
-                    <label
-                      htmlFor="time-input"
-                      className="text-white font-normal text-lg block mb-2"
-                    >
-                      Duration of Lecture
-                    </label>
-                    <InputMask
-                      mask="99:99:99"
-                      value={lectureData.duration} // Ensure this uses lectureData.duration
-                      onChange={handleTimeChange}
-                      className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3"
-                      placeholder="HH:MM:SS"
-                      id="time-input"
-                    />
-                  </div>
-                  <div className="w-full md:w-1/2">
-                    <label
-                      htmlFor="category"
-                      className="text-white font-normal text-lg block mb-2"
-                    >
-                      Category
-                    </label>
-                    <select
-                      id="sort"
-                      name="category"
-                      className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 appearance-none"
-                      value={lectureData.category}
-                      onChange={handleChange}
-                    >
-                      <option className="bg-[#101011] text-white">
-                        Select a Category
-                      </option>
-                      <option
-                        className="bg-[#101011] text-white"
-                        value="Finance"
-                      >
-                        Finance
-                      </option>
-                      <option
-                        className="bg-[#101011] text-white"
-                        value="Technology"
-                      >
-                        Technology
-                      </option>
-                      <option
-                        className="bg-[#101011] text-white"
-                        value="Health"
-                      >
-                        Health
-                      </option>
-                      <option
-                        className="bg-[#101011] text-white"
-                        value="Education"
-                      >
-                        Education
-                      </option>
-                    </select>
-                  </div>
-                </div>
-                <div className="mt-5">
-                  <label
-                    htmlFor="overview"
-                    className="text-white font-normal text-lg block mb-2"
-                  >
-                    Overview
+                <div className="w-full md:w-1/2">
+                  <label htmlFor="category" className="text-white font-normal text-lg block mb-2">
+                    Category
                   </label>
-                  <textarea
-                    id="overview"
-                    name="overview"
-                    className="w-full h-32 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 pt-4 resize-none"
-                    placeholder="Overview"
-                    value={lectureData.overview}
+                  <select
+                    id="sort"
+                    name="category"
+                    className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 appearance-none"
+                    value={lectureData.category}
                     onChange={handleChange}
-                    required
-                  />
+                  >
+                    <option className="bg-[#101011] text-white">Select a Category</option>
+                    <option className="bg-[#101011] text-white" value="Finance">
+                      Finance
+                    </option>
+                    <option className="bg-[#101011] text-white" value="Technology">
+                      Technology
+                    </option>
+                    <option className="bg-[#101011] text-white" value="Health">
+                      Health
+                    </option>
+                    <option className="bg-[#101011] text-white" value="Education">
+                      Education
+                    </option>
+                  </select>
                 </div>
+              </div>
+              <div className="mt-5">
+                <label htmlFor="overview" className="text-white font-normal text-lg block mb-2">
+                  Overview
+                </label>
+                <textarea
+                  id="overview"
+                  name="overview"
+                  className="w-full h-32 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 pt-4 resize-none"
+                  placeholder="Overview"
+                  value={lectureData.overview}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
                 {/* Video Upload Section */}
                 <div className="mt-5 relative">
@@ -275,40 +246,35 @@ const CreateLecture = () => {
                 </div>
               </div>
 
-              {/* Image Upload Section - 40% */}
-              <div className="flex flex-col items-center w-full md:w-1/3 h-full py-8">
-                <label className="text-white font-semibold mb-2">
-                  Cover Image
-                </label>
-                <div className="border-dashed border-2 border-white rounded-lg w-3/4 h-80 flex flex-col items-center justify-center text-white bg-transparent hover:bg-gray-800 transition duration-200">
-                  <input
-                    type="file"
-                    name="coverImage"
-                    accept="image/*"
-                    className="opacity-0 absolute"
-                    onChange={handleFileChange}
-                    required
-                  />
-                  <span className="text-lg">
-                    {imageFileName || "Upload Image"}
-                  </span>
-                </div>
+            {/* Image Upload Section - 40% */}
+            <div className="flex flex-col items-center w-full md:w-1/3 h-full py-8">
+              <label className="text-white font-semibold mb-2">Cover Image</label>
+              <div className="border-dashed border-2 border-white rounded-lg w-3/4 h-80 flex flex-col items-center justify-center text-white bg-transparent hover:bg-gray-800 transition duration-200">
+                <input
+                  type="file"
+                  name="coverImage"
+                  accept="image/*"
+                  className="opacity-0 absolute"
+                  onChange={handleFileChange}
+                  required
+                />
+                <span className="text-lg">{imageFileName || "Upload Image"}</span> 
               </div>
             </div>
-            <div className="flex flex-row justify-end gap-6 mt-8 ml-16 w-3/5">
-              <div className="">
-                <button
-                  type="submit"
-                  className="w-56 h-12 bg-[#6a55ea] hover:bg-[#5242b6] ease-in-out transition duration-300 rounded-xl text-white font-semibold text-lg"
-                >
-                  Save Lecture
-                </button>
-              </div>
+          </div>
+          <div className="flex flex-row justify-end gap-6 mt-8 ml-16 w-3/5">
+            <div className="">
+              <button
+                type="submit"
+                className="w-56 h-12 bg-[#6a55ea] hover:bg-[#5242b6] ease-in-out transition duration-300 rounded-xl text-white font-semibold text-lg"
+              >
+                Save Documentary
+              </button>
             </div>
-          </form>
-        </div>
-      </Box>
-    </LoadingWrapper>
+          </div>
+        </form>
+      </div>
+    </Box>
   );
 };
 

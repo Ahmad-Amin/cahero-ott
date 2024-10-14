@@ -12,7 +12,7 @@ const Lectures = () => {
 
   // Function to handle card click and navigate to the appropriate video player route
   const handleCardClick = (id) => {
-    navigate(`/lectures/${id}`);
+    navigate(`/documentaries/${id}`);
   };
 
   // Dataset for lectures
@@ -102,7 +102,7 @@ const Lectures = () => {
           <LoginedNavbar />
         </div>
         <div style={{ position: "relative", zIndex: 2 }} className="mt-12 flex justify-between items-center">
-          <p className="text-xl mx-8 text-white font-semibold">All Lectures</p>
+          <p className="text-xl mx-8 text-white font-semibold">All Documentaries</p>
           <div className="ml-auto w-auto">
             <SearchBar className="w-full mx-8" />
           </div>
@@ -123,7 +123,7 @@ const Lectures = () => {
         </div>
         
         <div style={{ position: "relative", zIndex: 2 }} className="mt-12 flex justify-between items-center">
-          <p className="text-xl mx-8 text-white font-semibold">Recommended Lectures</p>
+          <p className="text-xl mx-8 text-white font-semibold">Recommended Documentaries</p>
           <div className="ml-auto w-auto"></div>
         </div>
         

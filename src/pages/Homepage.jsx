@@ -33,7 +33,7 @@ export default function Homepage({ window }) {
     { text: "Dashboard", icon: <DashboardIcon />, link: "/" },
     { text: "Webinar", icon: <VideoLibraryIcon />, link: "/webinar" },
     { text: "Books", icon: <LibraryBooksIcon />, link: "/all-books" },
-    { text: "Lectures", icon: <VideoLibraryIcon />, link: "/lectures" },
+    { text: "Documentaries", icon: <VideoLibraryIcon />, link: "/documentaries" },
     { text: "Profile Settings", icon: <TuneIcon />, link: "/profile-settings" },
     { text: "Subscription Plans", icon: <CalendarTodayIcon />, link: "/subscription-plans" },
   ];
@@ -93,7 +93,7 @@ export default function Homepage({ window }) {
 
   const container = window !== undefined ? () => window().document.body : undefined;
 
-  const shouldHideSidebar = location.pathname.includes('/lectures/');
+  const shouldHideSidebar = location.pathname.includes('/documentaries/');
 
   return (
     <Box sx={{ display: "flex" }}>

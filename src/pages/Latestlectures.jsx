@@ -7,7 +7,7 @@ function LatestLectures() {
 
   // Function to handle card click and navigate to the appropriate video player route
   const handleCardClick = (id) => {
-    navigate(`/lectures/${id}`);
+    navigate(`/documentaries/${id}`);
   };
 
   return (

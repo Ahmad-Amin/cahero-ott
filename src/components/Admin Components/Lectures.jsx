@@ -57,11 +57,11 @@ const Lectures = () => {
 
   const handleDeleteClick = (lecture) => {
     setItemToDelete(lecture); // Set the selected item to be deleted
-    setIsModalOpen(true); // Open the modal
+    setIsModalOpen(true); 
   };
 
   if (error) {
-    return <div>{error}</div>; // Error state
+    return <div>{error}</div>; 
   }
 
   const formatDuration = (duration) => {
@@ -116,7 +116,7 @@ const Lectures = () => {
 
               <div className="flex justify-start mt-6 gap-3">
                 <Link
-                  to={`/dashboard/video-lecture/${lecture.id}/edit-lecture`}
+                  to={`/dashboard/documentaries/${lecture.id}/edit-documentary`}
                 >
                   <ModeEditIcon className="text-[#05c283] cursor-pointer hover:text-[#038f60] ease-in-out transition-colors duration-300" />
                 </Link>
@@ -134,7 +134,7 @@ const Lectures = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)} // Close modal
         onConfirm={handleDeleteConfirm} // Handle delete confirmation
-        itemType={"Lecture"}
+        itemType={"Documentary"}
       />
     </LoadingWrapper>
   );

@@ -20,11 +20,11 @@ const RecordedWebinars = () => {
       <div className="p-5">
         <div className="flex flex-row items-center gap-6">
           <h1 className="flex-1 text-3xl font-semibold text-white py-8">
-            Video Lectures
+            Documentaries
           </h1>
-          <Link to="/dashboard/video-lecture/create-lecture">
-            <button className="w-44 h-12 hover:bg-[#5242b6] bg-[#6a55ea] text-white text-lg font-semibold rounded-lg ease-in-out transition duration-300">
-              Create Lecture
+          <Link to="/dashboard/documentaries/create-documentary">
+            <button className="w-auto px-2 h-12 hover:bg-[#5242b6] bg-[#6a55ea] text-white text-lg font-semibold rounded-lg ease-in-out transition duration-300">
+              Create Documentary
             </button>
           </Link>
           <div className="flex items-center">

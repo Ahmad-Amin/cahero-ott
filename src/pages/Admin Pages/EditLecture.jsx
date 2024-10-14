@@ -104,11 +104,11 @@ const EditLecture = () => {
 
       await axiosInstance.patch(`/lectures/${id}`, lectureToUpdate);
 
-      navigate("/dashboard/video-lecture");
-      toast.success("Lecture updated successfully");
+      navigate("/dashboard/documentaries");
+      toast.success("Documentary updated successfully");
     } catch (error) {
-      console.error("Error updating lecture:", error);
-      toast.error("Failed to update lecture.");
+      console.error("Error updating Documentary:", error);
+      toast.error("Failed to update Documentary.");
     } finally {
       setLoading(false);
     }
@@ -161,10 +161,10 @@ const EditLecture = () => {
         <div className="p-5">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-semibold text-white py-8">
-              Edit Lecture
+              Edit Documentary
             </h1>
             <div className="space-x-3">
-              <Link to="/dashboard/video-lecture">
+              <Link to="/dashboard/documentaries">
                 <button className="w-44 h-12 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl ease-in-out transition duration-300">
                   Cancel
                 </button>
@@ -184,7 +184,7 @@ const EditLecture = () => {
                   htmlFor="lecture_title"
                   className="text-white font-normal text-lg block mb-2"
                 >
-                  Lecture Title
+                  Documentary Title
                 </label>
                 <input
                   type="text"
@@ -193,7 +193,7 @@ const EditLecture = () => {
                   value={lecture.title}
                   onChange={handleInputChange}
                   className="w-full h-16 rounded-xl border-2 border-white focus:border-none bg-transparent px-3 text-white"
-                  placeholder="Enter Lecture Title"
+                  placeholder="Enter Documentary Title"
                   required
                 />
               </div>
@@ -205,7 +205,7 @@ const EditLecture = () => {
                     htmlFor="duration"
                     className="text-white font-normal text-lg block mb-2"
                   >
-                    Duration of Lecture
+                    Duration of Documentary
                   </label>
                   <input
                     type="text"
@@ -332,7 +332,7 @@ const EditLecture = () => {
               onClick={handleSubmit}
               className="w-56 h-12 bg-[#6a55ea] hover:bg-[#5242b6] ease-in-out transition duration-300 rounded-xl text-white font-semibold text-lg"
             >
-              Update Lecture
+              Update Documentary
             </button>
           </div>
         </div>
@@ -343,7 +343,7 @@ const EditLecture = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleDeleteConfirm}
-        itemType={"Lecture"}
+        itemType={"documentary"}
       />
     </LoadingWrapper>
   );

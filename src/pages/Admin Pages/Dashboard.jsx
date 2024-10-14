@@ -58,8 +58,8 @@ export default function AdminPanelLayout() {
     switch (secondSegment) {
       case "webinars":
         return "Webinars";
-      case "video-lecture":
-        return "Video Lectures";
+      case "documentaries":
+        return "Documentaries";
       case "recordings":
         return "Recordings";
       case "subscription":
@@ -81,9 +81,9 @@ export default function AdminPanelLayout() {
     { text: "Dashboard", icon: <DashboardIcon />, link: "/dashboard" },
     { text: "Webinar", icon: <LaptopIcon />, link: "/dashboard/webinars" },
     {
-      text: "Video Lectures",
+      text: "Documentaries",
       icon: <VideocamIcon />,
-      link: "/dashboard/video-lecture",
+      link: "/dashboard/documentaries",
     },
     {
       text: "Recording",
