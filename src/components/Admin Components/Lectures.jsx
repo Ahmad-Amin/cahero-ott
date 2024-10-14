@@ -41,7 +41,6 @@ const Lectures = () => {
   const handleDeleteConfirm = async () => {
     if (itemToDelete) {
       try {
-        setLoading(true);
         console.log("Ready to Delete Item-> ", itemToDelete.id);
         await axiosInstance.delete(`/lectures/${itemToDelete.id}`);
 
@@ -51,8 +50,6 @@ const Lectures = () => {
         console.log("Deleted:", itemToDelete);
       } catch (error) {
         console.error("Error deleting item:", error);
-      } finally {
-        setLoading(false);
       }
     }
     setIsModalOpen(false);

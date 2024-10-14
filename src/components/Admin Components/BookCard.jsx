@@ -40,7 +40,6 @@ const BookCardGrid = () => {
     if (itemToDelete) {
 
       try {
-        setLoading(true);
         await axiosInstance.delete(`/books/${itemToDelete.id}`);
         
         // Remove the deleted book from state
@@ -49,8 +48,6 @@ const BookCardGrid = () => {
         );
       } catch (error) {
         console.error("Error deleting book:", error);
-      } finally {
-        setLoading(false);
       }
     }
     setIsModalOpen(false);

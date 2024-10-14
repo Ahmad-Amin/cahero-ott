@@ -30,6 +30,7 @@ const EditLecture = () => {
   useEffect(() => {
     const fetchLectureDetails = async () => {
       try {
+        setLoading(true);
         const response = await axiosInstance.get(`/lectures/${id}`);
         const lectureData = response.data;
         setLecture({
@@ -43,6 +44,8 @@ const EditLecture = () => {
       } catch (error) {
         console.error("Error fetching lecture details:", error);
         toast.error("Failed to fetch lecture details.");
+      } finally {
+        setLoading(false);
       }
     };
 
