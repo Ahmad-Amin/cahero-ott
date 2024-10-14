@@ -4,7 +4,8 @@ import { Box } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ConfirmDelete from "../../components/Admin Components/ConfirmDelete";
-import axiosInstance from "../../lib/axiosInstance"; // Ensure this i
+import axiosInstance from "../../lib/axiosInstance"; // Ensure this is correct
+import { toast } from "react-toastify";
 
 const EditLecture = () => {
   const { id } = useParams(); // Extract the ID from the route parameters
@@ -39,13 +40,14 @@ const EditLecture = () => {
         });
       } catch (error) {
         console.error("Error fetching lecture details:", error);
+        toast.error("Failed to fetch lecture details.");
       }
     };
 
     fetchLectureDetails();
   }, [id]);
 
-  // Upload file helper function (similar to your original code)
+  // Upload file helper function
   const uploadFile = async (file, uploadUrl) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -59,7 +61,8 @@ const EditLecture = () => {
       return response.data.fileUrl;
     } catch (error) {
       console.error("Error uploading file:", error);
-      return null; // Handle error appropriately
+      toast.error("Failed to upload file.");
+      return null;
     }
   };
 
@@ -72,20 +75,16 @@ const EditLecture = () => {
 
     try {
       if (lecture.videoFile) {
-        // Upload new video if changed
-        console.log("Uploading new video...");
         updatedVideoUrl = await uploadFile(lecture.videoFile, "/upload/video");
-        console.log("Video uploaded successfully:", updatedVideoUrl);
+        if (!updatedVideoUrl) return; // Stop if video upload fails
       }
 
       if (lecture.coverImageFile) {
-        // Upload new cover image if changed
-        console.log("Uploading new cover image...");
         updatedCoverImageUrl = await uploadFile(
           lecture.coverImageFile,
           "/upload/image"
         );
-        console.log("Image uploaded successfully:", updatedCoverImageUrl);
+        if (!updatedCoverImageUrl) return; // Stop if image upload fails
       }
 
       const lectureToUpdate = {
@@ -98,10 +97,12 @@ const EditLecture = () => {
       };
 
       await axiosInstance.patch(`/lectures/${id}`, lectureToUpdate);
-      console.log("Lecture updated successfully:", lectureToUpdate);
+
       navigate("/dashboard/video-lecture");
+      toast.success("Lecture updated successfully");
     } catch (error) {
       console.error("Error updating lecture:", error);
+      toast.error("Failed to update lecture.");
     }
   };
 
@@ -148,6 +149,7 @@ const EditLecture = () => {
           overflow: "hidden",
         }}
       >
+        {/* Main Form */}
         <div className="p-5">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-semibold text-white py-8">
@@ -161,7 +163,7 @@ const EditLecture = () => {
               </Link>
               <DeleteOutlineIcon
                 className="text-[#e53939] cursor-pointer hover:text-[#b22c2c]  ease-in-out transition-colors duration-300"
-                onClick={() => handleDeleteClick(lecture)}
+                onClick={handleDeleteClick}
               />
             </div>
           </div>

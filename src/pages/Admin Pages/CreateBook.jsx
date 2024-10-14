@@ -17,7 +17,7 @@ const CreateBook = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imageFileName, setImageFileName] = useState(""); // State for image file name
   const [audioFile, setAudioFile] = useState(null);
-  const [audioFileName, setAudioFileName] = useState(""); // State for audio file name
+  const [audioFileName, setAudioFileName] = useState(""); 
 
   const navigate = useNavigate(); // To navigate after successful submission
 

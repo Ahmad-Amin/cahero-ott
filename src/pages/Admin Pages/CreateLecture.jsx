@@ -1,10 +1,11 @@
-import React, { useState  } from "react";
-import { useNavigate } from "react-router-dom"
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import axiosInstance from "../../lib/axiosInstance"; // Make sure this is correctly set up for Axios
 import InputMask from "react-input-mask";
+import { toast } from "react-toastify";
 
 const CreateLecture = () => {
   const [lectureData, setLectureData] = useState({
@@ -15,6 +16,10 @@ const CreateLecture = () => {
     videoFile: null,
     coverImage: null,
   });
+
+  const [videoFileName, setVideoFileName] = useState("Choose MP4 Video"); // State to hold video file name
+  const [imageFileName, setImageFileName] = useState("Upload"); // State to hold image file name
+  
   const navigate = useNavigate(); // Use the hook
 
   const handleChange = (e) => {
@@ -35,6 +40,13 @@ const CreateLecture = () => {
     const { name, files } = e.target;
     if (files.length > 0) {
       setLectureData({ ...lectureData, [name]: files[0] });
+      
+      // Set file name for display based on input type
+      if (name === "videoFile") {
+        setVideoFileName(files[0].name);
+      } else if (name === "coverImage") {
+        setImageFileName(files[0].name);
+      }
     }
   };
 
@@ -48,20 +60,20 @@ const CreateLecture = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      return response.data.fileUrl; 
+      return response.data.fileUrl;
     } catch (error) {
       console.error("Error uploading file:", error);
       return null; // Handle error appropriately
     }
   };
- 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       console.log("Uploading Video");
       const videoUrl = await uploadFile(lectureData.videoFile, "/upload/video");
       console.log("Video Upload Success");
-      
+
       console.log("Uploading Image");
       const coverImageUrl = await uploadFile(
         lectureData.coverImage,
@@ -80,9 +92,13 @@ const CreateLecture = () => {
 
       await axiosInstance.post("/lectures", lectureToSubmit);
       console.log("Lecture created successfully:", lectureToSubmit);
+
+      toast.success("Lecture created successfully");
+
       navigate("/dashboard/video-lecture");
     } catch (error) {
       console.error("Error creating lecture:", error);
+      toast.error("Error Creating Lecture");
     }
   };
 
@@ -101,9 +117,7 @@ const CreateLecture = () => {
     >
       <div className="p-5">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-semibold text-white py-8">
-            Create Lecture
-          </h1>
+          <h1 className="text-3xl font-semibold text-white py-8">Create Lecture</h1>
           <Link to="/dashboard/video-lecture">
             <button className="w-44 h-12 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl ease-in-out transition duration-300">
               Cancel
@@ -117,10 +131,7 @@ const CreateLecture = () => {
             {/* Form Section - 60% */}
             <div className="flex-1 w-full md:w-4/6 py-8">
               <div>
-                <label
-                  htmlFor="webinar_title"
-                  className="text-white font-normal text-lg block mb-2"
-                >
+                <label htmlFor="webinar_title" className="text-white font-normal text-lg block mb-2">
                   Lecture Title
                 </label>
                 <input
@@ -136,10 +147,7 @@ const CreateLecture = () => {
               </div>
               <div className="flex flex-col md:flex-row gap-10 mt-5">
                 <div className="w-full md:w-1/2">
-                  <label
-                    htmlFor="time-input"
-                    className="text-white font-normal text-lg block mb-2"
-                  >
+                  <label htmlFor="time-input" className="text-white font-normal text-lg block mb-2">
                     Duration of Lecture
                   </label>
                   <InputMask
@@ -152,10 +160,7 @@ const CreateLecture = () => {
                   />
                 </div>
                 <div className="w-full md:w-1/2">
-                  <label
-                    htmlFor="category"
-                    className="text-white font-normal text-lg block mb-2"
-                  >
+                  <label htmlFor="category" className="text-white font-normal text-lg block mb-2">
                     Category
                   </label>
                   <select
@@ -165,35 +170,24 @@ const CreateLecture = () => {
                     value={lectureData.category}
                     onChange={handleChange}
                   >
-                    <option className="bg-[#101011] text-white">
-                      Select a Category
-                    </option>
+                    <option className="bg-[#101011] text-white">Select a Category</option>
                     <option className="bg-[#101011] text-white" value="Finance">
                       Finance
                     </option>
-                    <option
-                      className="bg-[#101011] text-white"
-                      value="Technology"
-                    >
+                    <option className="bg-[#101011] text-white" value="Technology">
                       Technology
                     </option>
                     <option className="bg-[#101011] text-white" value="Health">
                       Health
                     </option>
-                    <option
-                      className="bg-[#101011] text-white"
-                      value="Education"
-                    >
+                    <option className="bg-[#101011] text-white" value="Education">
                       Education
                     </option>
                   </select>
                 </div>
               </div>
               <div className="mt-5">
-                <label
-                  htmlFor="overview"
-                  className="text-white font-normal text-lg block mb-2"
-                >
+                <label htmlFor="overview" className="text-white font-normal text-lg block mb-2">
                   Overview
                 </label>
                 <textarea
@@ -209,11 +203,8 @@ const CreateLecture = () => {
 
               {/* Video Upload Section */}
               <div className="mt-5 relative">
-                <label
-                  className="text-white font-normal text-lg block mb-2"
-                  htmlFor="video-upload"
-                >
-                  Video Upload
+                <label className="text-white font-normal text-lg block mb-2" htmlFor="video-upload">
+                  Video Upload (Optional)
                 </label>
                 <input
                   type="file"
@@ -225,7 +216,7 @@ const CreateLecture = () => {
                   required
                 />
                 <div className="w-full h-16 rounded-xl border-2 border-white bg-transparent px-3 text-white flex items-center justify-between">
-                  <span className="text-white">Choose MP4 Video</span>
+                  <span className="text-white">{videoFileName || "Upload MP4 Video"}</span> {/* Display the video file name */}
                   <FileUploadIcon
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -246,9 +237,7 @@ const CreateLecture = () => {
 
             {/* Image Upload Section - 40% */}
             <div className="flex flex-col items-center w-full md:w-1/3 h-full py-8">
-              <label className="text-white font-semibold mb-2">
-                Cover Image
-              </label>
+              <label className="text-white font-semibold mb-2">Cover Image</label>
               <div className="border-dashed border-2 border-white rounded-lg w-3/4 h-80 flex flex-col items-center justify-center text-white bg-transparent hover:bg-gray-800 transition duration-200">
                 <input
                   type="file"
@@ -258,8 +247,7 @@ const CreateLecture = () => {
                   onChange={handleFileChange}
                   required
                 />
-                <span className="text-lg">Upload</span>
-                <span className="text-gray-400">or drag and drop</span>
+                <span className="text-lg">{imageFileName || "Upload Image"}</span> 
               </div>
             </div>
           </div>

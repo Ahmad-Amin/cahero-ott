@@ -11,31 +11,35 @@ const BookCardGrid = () => {
   const [books, setBooks] = useState([]); // Ensure this starts as an array
   const fallbackImageUrl = `${process.env.PUBLIC_URL}/images/book1.png`; // Fallback image URL
 
-  useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const response = await axiosInstance.get("/books");
-        console.log(response.data.results); // Log the response data to check the structure
+  // Fetch books function
+  const fetchBooks = async () => {
+    try {
+      const response = await axiosInstance.get("/books");
+      console.log(response.data.results); // Log the response data to check the structure
 
-        if (Array.isArray(response.data.results)) {
-          setBooks(response.data.results); // Set the fetched books data to state
-        } else {
-          console.error("Books data is not an array");
-        }
-      } catch (error) {
-        console.error("Error fetching books data:", error);
+      if (Array.isArray(response.data.results)) {
+        setBooks(response.data.results); // Set the fetched books data to state
+      } else {
+        console.error("Books data is not an array");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching books data:", error);
+    }
+  };
 
-    fetchBooks();
+  useEffect(() => {
+    fetchBooks(); // Call the fetch function on mount
   }, []);
 
   const handleDeleteConfirm = async () => {
     if (itemToDelete) {
       try {
         await axiosInstance.delete(`/books/${itemToDelete.id}`);
-        // Optionally refresh the books list after deletion
-        setBooks((prevBooks) => prevBooks.filter(book => book.id !== itemToDelete.id));
+        
+        // Remove the deleted book from state
+        setBooks((prevBooks) =>
+          prevBooks.filter((book) => book.id !== itemToDelete.id)
+        );
       } catch (error) {
         console.error("Error deleting book:", error);
       }
@@ -44,8 +48,8 @@ const BookCardGrid = () => {
   };
 
   const handleDeleteClick = (book) => {
-    setItemToDelete(book);
-    setIsModalOpen(true);
+    setItemToDelete(book); // Set the selected book to be deleted
+    setIsModalOpen(true); // Open the modal
   };
 
   return (

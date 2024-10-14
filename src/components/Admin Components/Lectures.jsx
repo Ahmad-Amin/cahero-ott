@@ -14,35 +14,39 @@ const Lectures = () => {
   const [upcomingLectures, setUpcomingLectures] = useState([]); // State to store the fetched lectures
   const [error, setError] = useState(null); // State to handle errors
 
-  useEffect(() => {
-    const fetchLectures = async () => {
-      try {
-        const response = await axiosInstance.get("/lectures");
-        if (Array.isArray(response.data.results)) {
-          console.log(response.data.results);
-          setUpcomingLectures(response.data.results);
-        } else {
-          setError("Unexpected response format."); // Handle unexpected response format
-        }
-      } catch (err) {
-        console.error("Error fetching lectures:", err);
-        setError("Failed to fetch lectures.");
+  // Fetch lectures function
+  const fetchLectures = async () => {
+    try {
+      const response = await axiosInstance.get("/lectures");
+      if (Array.isArray(response.data.results)) {
+        setUpcomingLectures(response.data.results);
+      } else {
+        setError("Unexpected response format."); // Handle unexpected response format
       }
-    };
+    } catch (err) {
+      console.error("Error fetching lectures:", err);
+      setError("Failed to fetch lectures.");
+    }
+  };
 
-    fetchLectures(); // Call the fetch function
-  }, []); // Empty dependency array means this effect runs once on mount
+  useEffect(() => {
+    fetchLectures(); // Call the fetch function on mount
+  }, []);
 
   const handleDeleteConfirm = async () => {
-    if(itemToDelete)
+    if (itemToDelete) {
       try {
-        console.log("Ready to Delete Item-> ", itemToDelete.id)
-        await axiosInstance.delete(`/lectures/${itemToDelete.id}`)
+        console.log("Ready to Delete Item-> ", itemToDelete.id);
+        await axiosInstance.delete(`/lectures/${itemToDelete.id}`);
+
+        // Re-fetch the updated lecture list
+        await fetchLectures();
+
         console.log("Deleted:", itemToDelete);
-    } catch(error){
-      console.error("Error deleting item:", error);
+      } catch (error) {
+        console.error("Error deleting item:", error);
+      }
     }
-     // Log or perform deletion for the selected item
     setIsModalOpen(false);
   };
 
@@ -54,6 +58,7 @@ const Lectures = () => {
   if (error) {
     return <div>{error}</div>; // Error state
   }
+
   const formatDuration = (duration) => {
     const [hours, minutes, seconds] = duration.split(":");
 
