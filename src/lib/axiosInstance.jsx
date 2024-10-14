@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const axiosInstance = axios.create({
-  baseURL: "https://cahero-ott-backend.onrender.com",
+  baseURL: "https://cahero-ott-backend.onrender.com/api",
 });
 
 axiosInstance.interceptors.request.use(
