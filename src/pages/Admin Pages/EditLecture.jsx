@@ -14,7 +14,7 @@ const EditLecture = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const [itemToDelete, setItemToDelete] = useState(null); // Store selected item for deletion
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [lecture, setLecture] = useState({
     title: "",
     duration: "",
@@ -126,10 +126,24 @@ const EditLecture = () => {
   // Handle file changes (video or cover image)
   const handleFileChange = (e) => {
     const { name, files } = e.target;
-    setLecture((prevState) => ({
-      ...prevState,
-      [name === "video" ? "videoFile" : "coverImageFile"]: files[0],
-    }));
+
+    // Check file size limit (20MB)
+    const maxFileSizeMB = 20;
+    const maxFileSizeBytes = maxFileSizeMB * 1024 * 1024;
+
+    if (files.length > 0) {
+      const file = files[0];
+
+      if (file.size > maxFileSizeBytes) {
+        toast.error(`File size exceeds ${maxFileSizeMB}MB limit.`);
+        return; // Stop the function if file size is too large
+      }
+
+      setLecture((prevState) => ({
+        ...prevState,
+        [name === "video" ? "videoFile" : "coverImageFile"]: file,
+      }));
+    }
   };
 
   // Handle delete confirmation
@@ -142,7 +156,7 @@ const EditLecture = () => {
     setItemToDelete(lecture); // Set the selected item to be deleted
     setIsModalOpen(true); // Open the modal
   };
-
+  
   return (
     <LoadingWrapper loading={loading}>
       <Box

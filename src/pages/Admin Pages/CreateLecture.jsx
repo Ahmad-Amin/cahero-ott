@@ -20,7 +20,7 @@ const CreateLecture = () => {
 
   const [videoFileName, setVideoFileName] = useState("Choose MP4 Video"); // State to hold video file name
   const [imageFileName, setImageFileName] = useState("Upload"); // State to hold image file name
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate(); // Use the hook
 
@@ -40,14 +40,25 @@ const CreateLecture = () => {
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
+    const maxFileSizeMB = 20;
+    const maxFileSizeBytes = maxFileSizeMB * 1024 * 1024;
+
     if (files.length > 0) {
-      setLectureData({ ...lectureData, [name]: files[0] });
+      const file = files[0];
+
+      // Check if the file size exceeds 20MB
+      if (file.size > maxFileSizeBytes) {
+        toast.error(`${name === "videoFile" ? "Video" : "Image"} file exceeds 20MB limit. Please upload a smaller file.`);
+        return; // Stop the function if the file size is too large
+      }
+
+      setLectureData({ ...lectureData, [name]: file });
 
       // Set file name for display based on input type
       if (name === "videoFile") {
-        setVideoFileName(files[0].name);
+        setVideoFileName(file.name);
       } else if (name === "coverImage") {
-        setImageFileName(files[0].name);
+        setImageFileName(file.name);
       }
     }
   };
@@ -102,10 +113,11 @@ const CreateLecture = () => {
     } catch (error) {
       console.error("Error creating Documentary:", error);
       toast.error("Error Creating Documentary");
-    } finally{
+    } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <Box

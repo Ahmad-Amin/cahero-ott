@@ -4,6 +4,7 @@ import { Link, useNavigate , useParams } from "react-router-dom";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import ConfirmDelete from "../../components/Admin Components/ConfirmDelete";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { toast } from "react-toastify";
 import axiosInstance from "../../lib/axiosInstance";
 const ManageBook = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,9 +76,20 @@ const ManageBook = () => {
   // Handle file upload changes
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
+  
     if (file) {
+      // Check if the file size exceeds 5MB (5 * 1024 * 1024 = 5242880 bytes)
+      const maxFileSizeMB = 5;
+      const maxFileSizeBytes = maxFileSizeMB * 1024 * 1024;
+  
+      if (file.size > maxFileSizeBytes) {
+        console.error("Error: File size exceeds 5MB.");
+        toast.error("File size exceeds the 5MB limit. Please upload a smaller file.");
+        return; // Stop the function if file size is too large
+      }
+  
       console.log("Uploaded file:", file.name);
-
+  
       let uploadUrl;
       if (e.target.id === "audio-upload") {
         uploadUrl = "/upload/audio";
@@ -86,10 +98,10 @@ const ManageBook = () => {
         uploadUrl = "/upload/image";
         setBooksData((prev) => ({ ...prev, coverImageUrl: file.name })); // temporarily store file name
       }
-
+  
       const formData = new FormData();
       formData.append("file", file);
-
+  
       try {
         // Upload the file
         setLoading(true);
@@ -98,10 +110,10 @@ const ManageBook = () => {
             "Content-Type": "multipart/form-data",
           },
         });
-
+  
         // Assuming the response contains the URL of the uploaded file
         const fileUrl = uploadResponse.data.fileUrl;
-
+  
         // Now update the book details with the new URLs
         await updateBookData(
           fileUrl,
@@ -114,7 +126,7 @@ const ManageBook = () => {
       }
     }
   };
-
+  
   const updateBookData = async (fileUrl, field) => {
     setLoading(true);
     try {

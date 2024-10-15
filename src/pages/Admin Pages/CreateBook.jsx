@@ -20,6 +20,7 @@ const CreateBook = () => {
   const [audioFile, setAudioFile] = useState(null);
   const [audioFileName, setAudioFileName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [audioError, setAudioError] = useState(""); // State for audio file size error
 
   const navigate = useNavigate(); // To navigate after successful submission
 
@@ -44,10 +45,14 @@ const CreateBook = () => {
       const maxSize = 5 * 1024 * 1024; // 5MB in bytes
 
       if (file.size > maxSize) {
-        toast.error("Audio file size exceeds 5MB. Please upload a smaller file.");
+        setAudioError("Audio file size exceeds 5MB. Please upload a smaller file.");
+        toast.error("Audio file size exceeds 5MB. Please upload a smaller file.")
+        setAudioFile(null); 
+        setAudioFileName(""); // Reset the file name
         return;
       }
 
+      setAudioError(""); // Clear any previous errors
       setAudioFile(file);
       setAudioFileName(file.name); // Set the audio file name
     }
@@ -267,6 +272,9 @@ const CreateBook = () => {
                   </span>
                   <FileUploadIcon className="w-6 h-6 text-white" />
                 </div>
+                {audioError && (
+                  <p className="text-red-500 mt-2">{audioError}</p>
+                )}
               </div>
             </div>
 
