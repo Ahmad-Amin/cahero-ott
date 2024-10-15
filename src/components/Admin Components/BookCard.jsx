@@ -13,7 +13,6 @@ const BookCardGrid = () => {
   const fallbackImageUrl = `${process.env.PUBLIC_URL}/images/book1.png`; // Fallback image URL
   const [loading, setLoading] = useState(false); 
 
-  // Fetch books function
   const fetchBooks = async () => {
     try {
       setLoading(true);
@@ -66,7 +65,7 @@ const BookCardGrid = () => {
             books.map((book) => (
               <div
                 key={book.id} // Use the book ID as the key
-                className="bg-transparent rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105"
+                className="bg-transparent h-full rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105"
               >
                 <img
                   src={book.coverImageUrl || fallbackImageUrl} // Use fallback if no coverImageUrl
@@ -75,7 +74,7 @@ const BookCardGrid = () => {
                     e.target.onerror = null; // Prevent infinite loop if fallback image also fails
                     e.target.src = fallbackImageUrl; // Set fallback image
                   }}
-                  className="w-full h-auto object-cover scale-105"
+                  className="w-full h-2/3 object-cover scale-105 overflow-hidden"
                 />
 
                 <div className="p-4 h-auto space-y-3 flex flex-col justify-between">

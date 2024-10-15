@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import axiosInstance from "../../lib/axiosInstance"; // Import your axios instance
 import { toast, ToastContainer } from "react-toastify"; // Import toast and ToastContainer
-import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for the toast notifications
+import "react-toastify/dist/ReactToastify.css"; // Import the CSS for the toast notifications
 import LoadingWrapper from "../../components/ui/LoadingWrapper";
 
 const CreateBook = () => {
@@ -18,7 +18,7 @@ const CreateBook = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imageFileName, setImageFileName] = useState(""); // State for image file name
   const [audioFile, setAudioFile] = useState(null);
-  const [audioFileName, setAudioFileName] = useState(""); 
+  const [audioFileName, setAudioFileName] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate(); // To navigate after successful submission
@@ -41,6 +41,13 @@ const CreateBook = () => {
   const handleAudioChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+
+      if (file.size > maxSize) {
+        toast.error("Audio file size exceeds 5MB. Please upload a smaller file.");
+        return;
+      }
+
       setAudioFile(file);
       setAudioFileName(file.name); // Set the audio file name
     }
@@ -52,7 +59,6 @@ const CreateBook = () => {
       let coverImageUrl = "";
       let audioFileUrl = "";
 
-      // Upload image file
       if (imageFile) {
         const formData = new FormData();
         formData.append("file", imageFile);
@@ -82,16 +88,24 @@ const CreateBook = () => {
       }
 
       const response = await axiosInstance.post("/books", {
-        ...bookData,
-        coverImageUrl,
-        audioFileUrl,
+        title: bookData.title,
+        author: bookData.author,
+        genre: bookData.genre,
+        description: bookData.description,
+        coverImageUrl: coverImageUrl,
+        audioFileUrl: audioFileUrl,
       });
 
-        toast.success("Book uploaded successfully!"); 
-        navigate("/dashboard/book-creation");
+      toast.success("Book uploaded successfully!");
+      navigate("/dashboard/book-creation");
     } catch (error) {
-      console.error("Error creating book:", error);
-      toast.error("Error creating book: " + error.message); 
+      if (error.response && error.response.data && error.response.data.message) {
+        // If the error contains a message from the server, display it
+        toast.error("Error creating book: " + error.response.data.message);
+      } else {
+        // Default error message if no specific message is available
+        toast.error("Error creating book: " + error.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -269,7 +283,9 @@ const CreateBook = () => {
                   onChange={handleImageChange}
                 />
                 <span className="text-lg">{imageFileName || "Upload"}</span>
-                <span className="text-gray-400">Browse from your local machine</span>
+                <span className="text-gray-400">
+                  Browse from your local machine
+                </span>
               </div>
             </div>
           </div>
