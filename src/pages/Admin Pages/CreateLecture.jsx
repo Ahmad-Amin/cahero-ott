@@ -54,7 +54,6 @@ const CreateLecture = () => {
 
       setLectureData({ ...lectureData, [name]: file });
 
-      // Set file name for display based on input type
       if (name === "videoFile") {
         setVideoFileName(file.name);
       } else if (name === "coverImage") {

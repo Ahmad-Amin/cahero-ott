@@ -11,6 +11,7 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
       }
     };
 
+
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
@@ -24,6 +25,18 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
 
   if (!isOpen || !itemType) return null;
 
+  const getUserTypeColor = (role) => {
+    switch (role.toLowerCase()) {  
+      case 'host':
+        return '#FFEA00';
+      case 'admin':
+        return '#46d133';
+      case 'participant':
+        return '#6a55ea';
+      default:
+        return 'white';
+    }}
+  
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div
@@ -51,11 +64,11 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
 
         <div className="flex flex-row w-full h-auto mb-4">
           <h1 className="flex-1 text-white text-base font-medium opacity-70">Full Name</h1>
-          <p className="text-white text-base font-medium">{itemType.fullName}</p>
+          <p className="text-white text-base font-medium">{itemType.firstName}&nbsp;{itemType.lastName}</p>
         </div>
         <div className="flex flex-row w-full h-auto mb-4">
           <h1 className="flex-1 text-white text-base font-medium opacity-70">User Type</h1>
-          <p className="text-white text-base font-medium">{itemType.userType}</p>
+          <p className="text-white text-base font-medium" style={{ color: getUserTypeColor(itemType.role) }}>{itemType.role}</p>
         </div>
         <div className="flex flex-row w-full h-auto mb-4">
           <h1 className="flex-1 text-white text-base font-medium opacity-70">Phone Number</h1>

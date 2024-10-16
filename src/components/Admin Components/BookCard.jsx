@@ -10,7 +10,6 @@ const BookCardGrid = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [books, setBooks] = useState([]); // Ensure this starts as an array
-  const fallbackImageUrl = `${process.env.PUBLIC_URL}/images/book1.png`; // Fallback image URL
   const [loading, setLoading] = useState(false); 
 
   const fetchBooks = async () => {
@@ -68,11 +67,10 @@ const BookCardGrid = () => {
                 className="bg-transparent h-full rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105"
               >
                 <img
-                  src={book.coverImageUrl || fallbackImageUrl} // Use fallback if no coverImageUrl
+                  src={book.coverImageUrl} // Use fallback if no coverImageUrl
                   alt={book.title}
                   onError={(e) => {
                     e.target.onerror = null; // Prevent infinite loop if fallback image also fails
-                    e.target.src = fallbackImageUrl; // Set fallback image
                   }}
                   className="w-full h-2/3 object-cover scale-105 overflow-hidden"
                 />
