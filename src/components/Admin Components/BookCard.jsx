@@ -72,11 +72,11 @@ const BookCardGrid = () => {
                   onError={(e) => {
                     e.target.onerror = null; // Prevent infinite loop if fallback image also fails
                   }}
-                  className="w-full h-2/3 object-cover scale-105 overflow-hidden"
+                  className="w-full h-64 object-cover scale-105 overflow-hidden"
                 />
 
                 <div className="p-4 h-auto space-y-3 flex flex-col justify-between">
-                  <h3 className="text-lg font-semibold h-14 text-white">
+                  <h3 className="text-lg font-semibold text-white">
                     {book.title}
                   </h3>
                   <p className="text-white text-sm opacity-75">
@@ -84,10 +84,9 @@ const BookCardGrid = () => {
                   </p>
                   <div className="space-x-2">
                     <DeleteOutlineIcon
-                      className="text-[#e53939] hover:text-[#b22c2c]"
+                      className="text-[#e53939] hover:text-[#b22c2c] cursor-pointer"
                       onClick={() => handleDeleteClick(book)}
                     />
-                    {/* Update Link to include book ID */}
                     <Link to={`/dashboard/book-creation/${book.id}/manage-book`}>
                       <EditIcon className="text-[#05c283] hover:text-[#038f60]" />
                     </Link>
