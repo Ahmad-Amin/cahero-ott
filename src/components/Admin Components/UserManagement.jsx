@@ -6,16 +6,27 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
   const modalRef = useRef();
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
-    firstName: itemType?.firstName || "",
-    lastName: itemType?.lastName || "",
-    role: itemType?.role || "",
-    phoneNumber: itemType?.phoneNumber || "",
+    firstName: "",
+    lastName: "",
+    role: "",
+    phoneNumber: "",
   });
+
+  useEffect(() => {
+    if (itemType) {
+      setUserData({
+        firstName: itemType.firstName,
+        lastName: itemType.lastName,
+        role: itemType.role,
+        phoneNumber: itemType.phoneNumber,
+      });
+    }
+  }, [itemType]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
-        onClose();
+        handleClose();
       }
     };
 
@@ -28,7 +39,21 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
+
+  const handleClose = () => {
+    // Reset data to original itemType when modal closes
+    setUserData({
+      firstName: itemType.firstName,
+      lastName: itemType.lastName,
+      role: itemType.role,
+      phoneNumber: itemType.phoneNumber,
+    });
+    // Disable editing mode
+    setIsEditing(false);
+    // Call onClose prop to actually close the modal
+    onClose();
+  };
 
   if (!isOpen || !itemType) return null;
 
@@ -48,7 +73,7 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
   const handleRemoveUser = async () => {
     try {
       await axiosInstance.delete(`/users/${itemType.id}`);
-      onClose();
+      handleClose();
     } catch (error) {
       console.error("Failed to remove user:", error);
     }
@@ -79,7 +104,7 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
         className="relative bg-[#101011] border border-white rounded-2xl p-6 w-1/3 h-auto flex flex-col items-start justify-center py-10"
       >
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 text-white hover:text-gray-400 transition ease-in-out"
         >
           <CloseIcon />
@@ -87,7 +112,9 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
 
         <div className="flex flex-row w-full mt-5">
           <div className="flex-1 text-start mb-10">
-            <h2 className="text-white text-xl font-semibold">User Management</h2>
+            <h2 className="text-white text-xl font-semibold">
+              User Management
+            </h2>
             <p className="text-white">Manage Participants and Hosts</p>
           </div>
 
@@ -110,37 +137,68 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
 
         {/* Full Name */}
         <div className="flex flex-row w-full h-auto mb-4">
-          <h1 className="flex-1 text-white text-base font-medium opacity-70">Full Name</h1>
+          <h1 className="flex-1 text-white text-base font-medium opacity-70">
+            Full Name
+          </h1>
           {isEditing ? (
-            <input
-              type="text"
-              name="firstName"
-              value={userData.firstName}
-              onChange={handleChange}
-              className="text-white text-base font-medium bg-transparent border-b border-white"
-              placeholder="First Name"
-            />
+            <>
+              <input
+                type="text"
+                name="firstName"
+                value={userData.firstName}
+                onChange={handleChange}
+                className="text-white text-base font-medium bg-transparent border-b border-white mr-2"
+                placeholder="First Name"
+              />
+              <input
+                type="text"
+                name="lastName"
+                value={userData.lastName}
+                onChange={handleChange}
+                className="text-white text-base font-medium bg-transparent border-b border-white"
+                placeholder="Last Name"
+              />
+            </>
           ) : (
             <p className="text-white text-base font-medium">
-              {userData.firstName}&nbsp;{userData.lastName}
+              {userData.firstName} {userData.lastName}
             </p>
           )}
         </div>
 
         {/* User Type */}
         <div className="flex flex-row w-full h-auto mb-4">
-          <h1 className="flex-1 text-white text-base font-medium opacity-70">User Type</h1>
+          <h1 className="flex-1 text-white text-base font-medium opacity-70">
+            User Type
+          </h1>
           {isEditing ? (
-            <input
-              type="text"
+            <select
               name="role"
               value={userData.role}
               onChange={handleChange}
               className="text-white text-base font-medium bg-transparent border-b border-white"
-              placeholder="User Role"
-            />
+            >
+              <option value="" disabled>
+                Select Role
+              </option>
+              <option
+                value="admin"
+                style={{ color: getUserTypeColor("admin") }}
+              >
+                admin
+              </option>
+              <option
+                value="participant"
+                style={{ color: getUserTypeColor("participant") }}
+              >
+                user
+              </option>
+            </select>
           ) : (
-            <p className="text-white text-base font-medium" style={{ color: getUserTypeColor(userData.role) }}>
+            <p
+              className="text-white text-base font-medium"
+              style={{ color: getUserTypeColor(userData.role) }}
+            >
               {userData.role}
             </p>
           )}
@@ -148,10 +206,12 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
 
         {/* Phone Number */}
         <div className="flex flex-row w-full h-auto mb-4">
-          <h1 className="flex-1 text-white text-base font-medium opacity-70">Phone Number</h1>
+          <h1 className="flex-1 text-white text-base font-medium opacity-70">
+            Phone Number
+          </h1>
           {isEditing ? (
             <input
-              type="text"
+              type="number"
               name="phoneNumber"
               value={userData.phoneNumber}
               onChange={handleChange}
@@ -159,24 +219,30 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
               placeholder="Phone Number"
             />
           ) : (
-            <p className="text-white text-base font-medium">{userData.phoneNumber}</p>
+            <p className="text-white text-base font-medium">
+              {userData.phoneNumber}
+            </p>
           )}
         </div>
 
         {/* Other fields */}
         <div className="flex flex-row w-full h-auto mb-4">
-          <h1 className="flex-1 text-white text-base font-medium opacity-70">Email</h1>
+          <h1 className="flex-1 text-white text-base font-medium opacity-70">
+            Email
+          </h1>
           <p className="text-white text-base font-medium">{itemType.email}</p>
         </div>
         <div className="flex flex-row w-full h-auto mb-4">
-          <h1 className="flex-1 text-white text-base font-medium opacity-70">Current Status</h1>
+          <h1 className="flex-1 text-white text-base font-medium opacity-70">
+            Current Status
+          </h1>
           <p className="text-white text-base font-medium">Active</p>
         </div>
 
         <div className="w-full flex justify-center space-x-5 pt-10">
           <button
             className="border border-[#6a55ea] text-[#6a55ea] w-44 h-12 rounded-lg hover:bg-[#6a55ea] hover:text-white transition duration-200"
-            onClick={onClose}
+            onClick={handleClose}
           >
             Block User
           </button>
