@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateUser } from "../../Slice/AuthSlice";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import LoaderWrapper from '../../components/ui/LoadingWrapper'; // Import your loader wrapper
+import LoaderWrapper from "../../components/ui/LoadingWrapper"; // Import your loader wrapper
 
 const Profile = () => {
   const dispatch = useDispatch();

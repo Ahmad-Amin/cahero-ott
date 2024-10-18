@@ -15,6 +15,8 @@ const ManageWebinars = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+  const [imageFile, setImageFile] = useState(null); // For handling image upload
+  const [imagePreview, setImagePreview] = useState(null); // For image preview
   const [webinarData, setWebinarData] = useState({
     title: "",
     startTime: "",
@@ -22,7 +24,8 @@ const ManageWebinars = () => {
     startDate: "",
     description: "",
     price: 0,
-    id: ""
+    id: "",
+    coverImageUrl: "",
   });
 
   useEffect(() => {
@@ -31,17 +34,20 @@ const ManageWebinars = () => {
         setLoading(true);
         const response = await axiosInstance.get(`/webinars/${id}`);
         const data = response.data;
-        
-        const formattedStartDate = new Date(data.startDate).toISOString().split("T")[0];
+
+        const formattedStartDate = new Date(data.startDate)
+          .toISOString()
+          .split("T")[0];
 
         setWebinarData({
           title: data.title,
           startTime: data.startTime,
           endTime: data.endTime,
-          startDate: formattedStartDate, // Format the date here
+          startDate: formattedStartDate,
           description: data.description,
           price: data.price || 0,
-          id: data.id
+          id: data.id,
+          coverImageUrl: data.coverImageUrl || "", // Set existing image URL
         });
         setPaymentType(data.price ? "paid" : "unpaid");
       } catch (error) {
@@ -53,15 +59,6 @@ const ManageWebinars = () => {
 
     fetchWebinar();
   }, [id]);
-
-  // Helper function to format date from '2024-10-06T00:00:00.000Z' to 'mm/dd/yyyy'
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
-    const day = String(date.getDate()).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
-  };
 
   const handlePaymentTypeChange = (event) => {
     setPaymentType(event.target.value);
@@ -79,7 +76,7 @@ const ManageWebinars = () => {
     if (itemToDelete) {
       try {
         await axiosInstance.delete(`/webinars/${itemToDelete.id}`);
-        navigate("/dashboard/webinars")
+        navigate("/dashboard/webinars");
       } catch (error) {
         console.error("Error deleting webinar:", error);
       }
@@ -87,12 +84,7 @@ const ManageWebinars = () => {
     setIsModalOpen(false);
   };
 
-  useEffect(() => {
-console.log('itemsToDelete->', itemToDelete)
-  }, [itemToDelete])
-
   const handleDeleteClick = (webinar) => {
-    console.log('oiqweu')
     setItemToDelete(webinar);
     setIsModalOpen(true);
   };
@@ -104,7 +96,9 @@ console.log('itemsToDelete->', itemToDelete)
         ...webinarData,
         price: paymentType === "paid" ? webinarData.price : null,
       });
-      console.log("Webinar updated successfully!");
+      if (imageFile) {
+        await handleImageUpload(); 
+      }
       toast.success("Webinar updated successfully!");
     } catch (error) {
       toast.error(error?.response?.data?.error || "Error updating webinar");
@@ -114,6 +108,30 @@ console.log('itemsToDelete->', itemToDelete)
     }
   };
 
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file)); // Create a preview URL
+    }
+  };
+
+  const handleImageUpload = async () => {
+    const formData = new FormData();
+    formData.append("file", imageFile); // Assuming the API requires the key 'file'
+
+    try {
+      const response = await axiosInstance.post("/upload/image", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setWebinarData((prevData) => ({
+        ...prevData,
+        coverImageUrl: response.data.url, // Assuming response returns the image URL
+      }));
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
+  };
   return (
     <LoadingWrapper loading={loading}>
       <Box
@@ -143,7 +161,8 @@ console.log('itemsToDelete->', itemToDelete)
                     onClick={() => handleDeleteClick(webinarData)}
                   />
           </div>
-          <div className="py-8 w-4/6">
+          <div className="flex flex-row space-x-20">
+          <div className="py-8 w-full flex-1">
             <div>
               <label
                 htmlFor="webinar_title"
@@ -173,9 +192,9 @@ console.log('itemsToDelete->', itemToDelete)
                 <input
                   type="time"
                   id="start_time"
-                  name="startTime" // Set name for handling input change
+                  name="startTime" 
                   value={webinarData.startTime}
-                  onChange={handleInputChange} // Handle input change
+                  onChange={handleInputChange} 
                   className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 appearance-none"
                   required
                 />
@@ -190,9 +209,9 @@ console.log('itemsToDelete->', itemToDelete)
                 <input
                   type="time"
                   id="end_time"
-                  name="endTime" // Set name for handling input change
+                  name="endTime" 
                   value={webinarData.endTime}
-                  onChange={handleInputChange} // Handle input change
+                  onChange={handleInputChange} 
                   className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 appearance-none"
                   required
                 />
@@ -206,7 +225,7 @@ console.log('itemsToDelete->', itemToDelete)
                 Start Date
               </label>
               <input
-                type="date" // Change this to text to accept formatted date
+                type="date" 
                 id="start_date"
                 name="startDate" // Set name for handling input change
                 value={webinarData.startDate}
@@ -289,6 +308,22 @@ console.log('itemsToDelete->', itemToDelete)
                 Update Webinar
               </button>
             </div>
+          </div>
+          <div className="flex flex-col items-center w-3/12 h-full py-8">
+                <label className="text-white font-semibold mb-2">Cover Image</label>
+                <img src={webinarData.coverImageUrl} alt={webinarData.title} className="w-1/2" />
+                <div className="border-dashed border-2 border-white rounded-lg w-full mx-10 h-40 mt-10 flex flex-col items-center justify-center text-white bg-transparent hover:bg-gray-800 transition duration-200">
+                  <input
+                    type="file"
+                    className="opacity-0 absolute"
+                    accept="image/*"
+                    onChange={handleImageChange} // Handle file input
+                  />
+                  <span className="text-lg">Upload</span>
+                  <span className="text-gray-400">Browse from your local machine</span>
+                </div>
+              </div>
+            
           </div>
         </div>
       </Box>

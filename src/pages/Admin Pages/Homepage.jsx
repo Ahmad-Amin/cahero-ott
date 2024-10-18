@@ -5,7 +5,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import { Link } from "react-router-dom";
-import UpcommingWebinars from "../../components/Admin Components/UpcommingWebinars";
+import UpcomingWebinars from "../../components/Admin Components/UpcommingWebinars";
 import PastWebinars from "../../components/Admin Components/PastWebinars";
 import CountUp from "react-countup";
 import axiosInstance from "../../lib/axiosInstance";
@@ -20,26 +20,47 @@ const AdminHomepage = () => {
     totalSubscribers: 0,
     upcomingWebinars: 0,
   });
+  const [upcomingWebinars, setUpcomingWebinars] = useState([]);
+  const [pastWebinars, setPastWebinars] = useState([]);
 
   useEffect(() => {
-    (async () => {
+    const fetchStatsAndWebinars = async () => {
       try {
         setLoading(true);
-        const response = await axiosInstance.get("/stats");
+
+        // Fetch statistics
+        const statsResponse = await axiosInstance.get("/stats");
         const { totalSales, activeUsers, totalSubscribers, upcomingWebinars } =
-          response.data;
+          statsResponse.data;
         setStats({
           totalSales,
           activeUsers,
           totalSubscribers,
           upcomingWebinars,
         });
+
+        // Fetch webinars
+        const webinarsResponse = await axiosInstance.get("/webinars");
+        const webinars = webinarsResponse.data;
+
+        // Categorize webinars based on their type
+        const upcoming = webinars.filter(
+          (webinar) => new Date(webinar.startDate) >= new Date()
+        );
+        const past = webinars.filter(
+          (webinar) => new Date(webinar.startDate) < new Date()
+        );
+
+        setUpcomingWebinars(upcoming);
+        setPastWebinars(past);
       } catch (error) {
-        console.error("Error fetching stats data:", error);
-      } finally{
+        console.error("Error fetching data:", error);
+      } finally {
         setLoading(false);
       }
-    })();
+    };
+
+    fetchStatsAndWebinars();
   }, []);
 
   return (
@@ -185,9 +206,9 @@ const AdminHomepage = () => {
             </div>
             <div className="py-4 w-full">
               {activeTab === "upcoming" ? (
-                <UpcommingWebinars limit={4} />
+                <UpcomingWebinars limit={4} webinars={upcomingWebinars} />
               ) : (
-                <PastWebinars />
+                <PastWebinars webinars={pastWebinars} />
               )}
             </div>
           </div>

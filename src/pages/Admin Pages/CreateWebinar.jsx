@@ -8,6 +8,7 @@ import LoadingWrapper from "../../components/ui/LoadingWrapper";
 const CreateWebinars = () => {
   const [paymentType, setPaymentType] = useState("unpaid");
   const [loading, setLoading] = useState(false);
+  const [imageFile, setImageFile] = useState(null); // State to hold the selected image
   const [formData, setFormData] = useState({
     title: "",
     startTime: "",
@@ -16,6 +17,7 @@ const CreateWebinars = () => {
     description: "",
     type: "",
     price: "",
+    coverImageUrl: "", 
   });
 
   const navigate = useNavigate();
@@ -26,69 +28,81 @@ const CreateWebinars = () => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-
-    if (name === "startTime" || name === "endTime") {
-      const timeParts = value.split(":");
-      let hours = parseInt(timeParts[0]);
-      const minutes = timeParts[1];
-
-      if (value.includes("PM") && hours < 12) {
-        hours += 12;
-      } else if (value.includes("AM") && hours === 12) {
-        hours = 0;
-      }
-
-      const formattedHours = String(hours).padStart(2, "0");
-      console.log(`Selected ${name}: ${formattedHours}:${minutes}`);
-    }
   };
 
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    setImageFile(file); // Store the selected image file in state
+  };
+
+  const uploadImage = async () => {
+    const formData = new FormData();
+    formData.append("file", imageFile); // Use the key 'file' as required by the API
+  
+    try {
+      console.log("Sending image file:", formData.get("file"));
+      const response = await axiosInstance.post(
+        "/upload/image",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      return response.data.fileUrl; // Assuming the API returns the image URL
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Failed to upload image");
+      return null;
+    }
+  };
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
-    if (paymentType === "unpaid") {
-      try {
-        setLoading(true);
-  
-        const webinarResponse = await axiosInstance.post("/webinars", {
-          title: formData.title,
-          startTime: formData.startTime,
-          endTime: formData.endTime,
-          startDate: formData.startDate,
-          description: formData.description,
-          price: paymentType === "paid" ? formData.price : undefined,
-        });
-  
-        const webinarId = webinarResponse.data.id;
-        console.log("Webinar created:", webinarResponse.data);
-        console.log("Sending webinarId:", webinarId);
-  
-        const emailResponse = await axiosInstance.post(`/webinars/${webinarId}/send-email`);
-  
-        console.log("Emails sent:", emailResponse.data);
-  
-        navigate("/dashboard");
-  
-      } catch (error) {
-        console.error("Error creating webinar or sending emails:", error);
-        toast.error(error?.response?.data?.error || "Error creating webinar or sending emails");
-      } finally {
-        setLoading(false);
+    setLoading(true);
+
+    try {
+      // Upload the image if it was selected
+      let coverImageUrl = "";
+      if (imageFile) {
+        coverImageUrl = await uploadImage();
+        if (!coverImageUrl) {
+          setLoading(false);
+          return; // Exit if the image upload failed
+        }
       }
-    } else {
-      alert("Only unpaid webinars are accepted.");
+
+      const webinarPayload = {
+        title: formData.title,
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        startDate: formData.startDate,
+        description: formData.description,
+        price: paymentType === "paid" ? formData.price : undefined,
+        coverImageUrl, // Include the uploaded image URL
+      };
+
+      const webinarResponse = await axiosInstance.post("/webinars", webinarPayload);
+
+      const webinarId = webinarResponse.data.id;
+      console.log("Webinar created:", webinarResponse.data);
+
+      const emailResponse = await axiosInstance.post(`/webinars/${webinarId}/send-email`);
+      console.log("Emails sent:", emailResponse.data);
+
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error creating webinar or sending emails:", error);
+      toast.error(
+        error?.response?.data?.error || "Error creating webinar or sending emails"
+      );
+    } finally {
+      setLoading(false);
     }
   };
-  
-  
-  
-  
-
   return (
     <LoadingWrapper loading={loading}>
       <Box
@@ -114,8 +128,8 @@ const CreateWebinars = () => {
               </button>
             </Link>
           </div>
-          <form onSubmit={handleSubmit}>
-            <div className="py-8 w-4/6">
+          <form onSubmit={handleSubmit} className="flex flex-row space-x-20">
+            <div className="py-8 w-1/2 flex-1">
               <div>
                 <label
                   htmlFor="webinar_title"
@@ -246,7 +260,6 @@ const CreateWebinars = () => {
                   />
                 </div>
               )}
-
               <div className="flex flex-row gap-6 mt-8">
                 <div className="">
                   <button
@@ -263,6 +276,21 @@ const CreateWebinars = () => {
                   >
                     Create Webinar
                   </button>
+                </div>
+              </div>
+            </div>
+            <div>
+            <div className="flex flex-col items-center w-full h-full py-8">
+                <label className="text-white font-semibold mb-2">Cover Image</label>
+                <div className="border-dashed border-2 border-white rounded-lg w-full mx-10 h-80 flex flex-col items-center justify-center text-white bg-transparent hover:bg-gray-800 transition duration-200">
+                  <input
+                    type="file"
+                    className="opacity-0 absolute"
+                    accept="image/*"
+                    onChange={handleImageChange} // Handle file input
+                  />
+                  <span className="text-lg">Upload</span>
+                  <span className="text-gray-400">Browse from your local machine</span>
                 </div>
               </div>
             </div>
