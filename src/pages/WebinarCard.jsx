@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function WebinarCard({ title, year, genre, image, height, author, link }) {
+function WebinarCard({ title, year, genre, image, height, author, link, isVideo}) {
   return (
     <Link to={link || ''}>
       <div
@@ -11,7 +11,7 @@ function WebinarCard({ title, year, genre, image, height, author, link }) {
         <img
           src={image}
           alt={title}
-          className="rounded-t-xl w-full object-cover rounded-lg scale-[1.03] "
+          className="rounded-t-xl w-full object-cover rounded-lg scale-[1.03]  "
           style={{ height: "100%" }} // Adjust the height of the image portion
         />
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-white to-transparent text-black p-4 rounded-b-xl">

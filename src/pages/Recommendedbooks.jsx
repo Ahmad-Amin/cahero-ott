@@ -1,33 +1,52 @@
-import React from 'react';
-import WebinarCard from './WebinarCard';
+import React, { useEffect, useState } from "react";
+import WebinarCard from "./WebinarCard";
+import axiosInstance from "../lib/axiosInstance";
+import LoadingWrapper from "../components/ui/LoadingWrapper";
 
 function RecommendedBooks() {
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        const response = await axiosInstance.get("/books");
+        const sortedResults = response.data.results.sort((a, b) => {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
+        const firstFourResults = sortedResults.slice(0, 4);
+        setBooks(firstFourResults);
+      } catch (error) {
+        console.log("Error fetching the webinars");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
   return (
-    <div>
-      <h1 className="text-white text-3xl font-semibold ml-8 mt-3 p-4">Recommended Books</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mx-8 my-4">
-        <WebinarCard
-          title="The Black Witch"
-          author="Laurie Forest"
-          image={`${process.env.PUBLIC_URL}/images/TheBlackWitch.png`}
-        />
-        <WebinarCard
-          title="The Prisoner's Key"
-          author="C.J. Archer"
-          image={`${process.env.PUBLIC_URL}/images/ThePrisonersKey.png`}
-        />
-        <WebinarCard
-          title="Light Mage"
-          author="Laurie Forest"
-          image={`${process.env.PUBLIC_URL}/images/LightMage.png`}
-        />
-        <WebinarCard
-          title="The Fire Queen"
-          author="Emily R. King"
-          image={`${process.env.PUBLIC_URL}/images/TheFireQueen.png`}
-        />
+    <LoadingWrapper loading={loading}>
+      <div>
+        <h1 className="text-white text-3xl font-semibold ml-8 mt-3 p-4">
+          Recommended Books
+        </h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mx-8 my-4">
+          {books.map((book) => (
+            <WebinarCard
+              title={book.title}
+              genre="Book Genre"
+              image={
+                book.coverImageUrl ||
+                `${process.env.PUBLIC_URL}/images/Tokyotrain.png`
+              }
+              link={`/all-books/${book.id}`}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </LoadingWrapper>
   );
 }
 

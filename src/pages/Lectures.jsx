@@ -1,79 +1,37 @@
-import React from 'react';
-import { Box } from '@mui/material';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
-import WebinarCard from './WebinarCard';
-import LoginedNavbar from '../components/LoginedNavbar';
-import SearchBar from '../components/Searchbar';
+import React, { useEffect, useState } from "react";
+import { Box } from "@mui/material";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import WebinarCard from "./WebinarCard";
+import LoginedNavbar from "../components/LoginedNavbar";
+import SearchBar from "../components/Searchbar";
+import axiosInstance from "../lib/axiosInstance";
+import LoadingWrapper from "../components/ui/LoadingWrapper";
 
 const drawerWidth = 280;
 
 const Lectures = () => {
   const navigate = useNavigate(); // Hook to handle navigation
+  const [lectures, setLectures] = useState([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const fetchDocumentries = async () => {
+      try {
+        setLoading(true);
+        const response = await axiosInstance.get("/lectures");
+        setLectures(response.data.results);
+      } catch (e) {
+        console.log("Error getting the lecture", e);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Function to handle card click and navigate to the appropriate video player route
-  const handleCardClick = (id) => {
-    navigate(`/documentaries/${id}`);
-  };
-
-  // Dataset for lectures
-  const lectureData = [
-    {
-      id: 1, // Add an id property
-      title: "Affection of Love",
-      year: "2022",
-      genre: "Tutor Name",
-      image: `${process.env.PUBLIC_URL}/images/AffectionOfLove.png`,
-      height: "250px",
-    },
-    {
-      id: 2, // Add an id property
-      title: "Physical Activities",
-      year: "2022",
-      genre: "Tutor Name",
-      image: `${process.env.PUBLIC_URL}/images/PhysicalActivities.png`,
-      height: "250px",
-    },
-    {
-      id: 3, // Add an id property
-      title: "Study of Stars",
-      year: "2022",
-      genre: "Tutor Name",
-      image: `${process.env.PUBLIC_URL}/images/StudyOfStars.png`,
-      height: "250px",
-    },
-  ];
-
-  // Dataset for recommended lectures
-  const recommendedData = [
-    {
-      id: 1, // Add an id property
-      title: "Affection of Love",
-      year: "2022",
-      genre: "Tutor Name",
-      image: `${process.env.PUBLIC_URL}/images/AffectionOfLove.png`,
-      height: "250px",
-    },
-    {
-      id: 2, // Add an id property
-      title: "Physical Activities",
-      year: "2022",
-      genre: "Tutor Name",
-      image: `${process.env.PUBLIC_URL}/images/PhysicalActivities.png`,
-      height: "250px",
-    },
-    {
-      id: 3, // Add an id property
-      title: "Study of Stars",
-      year: "2022",
-      genre: "Tutor Name",
-      image: `${process.env.PUBLIC_URL}/images/StudyOfStars.png`,
-      height: "250px",
-    },
-  ];
+    fetchDocumentries();
+  }, []);
 
   return (
     <>
-      <Box 
+      <Box
         component="main"
         sx={{
           flexGrow: 1,
@@ -86,63 +44,83 @@ const Lectures = () => {
           overflow: "hidden",
         }}
       >
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "70px",
-            height: "100%",
-            background:
-              "linear-gradient(to right, #220e37 0%, rgba(34, 14, 55, 0) 100%)",
-            zIndex: 1,
-          }}
-        />
-        <div>
-          <LoginedNavbar />
-        </div>
-        <div style={{ position: "relative", zIndex: 2 }} className="mt-12 flex justify-between items-center">
-          <p className="text-xl mx-8 text-white font-semibold">All Documentaries</p>
-          <div className="ml-auto w-auto">
-            <SearchBar className="w-full mx-8" />
+        <LoadingWrapper loading={loading}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "70px",
+              height: "100%",
+              background:
+                "linear-gradient(to right, #220e37 0%, rgba(34, 14, 55, 0) 100%)",
+              zIndex: 1,
+            }}
+          />
+          <div>
+            <LoginedNavbar />
           </div>
-        </div>
-        
-        <div style={{ position: "relative", zIndex: 2 }} className="grid grid-cols-3 gap-6 mx-8 my-4">
-          {lectureData.map((lecture) => (
-            <div className="main" key={lecture.id} onClick={() => handleCardClick(lecture.id)}> {/* Wrap card with div for click handling */}
+          <div
+            style={{ position: "relative", zIndex: 2 }}
+            className="mt-12 flex justify-between items-center"
+          >
+            <p className="text-xl mx-8 text-white font-semibold">
+              All Documentaries
+            </p>
+            <div className="ml-auto w-auto">
+              <SearchBar className="w-full mx-8" />
+            </div>
+          </div>
+
+          <div
+            style={{ position: "relative", zIndex: 2 }}
+            className="grid grid-cols-3 gap-6 mx-8 my-4"
+          >
+            {lectures.map((lecture) => (
               <WebinarCard
                 title={lecture.title}
-                year={lecture.year}
-                genre={lecture.genre}
-                image={lecture.image}
-                height={lecture.height}
+                genre="Webinar Genre"
+                height={300}
+                image={
+                  lecture.coverImageUrl ||
+                  `${process.env.PUBLIC_URL}/images/Tokyotrain.png`
+                }
+                link={`/documentaries/${lecture.id}`}
               />
-            </div>
-          ))}
-        </div>
-        
-        <div style={{ position: "relative", zIndex: 2 }} className="mt-12 flex justify-between items-center">
-          <p className="text-xl mx-8 text-white font-semibold">Recommended Documentaries</p>
+            ))}
+          </div>
+
+          {/* <div
+          style={{ position: "relative", zIndex: 2 }}
+          className="mt-12 flex justify-between items-center"
+        >
+          <p className="text-xl mx-8 text-white font-semibold">
+            Recommended Documentaries
+          </p>
           <div className="ml-auto w-auto"></div>
         </div>
-        
-        <div style={{ position: "relative", zIndex: 2 }} className="grid grid-cols-3 gap-6 mx-8 my-4">
+
+        <div
+          style={{ position: "relative", zIndex: 2 }}
+          className="grid grid-cols-3 gap-6 mx-8 my-4"
+        >
           {recommendedData.map((lecture) => (
-            <div className="main" key={lecture.id} onClick={() => handleCardClick(lecture.id)}> {/* Wrap card with div for click handling */}
-              <WebinarCard
-                title={lecture.title}
-                year={lecture.year}
-                genre={lecture.genre}
-                image={lecture.image}
-                height={lecture.height}
-              />
-            </div>
+            <WebinarCard
+              title={lecture.title}
+              year={lecture.startDate.split("-")[0]}
+              genre="Webinar Genre"
+              image={
+                lecture.coverImageUrl ||
+                `${process.env.PUBLIC_URL}/images/Tokyotrain.png`
+              }
+              link={`/documentaries/${lecture.id}`}
+            />
           ))}
-        </div>
+        </div> */}
+        </LoadingWrapper>
       </Box>
     </>
   );
-}
+};
 
 export default Lectures;
