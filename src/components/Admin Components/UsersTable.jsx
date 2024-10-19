@@ -7,7 +7,6 @@ const UsersTable = ({ onViewUser }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Function to fetch users
   const fetchUsers = async () => {
     try {
       setLoading(true);

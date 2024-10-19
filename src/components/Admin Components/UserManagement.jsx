@@ -1,16 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useSelector } from "react-redux";
 import axiosInstance from "../../lib/axiosInstance";
 import CloseIcon from "@mui/icons-material/Close";
-
+import loadingWrapper from "../../components/ui/LoadingWrapper";
+import LoadingWrapper from "../../components/ui/LoadingWrapper";
 const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
   const modalRef = useRef();
   const [isEditing, setIsEditing] = useState(false);
+  const [Loading, setLoading] = useState(false);
   const [userData, setUserData] = useState({
     firstName: "",
     lastName: "",
     role: "",
     phoneNumber: "",
   });
+
+  // Get the current user information from Redux
+  const currentUser = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     if (itemType) {
@@ -42,16 +48,13 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
   }, [isOpen]);
 
   const handleClose = () => {
-    // Reset data to original itemType when modal closes
     setUserData({
       firstName: itemType.firstName,
       lastName: itemType.lastName,
       role: itemType.role,
       phoneNumber: itemType.phoneNumber,
     });
-    // Disable editing mode
     setIsEditing(false);
-    // Call onClose prop to actually close the modal
     onClose();
   };
 
@@ -72,10 +75,14 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
 
   const handleRemoveUser = async () => {
     try {
+      setLoading(true);
       await axiosInstance.delete(`/users/${itemType.id}`);
       handleClose();
     } catch (error) {
       console.error("Failed to remove user:", error);
+    }
+    finally{
+      setLoading(false);
     }
   };
 
@@ -85,10 +92,13 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
 
   const handleUpdateClick = async () => {
     try {
+      setLoading(true);
       await axiosInstance.patch(`/users/${itemType.id}`, userData);
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to update user:", error);
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -97,19 +107,21 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
     setUserData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const isCurrentUser = currentUser && currentUser.id === itemType.id;
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div
         ref={modalRef}
         className="relative bg-[#101011] border border-white rounded-2xl p-6 w-1/3 h-auto flex flex-col items-start justify-center py-10"
       >
-        <button
+      <button
           onClick={handleClose}
           className="absolute top-4 right-4 text-white hover:text-gray-400 transition ease-in-out"
         >
           <CloseIcon />
         </button>
-
+        <LoadingWrapper loading = {Loading} className="w-full h-full">
         <div className="flex flex-row w-full mt-5">
           <div className="flex-1 text-start mb-10">
             <h2 className="text-white text-xl font-semibold">
@@ -122,6 +134,8 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
             <button
               className="border border-[#6a55ea] text-[#6a55ea] hover:bg-[#6a55ea] hover:text-white ease-in-out transition duration-300 w-36 h-12 px-3 rounded-lg"
               onClick={handleEditClick}
+              disabled={isCurrentUser} // Disable the button if it's the current user
+              style={isCurrentUser ? { opacity: 0.5, cursor: "not-allowed" } : {}}
             >
               Edit
             </button>
@@ -135,124 +149,113 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
           )}
         </div>
 
-        {/* Full Name */}
         <div className="flex flex-row w-full h-auto mb-4">
-          <h1 className="flex-1 text-white text-base font-medium opacity-70">
-            Full Name
-          </h1>
-          {isEditing ? (
-            <>
-              <input
-                type="text"
-                name="firstName"
-                value={userData.firstName}
-                onChange={handleChange}
-                className="text-white text-base font-medium bg-transparent border-b border-white mr-2"
-                placeholder="First Name"
-              />
-              <input
-                type="text"
-                name="lastName"
-                value={userData.lastName}
+            <h1 className="flex-1 text-white text-base font-medium opacity-70">
+              Full Name
+            </h1>
+            {isEditing ? (
+              <>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={userData.firstName}
+                  onChange={handleChange}
+                  className="text-white text-base font-medium bg-transparent border-b border-white mr-2"
+                  placeholder="First Name"
+                />
+                <input
+                  type="text"
+                  name="lastName"
+                  value={userData.lastName}
+                  onChange={handleChange}
+                  className="text-white text-base font-medium bg-transparent border-b border-white"
+                  placeholder="Last Name"
+                />
+              </>
+            ) : (
+              <p className="text-white text-base font-medium">
+                {userData.firstName} {userData.lastName}
+              </p>
+            )}
+          </div>
+
+          {/* User Type */}
+          <div className="flex flex-row w-full h-auto mb-4">
+            <h1 className="flex-1 text-white text-base font-medium opacity-70">User Type</h1>
+            {isEditing ? (
+              <select
+                name="role"
+                value={userData.role}
                 onChange={handleChange}
                 className="text-white text-base font-medium bg-transparent border-b border-white"
-                placeholder="Last Name"
+              >
+                <option value="" disabled>
+                  Select Role
+                </option>
+                <option value="admin" style={{ color: getUserTypeColor("admin") }}>
+                  Admin
+                </option>
+                <option value="user" style={{ color: getUserTypeColor("user") }}>
+                  User
+                </option>
+              </select>
+            ) : (
+              <p
+                className="text-white text-base font-medium"
+                style={{ color: getUserTypeColor(userData.role) }}
+              >
+                {userData.role}
+              </p>
+            )}
+          </div>
+
+          {/* Phone Number */}
+          <div className="flex flex-row w-full h-auto mb-4">
+            <h1 className="flex-1 text-white text-base font-medium opacity-70">Phone Number</h1>
+            {isEditing ? (
+              <input
+                type="number"
+                name="phoneNumber"
+                value={userData.phoneNumber}
+                onChange={handleChange}
+                className="text-white text-base font-medium bg-transparent border-b border-white"
+                placeholder="Phone Number"
               />
-            </>
-          ) : (
-            <p className="text-white text-base font-medium">
-              {userData.firstName} {userData.lastName}
-            </p>
-          )}
-        </div>
+            ) : (
+              <p className="text-white text-base font-medium">
+                {userData.phoneNumber}
+              </p>
+            )}
+          </div>
 
-        {/* User Type */}
-        <div className="flex flex-row w-full h-auto mb-4">
-          <h1 className="flex-1 text-white text-base font-medium opacity-70">
-            User Type
-          </h1>
-          {isEditing ? (
-            <select
-              name="role"
-              value={userData.role}
-              onChange={handleChange}
-              className="text-white text-base font-medium bg-transparent border-b border-white"
+          {/* Other fields */}
+          <div className="flex flex-row w-full h-auto mb-4">
+            <h1 className="flex-1 text-white text-base font-medium opacity-70">Email</h1>
+            <p className="text-white text-base font-medium">{itemType.email}</p>
+          </div>
+          <div className="flex flex-row w-full h-auto mb-4">
+            <h1 className="flex-1 text-white text-base font-medium opacity-70">Current Status</h1>
+            <p className="text-white text-base font-medium">Active</p>
+          </div>
+
+          {/* Block and Remove buttons */}
+          <div className="w-full flex justify-center space-x-5 pt-10">
+            <button
+              className="border border-[#6a55ea] text-[#6a55ea] w-44 h-12 rounded-lg hover:bg-[#6a55ea] hover:text-white transition duration-200"
+              onClick={handleClose}
+              disabled={isCurrentUser}
             >
-              <option value="" disabled>
-                Select Role
-              </option>
-              <option
-                value="admin"
-                style={{ color: getUserTypeColor("admin") }}
-              >
-                admin
-              </option>
-              <option
-                value="participant"
-                style={{ color: getUserTypeColor("participant") }}
-              >
-                user
-              </option>
-            </select>
-          ) : (
-            <p
-              className="text-white text-base font-medium"
-              style={{ color: getUserTypeColor(userData.role) }}
+              Block User
+            </button>
+            <button
+              className="bg-[#6a55ea] text-white rounded-lg w-44 h-12 hover:bg-[#e53939] transition duration-200"
+              onClick={handleRemoveUser}
+              disabled={isCurrentUser}
             >
-              {userData.role}
-            </p>
-          )}
-        </div>
-
-        {/* Phone Number */}
-        <div className="flex flex-row w-full h-auto mb-4">
-          <h1 className="flex-1 text-white text-base font-medium opacity-70">
-            Phone Number
-          </h1>
-          {isEditing ? (
-            <input
-              type="number"
-              name="phoneNumber"
-              value={userData.phoneNumber}
-              onChange={handleChange}
-              className="text-white text-base font-medium bg-transparent border-b border-white"
-              placeholder="Phone Number"
-            />
-          ) : (
-            <p className="text-white text-base font-medium">
-              {userData.phoneNumber}
-            </p>
-          )}
-        </div>
-
-        {/* Other fields */}
-        <div className="flex flex-row w-full h-auto mb-4">
-          <h1 className="flex-1 text-white text-base font-medium opacity-70">
-            Email
-          </h1>
-          <p className="text-white text-base font-medium">{itemType.email}</p>
-        </div>
-        <div className="flex flex-row w-full h-auto mb-4">
-          <h1 className="flex-1 text-white text-base font-medium opacity-70">
-            Current Status
-          </h1>
-          <p className="text-white text-base font-medium">Active</p>
-        </div>
-
-        <div className="w-full flex justify-center space-x-5 pt-10">
-          <button
-            className="border border-[#6a55ea] text-[#6a55ea] w-44 h-12 rounded-lg hover:bg-[#6a55ea] hover:text-white transition duration-200"
-            onClick={handleClose}
-          >
-            Block User
-          </button>
-          <button
-            className="bg-[#6a55ea] text-white rounded-lg w-44 h-12 hover:bg-[#e53939] transition duration-200"
-            onClick={handleRemoveUser}
-          >
-            Remove User
-          </button>
-        </div>
+              Remove User
+            </button>
+          </div>
+          </LoadingWrapper>
       </div>
     </div>
   );
