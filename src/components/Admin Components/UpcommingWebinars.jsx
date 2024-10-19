@@ -67,10 +67,9 @@ const UpcomingWebinars = ({ limit }) => {
             upcomingWebinars.map((webinar, index) => (
               <div
                 key={index}
-                className="bg-transparent rounded-3xl p-4 shadow-md h-auto border-2 relative mb-6"
+                className="bg-transparent rounded-3xl p-4 shadow-md h-auto border-2 relative flex flex-col justify-between"
               >
-                {/* Make the entire webinar card clickable */}
-                <Link to={`webinars/${webinar.id}/webinar-lobby`} className="block">
+                <Link to={`/dashboard/webinars/${webinar.id}/webinar-lobby`} className="block">
                   <div className="flex flex-row gap-3">
                     <div className="flex-1">
                       <h2 className="font-bold text-lg md:text-xl lg:text-2xl text-white mt-1">
@@ -96,7 +95,6 @@ const UpcomingWebinars = ({ limit }) => {
                     <p className="text-[#b2b2b2]">{webinar.startTime}</p>
                   </div>
 
-                  {/* Joined Users */}
                   <div className="flex items-center mt-2">
                     <PeopleAltIcon className="text-[#6a55ea] mr-1" />
                     <p className="text-white mr-2">Joined Users:</p>

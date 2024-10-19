@@ -10,7 +10,7 @@ const BookCardGrid = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [books, setBooks] = useState([]); // Ensure this starts as an array
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
 
   const fetchBooks = async () => {
     try {
@@ -36,10 +36,9 @@ const BookCardGrid = () => {
 
   const handleDeleteConfirm = async () => {
     if (itemToDelete) {
-
       try {
         await axiosInstance.delete(`/books/${itemToDelete.id}`);
-        
+
         // Remove the deleted book from state
         setBooks((prevBooks) =>
           prevBooks.filter((book) => book.id !== itemToDelete.id)
@@ -59,9 +58,9 @@ const BookCardGrid = () => {
   return (
     <LoadingWrapper loading={loading}>
       <div className="min-h-screen bg-transparent p-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
-          {books.length > 0 ? (
-            books.map((book) => (
+        {books.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+            {books.map((book) => (
               <div
                 key={book.id} // Use the book ID as the key
                 className="bg-transparent h-full rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105"
@@ -87,17 +86,21 @@ const BookCardGrid = () => {
                       className="text-[#e53939] hover:text-[#b22c2c] cursor-pointer"
                       onClick={() => handleDeleteClick(book)}
                     />
-                    <Link to={`/dashboard/book-creation/${book.id}/manage-book`}>
+                    <Link
+                      to={`/dashboard/book-creation/${book.id}/manage-book`}
+                    >
                       <EditIcon className="text-[#05c283] hover:text-[#038f60]" />
                     </Link>
                   </div>
                 </div>
               </div>
-            ))
-          ) : (
-            <p className="text-white">No books available</p>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-white text-2xl text-center w-full mx-auto">
+            No books available
+          </p>
+        )}
       </div>
       <ConfirmDelete
         isOpen={isModalOpen}
