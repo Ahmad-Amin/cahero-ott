@@ -1,280 +1,229 @@
-  import React, { useEffect, useRef, useState } from "react";
-  import Peer from "peerjs";
-  import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-  import { toast } from "react-toastify";
-  import { useParams } from "react-router-dom"; // Import useParams
-  import axiosInstance from "../../../lib/axiosInstance";
-  import LoadingWrapper from "../../../components/ui/LoadingWrapper"; // Import your loader component
-  import { useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import Peer from "peerjs";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
+import axiosInstance from "../../../lib/axiosInstance";
+import LoadingWrapper from "../../../components/ui/LoadingWrapper";
+import { useNavigate } from "react-router-dom";
 
-  const WebinarStream = () => {
-    const { webinarId } = useParams(); // Get webinarId from URL params
-    const [peerId, setPeerId] = useState(webinarId); // Set the peerId as the webinarId
-    const currentUserVideoRef = useRef(null);
-    const peerInstance = useRef(null);
-    const mediaStreamRef = useRef(null); // Store the media stream reference
-    const [streamStarted, setStreamStarted] = useState(false);
-    const [viewersCount, setViewersCount] = useState(0);
-    const navigate = useNavigate();
+const WebinarStream = () => {
+  const { webinarId } = useParams();
+  const [peerId, setPeerId] = useState(webinarId);
+  const currentUserVideoRef = useRef(null); // Reference to video element
+  const peerInstance = useRef(null);
+  const mediaStreamRef = useRef(null); // Reference to the media stream
+  const [streamStarted, setStreamStarted] = useState(false);
+  const [viewersCount, setViewersCount] = useState(0);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-const [loading, setloading] = useState(false);
-    useEffect(() => {
-      if (!webinarId) {
-        console.error("No webinar ID found in URL params.");
-        return;
-      }
-
-      const startStreamRequest = async () => {
-        try {
-          console.log(webinarId)
-          console.log(peerId)
-          const response = await axiosInstance.post(`/webinars/${webinarId}/start-stream`, {
-            streamId: peerId // Send peerId as streamId
-          });
-          console.log("Stream started:", response.data);
-          return true; // Indicate that the API call was successful
-        } catch (error) {
-          console.error("Error starting stream:", error);
-          return false; // Indicate that the API call failed
-        }
-      };
-
-      // Call the function to send the request
-      const initStream = async () => {
-        const isSuccess = await startStreamRequest(); 
-        if (isSuccess) {
-          const peer = new Peer(webinarId);
-          peer.on("open", (id) => {
-            setPeerId(id);
-          });
-
-          peer.on("call", (call) => {
-            if (mediaStreamRef.current) {
-              // Answer the call with the current local stream (sending video/audio to clients)
-              call.answer(mediaStreamRef.current);
-
-              // Increment viewer count when a new call is made
-              setViewersCount((prevCount) => prevCount + 1);
-
-              // Listen for when the call ends (viewer leaves)
-              call.on("close", () => {
-                setViewersCount((prevCount) => Math.max(prevCount - 1, 0)); // Ensure it doesn't go below 0
-              });
-            }
-          });
-
-          peerInstance.current = peer;
-        }
-      };
-
-      initStream(); // Initialize stream setup after API call
-
-    }, [webinarId, peerId]); // Added peerId as a dependency
-
-    const startStream = async () => {
-      try {
-        setloading(true);
-        const response = await axiosInstance.patch(`/webinars/${webinarId}/start-stream`);
-        console.log("Stream status updated:", response.data);
-    
-        // If the API call is successful, proceed to start the media stream
-        const getUserMedia =
-          navigator.mediaDevices.getUserMedia ||
-          navigator.webkitGetUserMedia ||
-          navigator.mozGetUserMedia;
-    
-        getUserMedia({ video: true, audio: true })
-          .then((mediaStream) => {
-            mediaStreamRef.current = mediaStream; // Store the media stream in ref
-            if (currentUserVideoRef.current) {
-              currentUserVideoRef.current.srcObject = mediaStream;
-              currentUserVideoRef.current.onloadedmetadata = () => {
-                currentUserVideoRef.current.play();
-              };
-            }
-    
-            // Mark the stream as started
-            setStreamStarted(true);
-            console.log("Stream has been Started")
+  // Effect to set video once the video element and media stream are available
+  useEffect(() => {
+    if (currentUserVideoRef.current && mediaStreamRef.current) {
+      currentUserVideoRef.current.srcObject = mediaStreamRef.current;
+      currentUserVideoRef.current.onloadedmetadata = () => {
+        currentUserVideoRef.current
+          .play()
+          .then(() => {
+            console.log("Video is playing successfully.");
           })
-          .catch((err) => {
-            console.error("Failed to get media stream", err);
+          .catch((error) => {
+            console.error("Error while playing video:", error);
           });
-      } catch (error) {
-        console.error("Error starting the stream:", error);
-        // Optionally, you can notify the user that the stream could not be started
-      }
-      finally {
-        setloading(false);
-      }
-    };
-    
+      };
+    }
+  }, [streamStarted]);
 
-    const endStream = async () => {
-      try {
-        const response = await axiosInstance.get(`/webinars/${webinarId}`);
-        console.log("Fetched webinar details:", response.data);
+  const startStreamRequest = async () => {
+    return true;
+  };
 
-        await axiosInstance.patch(`/webinars/${webinarId}`,{
-          title: response.data.title,
-          startTime: response.data.startTime,
-          endTime: response.data.endTime,
-          startDate: response.data.startDate,
-          isLive: false,
-        
-        } );
-    
+  const initStream = async () => {
+    const isSuccess = await startStreamRequest();
+    if (isSuccess) {
+      const peer = new Peer(webinarId); // Create a Peer with the webinarId
+      peer.on("open", (id) => {
+        setPeerId(id); // This sets the peer ID for others to join
+      });
+
+      peer.on("call", (call) => {
         if (mediaStreamRef.current) {
-          mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-          mediaStreamRef.current = null; // Clear the media stream reference
-        }
-    
-        if (peerInstance.current) {
-          const connections = peerInstance.current.connections;
-          Object.keys(connections).forEach((peerId) => {
-            connections[peerId].forEach((call) => {
-              call.close(); 
-            });
+          call.answer(mediaStreamRef.current); // Admin sends video/audio
+          setViewersCount((prevCount) => prevCount + 1);
+
+          call.on("close", () => {
+            setViewersCount((prevCount) => Math.max(prevCount - 1, 0));
           });
         }
-    
-        if (currentUserVideoRef.current) {
-          currentUserVideoRef.current.srcObject = null;
-        }
-    
-        // Reset viewer count and update stream status
-        setViewersCount(0);
-        setStreamStarted(false);
-        
-      } catch (error) {
-        console.error("Error ending the stream:", error);
-        // Handle the error appropriately (e.g., show a notification)
-        
-      } finally {
-        // Code here will run regardless of success or error
-        console.log("Stream ending process completed.");
-        navigate('/dashboard'); // Replace with your desired path
-      }
-    };
-    
+      });
 
-    // Function to copy PeerId to Clipboard
-    const copyToClipboard = () => {
-      navigator.clipboard
-        .writeText(peerId)
-        .then(() => {
-          toast.success("Peer ID copied to clipboard!");
+      peerInstance.current = peer;
+    }
+  };
+
+  const startStream = async () => {
+    try {
+      setLoading(true);
+      await axiosInstance.patch(`/webinars/${webinarId}/start-stream`);
+
+      const getUserMedia =
+        navigator.mediaDevices.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia;
+
+      getUserMedia({ video: true, audio: true })
+        .then((mediaStream) => {
+          mediaStreamRef.current = mediaStream;
+
+          // Start the peer stream after getting the media stream
+          setStreamStarted(true);
+          initStream(); // Initialize the peer after starting the media stream
         })
         .catch((err) => {
-          console.error("Failed to copy: ", err);
+          console.error("Failed to get media stream", err);
+          toast.error("Error accessing camera or microphone.");
         });
-    };
+    } catch (error) {
+      console.error("Error starting the stream:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-      <LoadingWrapper loading={loading}> {/* Use your loader here */}
+  const toggleVideo = () => {
+    if (mediaStreamRef.current) {
+      const videoTrack = mediaStreamRef.current.getVideoTracks()[0];
+      if (videoTrack) {
+        videoTrack.enabled = !videoTrack.enabled; // Toggle video track enabled state
+        setIsVideoEnabled(videoTrack.enabled); // Update state for UI
+      }
+    }
+  };
 
+  const toggleAudio = () => {
+    if (mediaStreamRef.current) {
+      const audioTrack = mediaStreamRef.current.getAudioTracks()[0];
+      if (audioTrack) {
+        audioTrack.enabled = !audioTrack.enabled; // Toggle audio track enabled state
+        setIsAudioEnabled(audioTrack.enabled); // Update state for UI
+      }
+    }
+  };
+
+  const endStream = async () => {
+    try {
+      // Stop the media stream (camera and mic)
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((track) => {
+          track.stop(); // Stops the camera and mic
+        });
+        mediaStreamRef.current = null;
+      }
+
+      // Close all peer connections
+      if (peerInstance.current) {
+        const connections = peerInstance.current.connections;
+        Object.keys(connections).forEach((peerId) => {
+          connections[peerId].forEach((call) => {
+            call.close(); // Close each call
+          });
+        });
+
+        // Destroy the Peer instance (makes the Peer ID unavailable)
+        peerInstance.current.destroy();
+        peerInstance.current = null; // Clear the peer reference
+        console.log("Peer ID destroyed, it is now unavailable.");
+      }
+
+      // Clear the video element
+      if (currentUserVideoRef.current) {
+        currentUserVideoRef.current.srcObject = null;
+      }
+
+      setViewersCount(0);
+      setStreamStarted(false);
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error ending the stream:", error);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard
+      .writeText(peerId)
+      .then(() => toast.success("Peer ID copied to clipboard!"))
+      .catch((err) => console.error("Failed to copy: ", err));
+  };
+
+  return (
+    <LoadingWrapper loading={loading}>
       <div className="App text-white">
         {!streamStarted ? (
           <div className="space-y-7 w-full h-auto ml-5">
-            <h1 className="font-semibold text-white text-4xl mb-5">
-              Create Or join Stream Session
-            </h1>
-            <div>
-              <label className="font-semibold text-white text-xl">
-                Enter Room Id to join
-              </label>
-              <p className="text-white font-medium text-base opacity-65">
-                You can join rooms both as spectator and streamer
-              </p>
-            </div>
-            <div>
-              <input
-                type="text"
-                id="room_id"
-                className=" w-2/5 h-16 rounded-xl border-2 border-white focus:border-none bg-transparent px-3 text-white"
-                placeholder="Enter Room Id"
-              />
-            </div>
-            <div className="space-x-5">
-              <button className="w-auto h-12 px-3 hover:bg-[#5242b6] bg-[#6a55ea] text-white text-lg font-semibold rounded-lg ease-in-out transition duration-300">
-                Join Stream as Streamer
-              </button>
-              <button className="w-auto h-12 px-3 hover:bg-[#6a55ea] border-2 border-[#6a55ea] text-white text-lg font-semibold rounded-lg ease-in-out transition duration-300">
-                Join Stream as Spectator
-              </button>
-            </div>
-            <div className="pt-5">
-              <h3 className="text-white text-xl font-semibold">
-                Create your own Stream Session!
-              </h3>
-              <p className="text-white font-medium text-base opacity-65">
-                Press Start Stream button to create your own streaming session
-              </p>
-            </div>
-            <div>
-              <button
-                onClick={startStream}
-                className="w-auto h-12 px-5 hover:bg-[#5242b6] bg-[#6a55ea] text-white text-lg font-semibold rounded-lg ease-in-out transition duration-300"
-              >
-                Start Stream
-              </button>
-            </div>
+            <button
+              onClick={startStream}
+              className="w-auto h-12 px-5 hover:bg-[#5242b6] bg-[#6a55ea] text-white text-lg font-semibold rounded-lg"
+            >
+              Start Stream
+            </button>
           </div>
         ) : (
           <div className="space-y-5">
-            <div className="flex flex-row justify-between items-center">
-              <div className="pt-5">
+            <div className="flex justify-between items-center">
+              <div>
                 <h3 className="text-white text-xl font-semibold">
-                  Welcome to your Streaming Session
+                  Streaming Live
                 </h3>
-                <p className="text-white font-medium text-base opacity-65">
-                  You can End your Streaming Session just by pressing End Stream
-                  Button
-                </p>
+                <h2 className="text-white text-xl">Viewers: {viewersCount}</h2>
               </div>
-
               <button
                 onClick={endStream}
-                className="w-auto h-12 px-5 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl ease-in-out transition duration-300"
+                className="w-auto h-12 px-5 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl"
               >
                 End Stream
               </button>
             </div>
+            <div className="flex space-x-5 justify-center">
+              <button
+                onClick={toggleVideo}
+                className={`w-auto h-12 px-5 ${
+                  isVideoEnabled ? "bg-red-500" : "bg-green-500"
+                } text-white text-lg font-semibold rounded-xl`}
+              >
+                {isVideoEnabled ? "Turn Off Video" : "Turn On Video"}
+              </button>
+              <button
+                onClick={toggleAudio}
+                className={`w-auto h-12 px-5 ${
+                  isAudioEnabled ? "bg-red-500" : "bg-green-500"
+                } text-white text-lg font-semibold rounded-xl`}
+              >
+                {isAudioEnabled ? "Mute Mic" : "Unmute Mic"}
+              </button>
+            </div>
+            <video
+              className="mx-auto w-4/6 rounded-xl"
+              ref={currentUserVideoRef}
+              playsInline
+              autoPlay
+              muted
+            />
+            <h1 className="border-2 border-white rounded-lg flex items-center justify-center p-2 text-xl">
+              <strong>Copy Stream Id</strong>
+              <ContentCopyIcon
+                className="ml-2 cursor-pointer text-white"
+                onClick={copyToClipboard}
+                title="Copy Peer ID"
+              />
+            </h1>
           </div>
         )}
-
-        {streamStarted && (
-          <div className="space-y-5 mt-5">
-            <div className="flex justify-center"></div>
-            <div className="flex justify-center">
-              <h1 className="border-2 border-white rounded-lg flex items-center justify-center p-2 text-xl ">
-                <strong>Copy Stream Id</strong>
-                <ContentCopyIcon
-                  className="ml-2 cursor-pointer text-white text-opacity-60 hover:text-opacity-100 ease-in-out transition duration-300"
-                  onClick={copyToClipboard}
-                  title="Copy Peer ID"
-                />
-              </h1>
-            </div>
-
-            <div className="flex justify-center">
-              <h2 className="text-white text-xl">
-                Viewers Count: {viewersCount}
-              </h2>
-            </div>
-          </div>
-        )}
-        <video
-          className=" mx-auto w-4/6 rounded-xl mt-3"
-          ref={currentUserVideoRef}
-          playsInline
-          autoPlay
-          muted
-        />
       </div>
-      </LoadingWrapper>
+    </LoadingWrapper>
+  );
+};
 
-    );
-  };
-
-  export default WebinarStream;
+export default WebinarStream;

@@ -1,179 +1,139 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import Peer from "peerjs";
 import { Box } from "@mui/material";
 import { toast } from "react-toastify";
-import { useParams } from "react-router-dom"; // Import useParams
+import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 const StreamPage = () => {
-  const {  id: urlId } = useParams(); // Destructure the id from the parameters
-  const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
-  const [inCall, setInCall] = useState(false); 
+  const { id: urlId } = useParams(); // Get the admin's peer ID from the URL
+  const [inCall, setInCall] = useState(false);
   const remoteVideoRef = useRef(null);
   const peerInstance = useRef(null);
-  const callInstance = useRef(null); 
-  const navigate = useNavigate(); // To navigate to the streaming page
+  const callInstance = useRef(null);
+  const navigate = useNavigate();
+
+  const handleStreamEnd = useCallback(() => {
+    setInCall(false);
+    if (remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = null; // Clear video
+    }
+    navigate("/");
+  }, [navigate]);
 
   useEffect(() => {
-    const peer = new Peer();
-  
-
+    const peer = new Peer(); // Create a new Peer instance for the viewer
     peerInstance.current = peer;
 
-    // Set the remotePeerIdValue when the component mounts
-    if (urlId) {
-      setRemotePeerIdValue(urlId); // Set the remote peer ID from URL parameters
-    }
-    // Handle incoming call requests
-    peer.on("call", (call) => {
-      console.log("Incoming call!");
+    peer.on("open", (id) => {
+      console.log("Viewer Peer ID:", id); // Log the viewer's peer ID
+    });
 
-      call.answer(); // Answer the call with an empty stream
-
-      // Handle the incoming remote stream
-      call.on("stream", (remoteStream) => {
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = remoteStream;
-          remoteVideoRef.current.onloadedmetadata = () => {
-            remoteVideoRef.current.play();
-          };
-        }
-      });
-
-      call.on("close", () => {
-        console.log("The stream has been ended by the admin.");
-        toast.error("The stream has been ended");
-        handleStreamEnd(); // Handle UI and state reset when stream ends
-      });
-
-      callInstance.current = call; // Save the call instance
-      setInCall(true); // Mark as in call
+    peer.on("error", (err) => {
+      console.error("Peer connection error:", err);
+      toast.error("Peer connection error: " + err.message);
     });
 
     return () => {
-      peer.disconnect(); // Clean up the peer connection on component unmount
+      peer.disconnect(); // Disconnect the peer when the component unmounts
     };
-  }, [urlId]); // Include id in dependency array to update when it changes
+  }, []);
 
-  const call = (remotePeerIdValue) => {
+  const initiateCall = () => {
+    if (!peerInstance.current) {
+      toast.error("Peer instance is not initialized.");
+      return;
+    }
+
+    if (!urlId) {
+      toast.error("No stream ID found!");
+      return;
+    }
+
+    console.log("Calling admin with Peer ID:", urlId);
     const emptyStream = new MediaStream();
+    
+    const call = peerInstance.current.call(urlId, emptyStream, {
+      constraints: {
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true,
+      },
+    });
 
-    try {
-      let call = peerInstance.current.call(remotePeerIdValue, emptyStream, {
-        constraints: {
-          offerToReceiveAudio: true,
-          offerToReceiveVideo: true,
-        },
-      });
+    if (!call) {
+      console.error("Failed to initiate the call. The peer might not be available.");
+      toast.error("Failed to initiate the call. Please try again.");
+      return;
+    }
 
-      if (!call) {
-        throw new Error("Failed to initiate a call. Please check the peer ID.");
+    call.on("stream", (remoteStream) => {
+      if (remoteVideoRef.current) {
+        console.log("Receiving stream from admin...");
+        remoteVideoRef.current.srcObject = remoteStream; // Display the stream
+        remoteVideoRef.current.onloadedmetadata = () => {
+          remoteVideoRef.current.play();
+        };
       }
+    });
 
-      callInstance.current = call; // Save the current call instance for later use
-      setInCall(true); // Mark as in call
+    call.on("close", () => {
+      console.log("Stream ended by the admin.");
+      handleStreamEnd();
+    });
 
-      call.on("stream", (remoteStream) => {
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = remoteStream;
-          remoteVideoRef.current.onloadedmetadata = () => {
-            remoteVideoRef.current.play();
-          };
-        }
-      });
+    call.on("error", (err) => {
+      console.error("Call error:", err);
+      toast.error("Call error: " + err.message);
+      handleStreamEnd();
+    });
 
-      // Handle call closure and errors
-      call.on("close", handleStreamEnd);
-      call.on("error", (err) => {
-        console.error("An error occurred during the call:", err);
-        alert("Failed to connect to the stream. Please check the peer ID.");
-        handleStreamEnd(); // Reset the UI
-      });
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
-
-  const handleStreamEnd = () => {
-    setInCall(false); // Reset the state to not in call
-    if (remoteVideoRef.current) {
-      remoteVideoRef.current.srcObject = null; // Clear the video element
-    }
-    navigate("/"); // Navigate back to the main page
+    callInstance.current = call;
+    setInCall(true);
   };
 
   const endCall = () => {
     if (callInstance.current) {
-      callInstance.current.close(); // End the call
-      handleStreamEnd(); // Handle UI and state reset
-    }
-  };
-
-  // Add a handler to initiate the call via a button click
-  const initiateCall = () => {
-    console.log("Remote Peer ID-> ",remotePeerIdValue)
-    if (remotePeerIdValue) {
-      call(remotePeerIdValue);
-    } else {
-      toast.error("No remote peer ID found!");
+      callInstance.current.close();
+      handleStreamEnd();
     }
   };
 
   return (
     <>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          backgroundColor: "#131213",
-          minHeight: "100vh",
-          padding: 0,
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
+      <Box component="main" sx={{ flexGrow: 1, p: 3, backgroundColor: "#131213", minHeight: "100vh" }}>
         <div className="App flex items-center w-full h-3/5">
           <div className="w-full h-full mt-32 ml-5">
             <div className="space-y-5">
-              <div className="flex flex-row items-center justify-between">
-                <div className="">
-                  <h3 className="text-white text-xl font-semibold">
-                    Welcome to the Stream!
-                  </h3>
-                  <p className="text-white font-medium text-base opacity-65">
-                    You can Leave Any time just by pressing End Stream Button
-                  </p>
+              <div className="flex justify-between items-center">
+                <h3 className="text-white text-xl font-semibold">Join the Stream!</h3>
+                {inCall && (
+                  <button
+                    onClick={endCall}
+                    className="w-auto h-12 px-5 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl"
+                  >
+                    End Stream
+                  </button>
+                )}
+              </div>
+              <div className="flex justify-center">
+                <video
+                  className="w-4/6 rounded-xl"
+                  ref={remoteVideoRef}
+                  playsInline
+                  autoPlay
+                />
+              </div>
+              {!inCall && (
+                <div className="flex justify-center mt-5">
+                  <button
+                    onClick={initiateCall}
+                    className="w-auto h-12 px-5 bg-[#4caf50] text-white text-lg font-semibold rounded-xl"
+                  >
+                    Join Stream
+                  </button>
                 </div>
-
-                <button
-                  onClick={endCall}
-                  className="w-auto h-12 px-5 hover:bg-[#b22c2c] bg-[#e53939] text-white text-lg font-semibold rounded-xl ease-in-out transition duration-300 mr-5"
-                >
-                  End Stream
-                </button>
-              </div>
+              )}
             </div>
-            <div className="flex justify-center mt-3 ">
-              <video
-                className="w-4/6 rounded-xl"
-                ref={remoteVideoRef}
-                playsInline
-                autoPlay
-              />
-            </div>
-
-            {!inCall && (
-              <div className="flex justify-center mt-5">
-                <button
-                  onClick={initiateCall}
-                  className="w-auto h-12 px-5 bg-[#4caf50] text-white text-lg font-semibold rounded-xl"
-                >
-                  Join Stream
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </Box>
