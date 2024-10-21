@@ -32,37 +32,6 @@ const Webinar = () => {
     })();
   }, []);
 
-  // const recomenededWebinars = [
-  //   {
-  //     id: 1,
-  //     title: "Tokyo Train",
-  //     year: "2022",
-  //     genre: "Webinar Genre",
-  //     image: `${process.env.PUBLIC_URL}/images/Tokyotrain.png`,
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "Moon Fall",
-  //     year: "2023",
-  //     genre: "Webinar Genre",
-  //     image: `${process.env.PUBLIC_URL}/images/Moonfall.png`,
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "Life in Paris",
-  //     year: "2022",
-  //     genre: "Webinar Genre",
-  //     image: `${process.env.PUBLIC_URL}/images/LifeinParis.png`,
-  //   },
-  //   {
-  //     id: 4,
-  //     title: "House of Gucci",
-  //     year: "2021",
-  //     genre: "Webinar Genre",
-  //     image: `${process.env.PUBLIC_URL}/images/HouseofGucci.png`,
-  //   },
-  // ];
-
   return (
     <Box
       component="main"

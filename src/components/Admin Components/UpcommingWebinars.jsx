@@ -67,63 +67,74 @@ const UpcomingWebinars = ({ limit }) => {
             upcomingWebinars.map((webinar, index) => (
               <div
                 key={index}
-                className="bg-transparent rounded-3xl p-4 shadow-md h-auto border-2 relative flex flex-col justify-between"
+                className="bg-transparent rounded-3xl p-4 shadow-md h-auto border-2 relative flex flex-col md:flex-row justify-between"
               >
-                <Link to={`/dashboard/webinars/${webinar.id}/webinar-lobby`} className="block">
-                  <div className="flex flex-row gap-3">
-                    <div className="flex-1">
-                      <h2 className="font-bold text-lg md:text-xl lg:text-2xl text-white mt-1">
-                        {webinar.title}
-                      </h2>
-                    </div>
-                  </div>
-
-                  <p className="text-[#808080] mt-2 text-sm md:text-base">
-                    {webinar.description}
-                  </p>
-
-                  <div className="flex items-center mt-2 text-sm md:text-base">
-                    <CalendarTodayIcon className="text-[#6a55ea] mr-1" />
-                    <p className="text-white mr-2">Date:</p>
-                    <p className="text-[#b2b2b2]">
-                      {new Date(webinar.startDate).toLocaleDateString()}{" "}
-                    </p>
-                  </div>
-                  <div className="flex items-center mt-2 text-sm md:text-base">
-                    <AccessTimeIcon className="text-[#6a55ea] mr-1" />
-                    <p className="text-white mr-2">Time:</p>
-                    <p className="text-[#b2b2b2]">{webinar.startTime}</p>
-                  </div>
-
-                  <div className="flex items-center mt-2">
-                    <PeopleAltIcon className="text-[#6a55ea] mr-1" />
-                    <p className="text-white mr-2">Joined Users:</p>
-                    <div className="flex ml-2">
-                      {webinar.joinedUsers?.length > 0 ? (
-                        webinar.joinedUsers.map((user, userIndex) => (
-                          <img
-                            key={userIndex}
-                            src={user}
-                            alt={`User ${userIndex + 1}`}
-                            className="inline-block w-6 h-6 md:w-8 md:h-8 rounded-full -ml-2"
-                          />
-                        ))
-                      ) : (
-                        <p className="text-[#b2b2b2]">No users joined</p>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-
-                {/* Icons for editing and deleting, outside the Link */}
-                <div className="flex justify-end mt-2 gap-2">
-                  <Link to={`/dashboard/webinars/${webinar.id}/manage-webinar`}>
-                    <ModeEditIcon className="text-[#05c283] cursor-pointer hover:text-[#038f60] ease-in-out transition-colors duration-300" />
-                  </Link>
-                  <DeleteOutlineIcon
-                    className="text-[#e53939] cursor-pointer hover:text-[#b22c2c] ease-in-out transition-colors duration-300"
-                    onClick={() => handleDeleteClick(webinar)}
+                <div className="md:w-1/3 w-full md:mr-4 mb-4 md:mb-0 overflow-hidden rounded-lg">
+                  <img
+                    src={webinar.coverImageUrl || "default-image-url.jpg"}
+                    alt={webinar.title}
+                    className=" w-44 h-48 object-cover rounded-lg"
                   />
+                </div>
+
+                {/* Right side - Webinar Details */}
+                <div className="flex flex-col justify-between w-full">
+                  <Link to={`/dashboard/webinars/${webinar.id}/webinar-lobby`} className="block">
+                    <div className="flex flex-row gap-3">
+                      <div className="flex-1">
+                        <h2 className="font-bold text-lg md:text-xl lg:text-2xl text-white mt-1">
+                          {webinar.title}
+                        </h2>
+                      </div>
+                    </div>
+
+                    <p className="text-[#808080] mt-2 text-sm md:text-base">
+                      {webinar.description}
+                    </p>
+
+                    <div className="flex items-center mt-2 text-sm md:text-base">
+                      <CalendarTodayIcon className="text-[#6a55ea] mr-1" />
+                      <p className="text-white mr-2">Date:</p>
+                      <p className="text-[#b2b2b2]">
+                        {new Date(webinar.startDate).toLocaleDateString()}{" "}
+                      </p>
+                    </div>
+                    <div className="flex items-center mt-2 text-sm md:text-base">
+                      <AccessTimeIcon className="text-[#6a55ea] mr-1" />
+                      <p className="text-white mr-2">Time:</p>
+                      <p className="text-[#b2b2b2]">{webinar.startTime}</p>
+                    </div>
+
+                    <div className="flex items-center mt-2">
+                      <PeopleAltIcon className="text-[#6a55ea] mr-1" />
+                      <p className="text-white mr-2">Joined Users:</p>
+                      <div className="flex ml-2">
+                        {webinar.joinedUsers?.length > 0 ? (
+                          webinar.joinedUsers.map((user, userIndex) => (
+                            <img
+                              key={userIndex}
+                              src={user}
+                              alt={`User ${userIndex + 1}`}
+                              className="inline-block w-6 h-6 md:w-8 md:h-8 rounded-full -ml-2"
+                            />
+                          ))
+                        ) : (
+                          <p className="text-[#b2b2b2]">No users joined</p>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+
+                  {/* Icons for editing and deleting */}
+                  <div className="flex justify-end mt-2 gap-2">
+                    <Link to={`/dashboard/webinars/${webinar.id}/manage-webinar`}>
+                      <ModeEditIcon className="text-[#05c283] cursor-pointer hover:text-[#038f60] ease-in-out transition-colors duration-300" />
+                    </Link>
+                    <DeleteOutlineIcon
+                      className="text-[#e53939] cursor-pointer hover:text-[#b22c2c] ease-in-out transition-colors duration-300"
+                      onClick={() => handleDeleteClick(webinar)}
+                    />
+                  </div>
                 </div>
               </div>
             ))}

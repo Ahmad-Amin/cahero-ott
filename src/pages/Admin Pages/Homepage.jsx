@@ -208,9 +208,16 @@ const AdminHomepage = () => {
               {activeTab === "upcoming" ? (
                 <UpcomingWebinars limit={4} webinars={upcomingWebinars} />
               ) : (
-                <PastWebinars webinars={pastWebinars} />
+                <PastWebinars limit={4} webinars={pastWebinars} />
               )}
             </div>
+            <div className="w-auto h-auto flex justify-end">
+              <Link to="/dashboard/webinars">
+                <button className="w-52 h-12 text-[#6a55ea]  rounded-lg text-lg font-semibold hover:text-[#3b2f83] ease-in-out transition duration-300">
+                  View All
+                </button>
+              </Link>
+              </div>
           </div>
         </div>
       </div>

@@ -160,7 +160,7 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
                   name="firstName"
                   value={userData.firstName}
                   onChange={handleChange}
-                  className="text-white text-base font-medium bg-transparent border-b border-white mr-2"
+                  className="text-white text-base font-medium bg-transparent border-b border-white mr-2 w-1/4"
                   placeholder="First Name"
                 />
                 <input
@@ -168,7 +168,7 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
                   name="lastName"
                   value={userData.lastName}
                   onChange={handleChange}
-                  className="text-white text-base font-medium bg-transparent border-b border-white"
+                  className="text-white text-base font-medium bg-transparent border-b border-white w-1/4"
                   placeholder="Last Name"
                 />
               </>
@@ -218,7 +218,7 @@ const UserManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
                 name="phoneNumber"
                 value={userData.phoneNumber}
                 onChange={handleChange}
-                className="text-white text-base font-medium bg-transparent border-b border-white"
+                className="text-white text-base font-medium bg-transparent border-b border-white w-1/4"
                 placeholder="Phone Number"
               />
             ) : (

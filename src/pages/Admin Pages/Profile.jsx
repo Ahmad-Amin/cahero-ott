@@ -85,11 +85,11 @@ const Profile = () => {
         toast.error("Failed to update user information");
         console.error("Error updating user data:", error);
       })
-      .finally(() => setLoading(false));  // Stop the loader after the request is completed
+      .finally(() => setLoading(false));  
   };
 
   return (
-    <LoaderWrapper loading={loading}> {/* Wrap the entire component with LoaderWrapper */}
+    <LoaderWrapper loading={loading}> 
       <Box
         component="main"
         sx={{

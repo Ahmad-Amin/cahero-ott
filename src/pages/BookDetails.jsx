@@ -15,8 +15,8 @@ import LoadingWrapper from "../components/ui/LoadingWrapper";
 const drawerWidth = 280;
 
 const BookDetails = () => {
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false); // State to control AudioPlayer rendering
-  const navigate = useNavigate(); // Create a navigate function
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false); 
+  const navigate = useNavigate(); 
   const [book, setBook] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -53,7 +53,7 @@ const BookDetails = () => {
           overflow: "hidden",
         }}
       >
-        <LoadingWrapper loading={loading}>
+        <LoadingWrapper loading={loading} className="h-full">
           <Box
             sx={{
               position: "absolute",
@@ -69,7 +69,7 @@ const BookDetails = () => {
           <LoginedNavbar />
           <Link to={'/all-books'} >
             <button
-              style={{ zIndex: 3 }} // Set a higher zIndex here
+              style={{ zIndex: 3 }}
               className="relative flex items-center bg-transparent text-white mx-5 opacity-75 hover:opacity-100 text-lg font-semibold"
             >
               <MdArrowBack className="mr-2" />
