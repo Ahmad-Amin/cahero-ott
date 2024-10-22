@@ -58,15 +58,27 @@ const CreateNotifications = () => {
                 </option>
                 <option
                   className="bg-[#101011] text-white"
-                  value="regular-updates"
-                >
-                  Regular Updates
-                </option>
-                <option
-                  className="bg-[#101011] text-white"
                   value="user-notification"
                 >
                   User Notification
+                </option>
+                <option
+                  className="bg-[#101011] text-white"
+                  value="upcomming-webinar"
+                >
+                  Upcomming Webinar
+                </option>
+                <option
+                  className="bg-[#101011] text-white"
+                  value="new-documentary"
+                >
+                  New Documentary
+                </option>
+                <option
+                  className="bg-[#101011] text-white"
+                  value="new-book"
+                >
+                  New Book
                 </option>
               </select>
             </div>
@@ -84,28 +96,25 @@ const CreateNotifications = () => {
                   className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 appearance-none"
                 >
                   <option className="bg-[#101011] text-white" value="Admin">
-                    Admin
+                    All
                   </option>
                   <option className="bg-[#101011] text-white" value="Host">
-                    Host
+                    Admins
                   </option>
                   <option
                     className="bg-[#101011] text-white"
                     value="Participents"
                   >
-                    Participents
+                    Users
                   </option>
-                  <option className="bg-[#101011] text-white" value="Customers">
-                    Customers
-                  </option>
-                </select>
+                  </select>
               </div>
               <div className="w-full md:w-1/2">
                 <label
                   htmlFor="specific-user"
                   className="text-white font-normal text-lg block mb-2"
                 >
-                  Specific Recipient
+                  Specific Recipient (Not Mandatory)
                 </label>
                 <input
                   type="text"
@@ -116,32 +125,13 @@ const CreateNotifications = () => {
               </div>
             </div>
             <div className="mt-5">
-              <div>
-                <label
-                  htmlFor="title"
-                  className="text-white font-normal text-lg block mb-2"
-                >
-                  Group/Segment
-                </label>
-                <select
-                  id="type"
-                  name="type"
-                  className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 appearance-none"
-                >
-                  <option
-                    className="bg-[#101011] text-white"
-                    value="system-update"
-                  >
-                    Users with Upcomming Webinars
-                  </option>
-                </select>
-              </div>
+              
               <div className="mt-5">
                 <label
                   htmlFor="title"
                   className="text-white font-normal text-lg block mb-2"
                 >
-                  Delivery Method
+                  External Notification Delivery
                 </label>
                 <select
                   id="type"
@@ -150,13 +140,25 @@ const CreateNotifications = () => {
                 >
                   <option
                     className="bg-[#101011] text-white"
-                    value="system-update"
+                    value="none"
+                  >
+                    None
+                  </option>
+                  <option
+                    className="bg-[#101011] text-white"
+                    value="all"
+                  >
+                    All
+                  </option>
+                  <option
+                    className="bg-[#101011] text-white"
+                    value="email"
                   >
                     Email
                   </option>
                   <option
                     className="bg-[#101011] text-white"
-                    value="regular-updates"
+                    value="phone-number"
                   >
                     Phone Number
                   </option>

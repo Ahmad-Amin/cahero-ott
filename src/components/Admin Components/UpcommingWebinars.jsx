@@ -77,7 +77,6 @@ const UpcomingWebinars = ({ limit }) => {
                   />
                 </div>
 
-                {/* Right side - Webinar Details */}
                 <div className="flex flex-col justify-between w-full">
                   <Link to={`/dashboard/webinars/${webinar.id}/webinar-lobby`} className="block">
                     <div className="flex flex-row gap-3">
@@ -88,7 +87,7 @@ const UpcomingWebinars = ({ limit }) => {
                       </div>
                     </div>
 
-                    <p className="text-[#808080] mt-2 text-sm md:text-base">
+                    <p className="text-[#808080] mt-2 text-sm md:text-base overflow-hidden max-h-6">
                       {webinar.description}
                     </p>
 

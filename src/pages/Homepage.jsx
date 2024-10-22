@@ -41,11 +41,13 @@ export default function Homepage({ window }) {
   const drawer = (
     <div className="bg-[#101011] text-white h-full">
       <div className="p-2 flex items-center">
+        <Link to={"/"}>
         <img
           src={`${process.env.PUBLIC_URL}/images/Cahero.png`}
           alt="Logo"
           className="h-auto w-auto"
         />
+        </Link>
       </div>
       <List className="mx-6 space-y-2">
         {menuItems.map((item) => {
