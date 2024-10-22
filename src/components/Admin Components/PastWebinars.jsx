@@ -77,7 +77,6 @@ const PastWebinars = ({ limit }) => {
                   />
                 </div>
 
-                {/* Right side - Webinar Details */}
                 <div className="flex flex-col justify-between w-full">
                     <div className="flex flex-row gap-3">
                       <div className="flex-1">
@@ -87,7 +86,7 @@ const PastWebinars = ({ limit }) => {
                       </div>
                     </div>
 
-                    <p className="text-[#808080] mt-2 text-sm md:text-base">
+                    <p className="text-[#808080] mt-2 text-sm md:text-base text-ellipsis max-h-6 line-clamp-1">
                       {webinar.description}
                     </p>
 

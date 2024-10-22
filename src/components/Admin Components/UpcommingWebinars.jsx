@@ -78,7 +78,10 @@ const UpcomingWebinars = ({ limit }) => {
                 </div>
 
                 <div className="flex flex-col justify-between w-full">
-                  <Link to={`/dashboard/webinars/${webinar.id}/webinar-lobby`} className="block">
+                  <Link
+                    to={`/dashboard/webinars/${webinar.id}/webinar-lobby`}
+                    className="block"
+                  >
                     <div className="flex flex-row gap-3">
                       <div className="flex-1">
                         <h2 className="font-bold text-lg md:text-xl lg:text-2xl text-white mt-1">
@@ -87,7 +90,7 @@ const UpcomingWebinars = ({ limit }) => {
                       </div>
                     </div>
 
-                    <p className="text-[#808080] mt-2 text-sm md:text-base overflow-hidden max-h-6">
+                    <p className="text-[#808080] mt-2 text-sm md:text-base text-ellipsis max-h-6 line-clamp-1">
                       {webinar.description}
                     </p>
 
@@ -126,7 +129,9 @@ const UpcomingWebinars = ({ limit }) => {
 
                   {/* Icons for editing and deleting */}
                   <div className="flex justify-end mt-2 gap-2">
-                    <Link to={`/dashboard/webinars/${webinar.id}/manage-webinar`}>
+                    <Link
+                      to={`/dashboard/webinars/${webinar.id}/manage-webinar`}
+                    >
                       <ModeEditIcon className="text-[#05c283] cursor-pointer hover:text-[#038f60] ease-in-out transition-colors duration-300" />
                     </Link>
                     <DeleteOutlineIcon
