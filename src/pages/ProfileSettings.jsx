@@ -203,7 +203,7 @@ const ProfileSettings = () => {
                     profileImage
                   }
                   alt="Profile"
-                  className="w-auto h-64"
+                  className="w-64 h-64"
                 />
                 {selectedFile ? (
                   <>

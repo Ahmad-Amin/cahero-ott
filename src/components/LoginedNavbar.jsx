@@ -123,7 +123,7 @@ function LoginedNavbar({ position = "relative" }) {
                 )}
               </ul>
               <div className="py-2" onClick={handleSignOut}>
-                <a  className="block px-4 py-2 text-sm text-white hover:bg-[#404041] cursor-pointer ease-in-out transition">Sign out</a>
+                <a  className="block px-4 py-2 text-sm text-white hover:bg-red-700 cursor-pointer ease-in-out transition">Sign out</a>
               </div>
             </div>
           )}
