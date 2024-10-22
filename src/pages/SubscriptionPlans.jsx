@@ -40,7 +40,7 @@ const SubscriptionPlans = () => {
             {currentUser ? <LoginedNavbar  /> : <Navbar />}
 
 
-      <div className="mr-96">
+      <div>
         <div
           style={{ position: "relative", zIndex: 2 }}
           className="mx-4 md:mx-8 mt-14 text-white text-xl font-semibold"
@@ -49,7 +49,7 @@ const SubscriptionPlans = () => {
         </div>
       </div>
 
-      <div className="w-auto h-auto mx-4 md:mx-20 mt-5 grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="w-auto h-auto mx-4 md:mx-20 mt-10 grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="w-full p-4 overflow-hidden rounded-3xl">
           <div className="relative ">
             <img
@@ -57,8 +57,8 @@ const SubscriptionPlans = () => {
               alt="Basic Plan"
               className="w-full h-full scale-[1.4] rounded-lg"
             />
-            <div className="absolute inset-0 ">
-              <div className="flex flex-col items-center justify-center text-white h-full gap-5">
+            <div className="absolute inset-0">
+              <div className="flex flex-col space-y-5 items-center justify-center text-white h-full gap-5">
                 <h2 className="text-2xl md:text-3xl font-bold mb-2">Basic</h2>
                 <h3 className="text-base font-extralight">
                   Monthly Charges
@@ -109,7 +109,7 @@ const SubscriptionPlans = () => {
               className="w-full h-full scale-[1.4] rounded-lg"
             />
             <div className="absolute inset-0 ">
-              <div className="flex flex-col items-center justify-center text-white h-full gap-5">
+              <div className="flex flex-col space-y-5 items-center justify-center text-white h-full gap-5">
                 <h2 className="text-2xl md:text-3xl font-bold mb-2">Standard</h2>
                 <h3 className="text-base font-extralight">
                   Monthly Charges
@@ -160,7 +160,7 @@ const SubscriptionPlans = () => {
               className="w-full h-full scale-[1.4] rounded-lg"
             />
             <div className="absolute inset-0 ">
-              <div className="flex flex-col items-center justify-center text-white h-full gap-5">
+              <div className="flex flex-col space-y-5 items-center justify-center text-white h-full gap-5">
                 <h2 className="text-2xl md:text-3xl font-bold mb-2">Premium</h2>
                 <h3 className="text-base font-extralight">
                   Monthly Charges

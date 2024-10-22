@@ -49,8 +49,8 @@ const Subscriptions = () => {
     },
   ];
   const handleDeleteClick = (plans) => {
-    setItemToDelete(plans); // Set the selected item to be deleted
-    setIsModalOpen(true); // Open the modal
+    setItemToDelete(plans);
+    setIsModalOpen(true); 
   };
   return (
     <>
@@ -59,7 +59,7 @@ const Subscriptions = () => {
         {plans.map((plan, index) => (
           <div
             key={index}
-            className="bg-[#000000] border border-[#6a55ea] rounded-xl p-6 text-white relative"
+            className="bg-[#000000] border border-[#6a55ea] rounded-xl p-6 space-y-7 text-white relative"
           >
             <div className="flex justify-between items-center">
               <div className="flex flex-row gap-3 flex-1">
@@ -73,14 +73,14 @@ const Subscriptions = () => {
                 </Link>
                 <DeleteOutlineIcon
             className="text-[#e53939] hover:text-[#b22c2c] ease-in-out transition-colors duration-300 cursor-pointer"
-            onClick={() => handleDeleteClick(plans)} // Open modal on click
+            onClick={() => handleDeleteClick(plans)} 
           />
               </div>
             </div>
             <h2 className="text-3xl font-bold my-4">
               {plan.price} <span className="text-lg">$/mo</span>
             </h2>
-            <ul className="space-y-2 mb-6">
+            <ul className="space-y-5 mb-6">
               {plan.features.map((feature, i) => (
                 <li key={i} className="flex items-center text-lg">
                   <span className="text-[#6a55ea] mr-2">●</span>
@@ -89,7 +89,7 @@ const Subscriptions = () => {
               ))}
             </ul>
             <div className="w-full flex justify-center">
-              <button className="bg-[#6a55ea] w-1/2 py-3 rounded-md text-lg font-semibold hover:bg-[#5242b6] transition ease-in-out">
+              <button className="bg-[#6a55ea] w-1/2 py-3 rounded-md text-lg mt-5 font-semibold hover:bg-[#5242b6] transition ease-in-out duration-300">
                 View
               </button>
             </div>
