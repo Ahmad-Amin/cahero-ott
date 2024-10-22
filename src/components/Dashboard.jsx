@@ -44,13 +44,12 @@ const Dashboard = () => {
           sx={{
             position: "relative",
             zIndex: 2,
-            mt: { xs: 4, sm: 8 }, // Adjust margin for mobile
+            mt: { xs: 4, sm: 8 }, 
           }}
         >
           <UpcomingWebinars />
         </Box>
 
-        {/* Recommended Books Section */}
         <Box
           sx={{
             position: "relative",
@@ -69,7 +68,7 @@ const Dashboard = () => {
             mt: { xs: 4, sm: 8 }, // Adjust margin for mobile
           }}
         >
-          <Latestlectures />
+          <Latestlectures limit={3} />
         </Box>
       </Box>
     </>

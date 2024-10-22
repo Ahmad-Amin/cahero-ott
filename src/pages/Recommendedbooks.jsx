@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import WebinarCard from "./WebinarCard";
 import axiosInstance from "../lib/axiosInstance";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
+import { Link } from "react-router-dom";
 
 function RecommendedBooks() {
   const [books, setBooks] = useState([]);
@@ -45,6 +46,11 @@ function RecommendedBooks() {
             />
           ))}
         </div>
+        <Link to={"/all-books"}>
+        <button className="flex justify-end w-full px-10 font-semibold text-lg text-white text-opacity-65 hover:text-opacity-100 ease-in-out transition duration-300">
+          View All
+        </button>
+        </Link>
       </div>
     </LoadingWrapper>
   );

@@ -132,7 +132,6 @@ export default function Homepage({ window }) {
         </Box>
       </AppBar>
 
-      {/* Sidebar conditionally rendered */}
       {!shouldHideSidebar && (
         <Box
           component="nav"

@@ -3,7 +3,7 @@ import WebinarCard from "./WebinarCard";
 import axiosInstance from "../lib/axiosInstance";
 import { useSelector } from "react-redux";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
-
+import { Link } from "react-router-dom";
 function UpcomingWebinars() {
   const [webinars, setWebinars] = useState([]);
   const { user } = useSelector((state) => state.auth);
@@ -19,7 +19,6 @@ function UpcomingWebinars() {
             return new Date(b.createdAt) - new Date(a.createdAt);
           });
 
-          // Take the first four items after sorting
           const firstFourResults = sortedResults.slice(0, 4);
           setWebinars(firstFourResults);
         } catch (error) {
@@ -53,6 +52,11 @@ function UpcomingWebinars() {
             );
           })}
         </div>
+        <Link to={"/webinar"}>
+        <button className="flex justify-end w-full px-10 font-semibold text-lg text-white text-opacity-65 hover:text-opacity-100 ease-in-out transition duration-300">
+          View All
+        </button>
+        </Link>
       </div>
     </LoadingWrapper>
   );
