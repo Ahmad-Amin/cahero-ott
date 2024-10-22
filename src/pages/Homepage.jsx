@@ -33,27 +33,36 @@ export default function Homepage({ window }) {
     { text: "Dashboard", icon: <DashboardIcon />, link: "/" },
     { text: "Webinar", icon: <VideoLibraryIcon />, link: "/webinar" },
     { text: "Books", icon: <LibraryBooksIcon />, link: "/all-books" },
-    { text: "Documentaries", icon: <VideoLibraryIcon />, link: "/documentaries" },
+    {
+      text: "Documentaries",
+      icon: <VideoLibraryIcon />,
+      link: "/documentaries",
+    },
     { text: "Profile Settings", icon: <TuneIcon />, link: "/profile-settings" },
-    { text: "Subscription Plans", icon: <CalendarTodayIcon />, link: "/subscription-plans" },
+    {
+      text: "Subscription Plans",
+      icon: <CalendarTodayIcon />,
+      link: "/subscription-plans",
+    },
   ];
 
   const drawer = (
     <div className="bg-[#101011] text-white h-full">
       <div className="p-2 flex items-center">
         <Link to={"/"}>
-        <img
-          src={`${process.env.PUBLIC_URL}/images/Cahero.png`}
-          alt="Logo"
-          className="h-auto w-auto"
-        />
+          <img
+            src={`${process.env.PUBLIC_URL}/images/Cahero.png`}
+            alt="Logo"
+            className="h-auto w-auto"
+          />
         </Link>
       </div>
       <List className="mx-6 space-y-2">
         {menuItems.map((item) => {
           const isActive =
-            location.pathname === item.link || 
-            (item.link === "/all-books" && location.pathname.startsWith("/all-books"));
+            location.pathname === item.link ||
+            (item.link === "/all-books" &&
+              location.pathname.startsWith("/all-books"));
 
           return (
             <ListItem key={item.text} disablePadding>
@@ -70,7 +79,7 @@ export default function Homepage({ window }) {
                   <ListItemIcon
                     sx={{
                       color: "white",
-                      minWidth: "30px", 
+                      minWidth: "30px",
                     }}
                   >
                     {item.icon}
@@ -81,7 +90,7 @@ export default function Homepage({ window }) {
                       fontSize: 16,
                       fontWeight: isActive ? "bold" : "normal",
                       color: "white",
-                      marginLeft: "8px", // Consistent margin for all items
+                      marginLeft: "8px",
                     }}
                   />
                 </ListItemButton>
@@ -93,9 +102,10 @@ export default function Homepage({ window }) {
     </div>
   );
 
-  const container = window !== undefined ? () => window().document.body : undefined;
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
 
-  const shouldHideSidebar = location.pathname.includes('/documentaries/');
+  const shouldHideSidebar = location.pathname.includes("/documentaries/");
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -103,7 +113,7 @@ export default function Homepage({ window }) {
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          width: { sm: `calc(100% - ${drawerWidth}px)` }, // Use backticks here
           ml: { sm: `${drawerWidth}px` },
           backgroundColor: "transparent",
           boxShadow: "none",
@@ -166,7 +176,6 @@ export default function Homepage({ window }) {
         </Box>
       )}
 
-      {/* Main content area where the nested routes will be rendered */}
       <Outlet />
     </Box>
   );
