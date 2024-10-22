@@ -1,101 +1,99 @@
 import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import { useDispatch } from "react-redux";
-import Cookies from "js-cookie";  // Import js-cookie
+import { useDispatch, useSelector } from "react-redux";
 import LoginedNavbar from "../components/LoginedNavbar";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
 import axiosInstance from "../lib/axiosInstance";
-import { updateUser } from "../Slice/AuthSlice";  // Adjust path according to your project structure
-
+import { updateUser } from "../Slice/AuthSlice";
+import { toast } from "react-toastify";
+import Navbar from "../components/Navbar";
 const drawerWidth = 280;
 
 const ProfileSettings = () => {
-  const [profileData, setProfileData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phoneNumber: "",
-    bio: "",
-    address: "",
-  });
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { user, token } = useSelector((state) => state.auth);
+
+  const [loading, setLoading] = useState(true);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const currentUser = useSelector((state) => state.auth.user); 
+
   const [isEditing, setIsEditing] = useState({
     profile: false,
     email: false,
     phoneNumber: false,
   });
 
-  const dispatch = useDispatch();
-
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        setLoading(true);
-        const response = await axiosInstance.get("/me");
-        const { firstName, lastName, email, phoneNumber } = response.data;
-
-        console.log("Fetched profile data:", response.data);  // Log fetched data
-
-        setProfileData((prevData) => ({
-          ...prevData,
-          firstName,
-          lastName,
-          email,
-          phoneNumber,
-        }));
-      } catch (error) {
-        console.error("Error fetching profile data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProfile();
-  }, []);
-
-  const handleEditToggle = (field) => {
-    setIsEditing((prevState) => ({
-      ...prevState,
-      [field]: !prevState[field],
-    }));
-  };
+    if (user) {
+      setFirstName(user.firstName || "");
+      setLastName(user.lastName || "");
+      setEmail(user.email || "");
+      setPhoneNumber(user.phoneNumber || "");
+      setLoading(false);
+    } else {
+      axiosInstance
+        .get("/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          const userData = response.data;
+          setFirstName(userData.firstName || "");
+          setLastName(userData.lastName || "");
+          setEmail(userData.email || "");
+          setPhoneNumber(userData.phoneNumber || "");
+          dispatch(updateUser({ user: userData, token }));
+        })
+        .catch((error) => {
+          toast.error("Failed to fetch user data");
+          console.error("Error fetching user data:", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [dispatch, user, token]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setProfileData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    if (name === "firstName") setFirstName(value);
+    if (name === "lastName") setLastName(value);
+    if (name === "email") setEmail(value);
+    if (name === "phoneNumber") setPhoneNumber(value);
   };
 
-  const handleSave = async (field) => {
-    try {
-      setLoading(true);
+  const handleSave = (field) => {
+    setLoading(true);
 
-      // Log data before sending
-      console.log("Updating field:", field, profileData[field]);
+    const updatedUser = {
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+    };
 
-      const response = await axiosInstance.patch("/me", {
-        [field]: profileData[field],
+    axiosInstance
+      .patch("/me", updatedUser, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(() => {
+        toast.success("User information updated successfully!");
+        dispatch(updateUser({ user: updatedUser, token }));
+      })
+      .catch((error) => {
+        toast.error("Failed to update user information");
+        console.error("Error updating user data:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+        setIsEditing((prev) => ({ ...prev, [field]: false }));
       });
+  };
 
-      console.log("Server response:", response.data);  // Log server response
-
-      const token = Cookies.get("token");
-
-      console.log("Token:", token);  // Log token to ensure it's being retrieved
-
-      // Dispatch user update to Redux
-      dispatch(updateUser({ user: response.data, token }));
-
-      setIsEditing((prevState) => ({
-        ...prevState,
-        [field]: false,
-      }));
-    } catch (error) {
-      console.error(`Error updating ${field}:`, error);
-    } finally {
-      setLoading(false);
-    }
+  const handleEditToggle = (field) => {
+    setIsEditing((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
   return (
@@ -126,7 +124,8 @@ const ProfileSettings = () => {
           }}
         />
         <div>
-          <LoginedNavbar />
+        {currentUser ? <LoginedNavbar  /> : <Navbar />}
+
         </div>
 
         <LoadingWrapper loading={loading}>
@@ -158,21 +157,21 @@ const ProfileSettings = () => {
                       <input
                         type="text"
                         name="firstName"
-                        value={profileData.firstName}
+                        value={firstName}
                         onChange={handleInputChange}
                         className="text-white bg-transparent border-b-2 px-2 py-1 mr-2"
                       />
                       <input
                         type="text"
                         name="lastName"
-                        value={profileData.lastName}
+                        value={lastName}
                         onChange={handleInputChange}
                         className="text-white bg-transparent border-b-2 px-2 py-1"
                       />
                     </div>
                   ) : (
                     <h1 className="text-white text-4xl font-semibold">
-                      {profileData.firstName} {profileData.lastName}
+                      {firstName} {lastName}
                     </h1>
                   )}
                   <div className="whitespace-nowrap">
@@ -196,7 +195,7 @@ const ProfileSettings = () => {
 
                 <div className="flex justify-between mt-4 flex-wrap">
                   <p className="text-white opacity-85 text-lg font-normal mr-4">
-                    {profileData.address || "No Address Available"}
+                    No Address Available
                   </p>
                 </div>
                 <div className="flex justify-between mt-4 flex-wrap">
@@ -222,7 +221,7 @@ const ProfileSettings = () => {
                 </div>
               </div>
               <p className="text-white font-light mx-8 opacity-65 mt-3">
-                {profileData.bio || "You have no bio"}
+                You have no bio
               </p>
 
               <div className="mx-8 mt-5">
@@ -236,14 +235,12 @@ const ProfileSettings = () => {
                   <input
                     type="text"
                     name="email"
-                    value={profileData.email}
+                    value={email}
                     onChange={handleInputChange}
                     className="text-white bg-transparent border-b-2 px-2 py-1 w-1/4"
                   />
                 ) : (
-                  <h1 className="text-lg opacity-85 font-thin">
-                    {profileData.email}
-                  </h1>
+                  <h1 className="text-lg opacity-85 font-thin">{email}</h1>
                 )}
                 <div className="whitespace-nowrap">
                   {isEditing.email ? (
@@ -269,13 +266,13 @@ const ProfileSettings = () => {
                   <input
                     type="text"
                     name="phoneNumber"
-                    value={profileData.phoneNumber}
+                    value={phoneNumber}
                     onChange={handleInputChange}
                     className="text-white bg-transparent border-b-2 px-2 py-1 w-1/4"
                   />
                 ) : (
                   <h1 className="text-lg opacity-85 font-thin">
-                    {profileData.phoneNumber || "No phone number available"}
+                    {phoneNumber || "No phone number available"}
                   </h1>
                 )}
                 <div className="whitespace-nowrap">

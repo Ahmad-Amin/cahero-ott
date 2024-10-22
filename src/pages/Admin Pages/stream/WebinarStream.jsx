@@ -115,10 +115,10 @@ const WebinarStream = () => {
 
   const endStream = async () => {
     try {
-      // Stop the media stream (camera and mic)
+      
       if (mediaStreamRef.current) {
         mediaStreamRef.current.getTracks().forEach((track) => {
-          track.stop(); // Stops the camera and mic
+          track.stop();
         });
         mediaStreamRef.current = null;
       }

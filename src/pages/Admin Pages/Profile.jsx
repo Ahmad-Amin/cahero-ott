@@ -17,7 +17,7 @@ const Profile = () => {
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
-  const [loading, setLoading] = useState(true);  // Loader state, initially true to indicate data fetching
+  const [loading, setLoading] = useState(true);  
   const [id, setId] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -26,7 +26,6 @@ const Profile = () => {
   const [role, setrole] = useState("");
 
   useEffect(() => {
-    // Check if user data is available in Redux store
     if (user) {
       setrole(user.role);
       setId(user.id);
@@ -34,9 +33,8 @@ const Profile = () => {
       setLastName(user.lastName || "");
       setEmail(user.email || "");
       setPassword(user.password || "");
-      setLoading(false);  // Stop the loader once user data is set
+      setLoading(false);  
     } else {
-      // Fetch user data from the API
       axiosInstance.get('/me', {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -49,7 +47,6 @@ const Profile = () => {
           setEmail(userData.email || "");
           setPassword(userData.password || "");
 
-          // Dispatch the user data to Redux
           dispatch(updateUser({ user: userData, token }));
         })
         .catch(error => {
@@ -57,14 +54,14 @@ const Profile = () => {
           console.error("Error fetching user data:", error);
         })
         .finally(() => {
-          setLoading(false);  // Stop the loader after fetching
+          setLoading(false);  
         });
     }
   }, [dispatch, user, token]);
 
   const handleUpdateUser = (e) => {
     e.preventDefault();
-    setLoading(true);  // Set loading to true when the form is submitted
+    setLoading(true); 
 
     const updatedUser = {
       role,

@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import { Link } from "react-router-dom"; // Import Link
 import WebinarCard from "./WebinarCard";
 import LoginedNavbar from "../components/LoginedNavbar";
 import SearchBar from "../components/Searchbar";
 import axiosInstance from "../lib/axiosInstance";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
-
+import { useSelector } from 'react-redux';
+import Navbar from "../components/Navbar";
 const drawerWidth = 280;
 
 const Webinar = () => {
   const [webinars, setWebinars] = useState([]);
+  const currentUser = useSelector((state) => state.auth.user); 
+
+  const [recordedWebinars, setrecordedWebinars] = useState([]);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     (async () => {
@@ -20,10 +23,13 @@ const Webinar = () => {
         const sortedResults = response.data.results.sort((a, b) => {
           return new Date(b.createdAt) - new Date(a.createdAt);
         });
-
-        // Take the first four items after sorting
-        const firstFourResults = sortedResults.slice(0, 4);
-        setWebinars(firstFourResults);
+        setWebinars(sortedResults);
+        
+        const recoededResponse = await axiosInstance.get("/webinars?type=past");
+        const RecordedResults = recoededResponse.data.results.sort((a, b) => {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+        setrecordedWebinars(RecordedResults);
       } catch (error) {
         console.log("Error fetching the webinars");
       } finally {
@@ -60,7 +66,8 @@ const Webinar = () => {
           }}
         />
         <div>
-          <LoginedNavbar />
+        {currentUser ? <LoginedNavbar  /> : <Navbar />}
+
         </div>
         <div
           style={{ position: "relative", zIndex: 2 }}
@@ -106,7 +113,7 @@ const Webinar = () => {
           style={{ position: "relative", zIndex: 2 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mx-8 my-4"
         >
-          {webinars.map((webinar) => (
+          {recordedWebinars.map((webinar) => (
             <WebinarCard
               title={webinar.title}
               year={webinar.startDate.split("-")[0]}

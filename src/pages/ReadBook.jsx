@@ -3,11 +3,13 @@ import { Box } from "@mui/material";
 import LoginedNavbar from "../components/LoginedNavbar";
 import { Link, useParams } from "react-router-dom";
 import { MdArrowBack } from "react-icons/md"; // Importing the left arrow icon from React Icons
-
+import { useSelector } from 'react-redux';
+import Navbar from "../components/Navbar";
 const drawerWidth = 280;
 
 const SubscriptionPlans = () => {
   const {id: bookId} = useParams()
+  const currentUser = useSelector((state) => state.auth.user); 
 
   return (
     <>
@@ -36,7 +38,8 @@ const SubscriptionPlans = () => {
             zIndex: 1,
           }}
         />
-        <LoginedNavbar />
+              {currentUser ? <LoginedNavbar  /> : <Navbar />}
+
 
         <div>
           <div

@@ -6,13 +6,16 @@ import LoginedNavbar from "../components/LoginedNavbar";
 import SearchBar from "../components/Searchbar";
 import axiosInstance from "../lib/axiosInstance";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
-
+import { useSelector } from 'react-redux';
+import Navbar from "../components/Navbar";
 const drawerWidth = 280;
 
 const Lectures = () => {
   const navigate = useNavigate(); // Hook to handle navigation
   const [lectures, setLectures] = useState([]);
   const [loading, setLoading] = useState(false);
+  const currentUser = useSelector((state) => state.auth.user); 
+
   useEffect(() => {
     const fetchDocumentries = async () => {
       try {
@@ -58,7 +61,7 @@ const Lectures = () => {
             }}
           />
           <div>
-            <LoginedNavbar />
+          {currentUser ? <LoginedNavbar  /> : <Navbar />}
           </div>
           <div
             style={{ position: "relative", zIndex: 2 }}

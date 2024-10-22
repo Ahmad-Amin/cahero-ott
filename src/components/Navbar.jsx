@@ -19,12 +19,12 @@ const style = {
   padding: "20px",
 };
 
-function Navbar() {
+function Navbar({ position = "relative" }) {
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   
-  const dispatch = useDispatch(); // Create a dispatch function
-  const currentUser = useSelector((state) => state.auth.user); // Get current user from Redux store
+  const dispatch = useDispatch(); 
+  const currentUser = useSelector((state) => state.auth.user); 
 
   const toggleSignIn = () => {
     setShowSignIn(true);
@@ -42,11 +42,11 @@ function Navbar() {
   };
 
   const handleLogout = () => {
-    dispatch(logout()); // Dispatch the logout action
+    dispatch(logout()); 
   };
 
   return (
-    <div className="w-full h-20 flex items-center justify-start bg-transparent absolute mt-10 md:mt-0">
+    <div className={`w-full h-20 flex items-center justify-start bg-transparent ${position} mt-10 md:mt-0`}>
       <SearchBar />
 
       <div className="flex items-center justify-end">

@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import { Link } from "react-router-dom";
 import LoginedNavbar from "../components/LoginedNavbar";
 import SearchBar from "../components/Searchbar";
 import WebinarCard from "./WebinarCard";
 import axiosInstance from "../lib/axiosInstance";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
+import { useSelector } from 'react-redux';
+import Navbar from "../components/Navbar";
+
 
 const drawerWidth = 280;
 
 function Allbooks() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const currentUser = useSelector((state) => state.auth.user); 
 
   useEffect(() => {
     (async () => {
@@ -93,8 +96,8 @@ function Allbooks() {
             zIndex: 1,
           }}
         />
-        <LoginedNavbar />
-        <div
+      {currentUser ? <LoginedNavbar  /> : <Navbar />}
+      <div
           style={{ position: "relative", zIndex: 2 }}
           className="mt-12 flex justify-between items-center"
         >

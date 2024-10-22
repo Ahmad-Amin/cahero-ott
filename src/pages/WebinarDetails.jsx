@@ -7,7 +7,8 @@ import WebinarCard from "../pages/WebinarCard";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
-
+import { useSelector } from 'react-redux';
+import Navbar from "../components/Navbar";
 const drawerWidth = 280;
 
 const WebinarDetails = () => {
@@ -17,6 +18,7 @@ const WebinarDetails = () => {
   const [webinarLiveStatus, setWebinarLiveStatus] = useState(null); // Track webinar live status
   const [isWatchNowEnabled, setIsWatchNowEnabled] = useState(false); //
   const [loading, setLoading] = useState(false);
+  const currentUser = useSelector((state) => state.auth.user); 
 
   // Fetch webinar details
   useEffect(() => {
@@ -84,7 +86,8 @@ const WebinarDetails = () => {
             }}
           />
           <div>
-            <LoginedNavbar />
+          {currentUser ? <LoginedNavbar  /> : <Navbar />}
+
           </div>
           {webinar && <div
             style={{ position: "relative", zIndex: 2 }}

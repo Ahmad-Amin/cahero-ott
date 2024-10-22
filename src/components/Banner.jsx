@@ -1,10 +1,14 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import Navbar from './Navbar';
-import { Link } from 'react-router-dom';
+import LoginedNavbar from './LoginedNavbar'; 
+
 function Banner() {
+  const currentUser = useSelector((state) => state.auth.user); 
+
   return (
     <div className="relative">
-      <Navbar />
+      {currentUser ? <LoginedNavbar position='absolute' /> : <Navbar position='absolute' />}
       <img 
         src={`${process.env.PUBLIC_URL}/images/Rectangle.png`} 
         alt="" 

@@ -1,10 +1,16 @@
 import React from "react";
 import { Box, Divider } from "@mui/material";
 import LoginedNavbar from "../components/LoginedNavbar";
+import { useSelector } from 'react-redux';
+import Navbar from "../components/Navbar";
+
 
 const drawerWidth = 280;
 
 const SubscriptionPlans = () => {
+
+  const currentUser = useSelector((state) => state.auth.user); 
+
   return (
     <Box
       component="main"
@@ -31,7 +37,8 @@ const SubscriptionPlans = () => {
           zIndex: 1,
         }}
       />
-      <LoginedNavbar />
+            {currentUser ? <LoginedNavbar  /> : <Navbar />}
+
 
       <div className="mr-96">
         <div

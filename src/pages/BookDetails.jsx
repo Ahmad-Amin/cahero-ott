@@ -11,6 +11,8 @@ import { MdArrowBack } from "react-icons/md"; // Importing the left arrow icon f
 import { useParams } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
+import Navbar from "../components/Navbar";
+import { useSelector } from 'react-redux';
 
 const drawerWidth = 280;
 
@@ -19,6 +21,7 @@ const BookDetails = () => {
   const navigate = useNavigate(); 
   const [book, setBook] = useState({});
   const [loading, setLoading] = useState(false);
+  const currentUser = useSelector((state) => state.auth.user); 
 
   const { id: bookId } = useParams();
 
@@ -66,8 +69,8 @@ const BookDetails = () => {
               zIndex: 0,
             }}
           />
-          <LoginedNavbar />
-          <Link to={'/all-books'} >
+      {currentUser ? <LoginedNavbar  /> : <Navbar />}
+      <Link to={'/all-books'} >
             <button
               style={{ zIndex: 3 }}
               className="relative flex items-center bg-transparent text-white mx-5 opacity-75 hover:opacity-100 text-lg font-semibold"
