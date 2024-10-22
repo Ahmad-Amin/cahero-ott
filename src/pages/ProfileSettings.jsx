@@ -7,6 +7,7 @@ import axiosInstance from "../lib/axiosInstance";
 import { updateUser } from "../Slice/AuthSlice";
 import { toast } from "react-toastify";
 import Navbar from "../components/Navbar";
+
 const drawerWidth = 280;
 
 const ProfileSettings = () => {
@@ -17,14 +18,21 @@ const ProfileSettings = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [bio, setBio] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const currentUser = useSelector((state) => state.auth.user); 
+  const [role, setRole] = useState("");
+  const [profileImage, setprofileImage] = useState(""); 
+  const currentUser = useSelector((state) => state.auth.user);
 
   const [isEditing, setIsEditing] = useState({
     profile: false,
     email: false,
     phoneNumber: false,
+    bio: false,
   });
+
+  const [selectedFile, setSelectedFile] = useState(null); 
+  const [fileName, setFileName] = useState(""); 
 
   useEffect(() => {
     if (user) {
@@ -32,6 +40,9 @@ const ProfileSettings = () => {
       setLastName(user.lastName || "");
       setEmail(user.email || "");
       setPhoneNumber(user.phoneNumber || "");
+      setBio(user.bio || "");
+      setRole(user.role || ""); 
+      setprofileImage(user.profileImageUrl || ""); 
       setLoading(false);
     } else {
       axiosInstance
@@ -44,6 +55,9 @@ const ProfileSettings = () => {
           setLastName(userData.lastName || "");
           setEmail(userData.email || "");
           setPhoneNumber(userData.phoneNumber || "");
+          setBio(userData.bio || "");
+          setRole(userData.role || ""); 
+          setprofileImage(userData.profileImageUrl || "")
           dispatch(updateUser({ user: userData, token }));
         })
         .catch((error) => {
@@ -55,25 +69,28 @@ const ProfileSettings = () => {
         });
     }
   }, [dispatch, user, token]);
-
+  console.log(profileImage)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "firstName") setFirstName(value);
     if (name === "lastName") setLastName(value);
     if (name === "email") setEmail(value);
     if (name === "phoneNumber") setPhoneNumber(value);
+    if (name === "bio") setBio(value);
   };
 
   const handleSave = (field) => {
     setLoading(true);
-
+  
     const updatedUser = {
       firstName,
       lastName,
       email,
       phoneNumber,
+      bio,
+      role,
+      profileImageUrl: profileImage,
     };
-
     axiosInstance
       .patch("/me", updatedUser, {
         headers: { Authorization: `Bearer ${token}` },
@@ -91,10 +108,53 @@ const ProfileSettings = () => {
         setIsEditing((prev) => ({ ...prev, [field]: false }));
       });
   };
+  
+  
 
   const handleEditToggle = (field) => {
     setIsEditing((prev) => ({ ...prev, [field]: !prev[field] }));
   };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setFileName(file.name); 
+    }
+  };
+
+  const handleImageUpload = async () => {
+    if (!selectedFile) return;
+  
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+  
+    try {
+      const response = await axiosInstance.post("/upload/profile", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(response);
+      const profileImageUrl = response.data.fileUrl; 
+      setprofileImage(profileImageUrl); 
+      console.log("Profile Image URL-> ",profileImageUrl); 
+  
+      const updatedUser = { ...user, profileImageUrl }; 
+      dispatch(updateUser({ user: updatedUser, token })); 
+  
+      toast.success("Profile image updated successfully!"); 
+      setSelectedFile(null); 
+      setFileName("");
+  
+    } catch (error) {
+      toast.error("Failed to upload profile image"); 
+      console.error("Error uploading image:", error); 
+    }
+  };
+  
+  
 
   return (
     <Box
@@ -123,10 +183,7 @@ const ProfileSettings = () => {
             zIndex: 1,
           }}
         />
-        <div>
-        {currentUser ? <LoginedNavbar  /> : <Navbar />}
-
-        </div>
+        <div>{currentUser ? <LoginedNavbar /> : <Navbar />}</div>
 
         <LoadingWrapper loading={loading}>
           <div className="mr-10">
@@ -142,13 +199,33 @@ const ProfileSettings = () => {
             >
               <div className="flex flex-col items-center">
                 <img
-                  src={`${process.env.PUBLIC_URL}/images/profile.png`}
+                  src={
+                    profileImage
+                  }
                   alt="Profile"
-                  className="w-full md:w-auto h-auto"
+                  className="w-auto h-64"
                 />
-                <button className="text-[#6a55ea] hover:text-[#5242b6] ease-in-out transition duration-300 font-medium text-base mt-4">
-                  Change image
-                </button>
+                {selectedFile ? (
+                  <>
+                    <span className="text-white mt-2">{fileName}</span>
+                    <button
+                      className="text-[#6a55ea] hover:text-[#5242b6] ease-in-out transition duration-300 font-medium text-base mt-4"
+                      onClick={handleImageUpload}
+                    >
+                      Save
+                    </button>
+                  </>
+                ) : (
+                  <label className="text-[#6a55ea] hover:text-[#5242b6] ease-in-out transition duration-300 font-medium text-base mt-4">
+                    Change image
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      style={{ display: "none" }}
+                    />
+                  </label>
+                )}
               </div>
               <div className="mt-10 ml-10 w-auto flex-1">
                 <div className="flex justify-between items-center">
@@ -212,17 +289,41 @@ const ProfileSettings = () => {
             </div>
 
             <div style={{ position: "relative", zIndex: 2 }}>
-              <div className="text-white mt-10 mx-4 md:mx-8 text-base font-normal flex justify-between w-auto">
-                <h1 className="text-xl font-semibold">Bio</h1>
-                <div className=" whitespace-nowrap">
-                  <button className="text-[#6a55ea] hover:text-[#5242b6] ease-in-out transition duration-300 font-medium">
-                    Edit Bio
-                  </button>
+              <div className="mt-7 mx-4 md:mx-8">
+                <h1 className="text-xl font-semibold text-white">Bio</h1>
+                <div className="text-white  text-base font-normal flex justify-between w-auto">
+                  {isEditing.bio ? (
+                    <textarea
+                      type="text"
+                      name="bio"
+                      value={bio}
+                      onChange={handleInputChange}
+                      className="text-white bg-transparent border-b-2 px-2 py-1 w-1/3"
+                    />
+                  ) : (
+                    <h1 className="text-lg opacity-85 font-thin">
+                      {bio || "You have no Bio"}
+                    </h1>
+                  )}
+                  <div className="whitespace-nowrap">
+                    {isEditing.bio ? (
+                      <button
+                        className="text-[#6a55ea] hover:text-[#5242b6] transition duration-300 font-medium"
+                        onClick={() => handleSave("bio")}
+                      >
+                        Save
+                      </button>
+                    ) : (
+                      <button
+                        className="text-[#6a55ea] hover:text-[#5242b6] transition duration-300 font-medium"
+                        onClick={() => handleEditToggle("bio")}
+                      >
+                        Edit bio
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-              <p className="text-white font-light mx-8 opacity-65 mt-3">
-                You have no bio
-              </p>
 
               <div className="mx-8 mt-5">
                 <h1 className="text-xl font-semibold text-white">
