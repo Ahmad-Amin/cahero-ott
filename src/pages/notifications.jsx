@@ -1,21 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LoginedNavbar from "../components/LoginedNavbar";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import { Box, Button } from "@mui/material";
+import axiosInstance from "../lib/axiosInstance";
+
 const drawerWidth = 280;
 
 const NotificationsUser = () => {
-  const currentUser = useSelector((state) => state.auth.user); 
-  
-  const notifications = [
-    { id: 1, title: "Notification 1", description: "You have a new message from John.", time: "2 hours ago" },
-    { id: 2, title: "Notification 2", description: "Your webinar starts in 30 minutes. Please make sure you are prepared and have all necessary materials ready before joining the session.", time: "3 hours ago" },
-    { id: 3, title: "Notification 3", description: "New update availablesdasdasd sdasd asd as das ds as das dasdasd as da  ds d d for your profile settings. This update includes changes to your privacy options, allowing you to customize your account security preferences even further.", time: "1 day ago" },
-    { id: 4, title: "Notification 4", description: "You have 3 unread messages. Please check your inbox to ensure you haven't missed anything important.", time: "2 days ago" },
-  ];
+  const currentUser = useSelector((state) => state.auth.user);
 
+  const [notifications, setNotifications] = useState([]);
   const [expanded, setExpanded] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalNotifications, setTotalNotifications] = useState(0);
+  const notificationsPerPage = 15;
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await axiosInstance.get("/notifications", {
+          params: {
+            page: currentPage, // Include current page
+            limit: notificationsPerPage, // Limit the number of notifications
+          },
+        });
+        console.log("Full API response: ", response);
+        setNotifications(response.data.results);
+        setTotalNotifications(response.data.total); // Set total notifications from API response
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching notifications: ", err);
+        setError("Failed to fetch notifications");
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, [currentPage]); // Fetch notifications when currentPage changes
 
   const handleToggleExpand = (id) => {
     setExpanded((prevState) => ({
@@ -23,6 +49,26 @@ const NotificationsUser = () => {
       [id]: !prevState[id],
     }));
   };
+
+  const handleNextPage = () => {
+    if (currentPage * notificationsPerPage < totalNotifications) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
+  if (loading) {
+    return <div className="text-white mx-5">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-white mx-5">{error}</div>;
+  }
 
   return (
     <>
@@ -41,28 +87,64 @@ const NotificationsUser = () => {
       >
         {currentUser ? <LoginedNavbar /> : <Navbar />}
 
-        <div className="font-bold text-4xl text-white mx-5">
-          Notifications
+        <div className="font-bold text-4xl text-white mx-5">Notifications</div>
+
+        <div className="text-white mx-5 mt-5">
+          {Array.isArray(notifications) && notifications.length > 0 ? (
+            notifications
+              .filter(
+                (notification) =>
+                  notification.recipientType === "All" ||
+                  notification.recipientType === "users"
+              )
+              .map((notification) => (
+                <div
+                  key={notification.id}
+                  className="mb-4 p-4 bg-[#404041] rounded-lg"
+                >
+                  <h1 className="font-semibold text-lg text-white">
+                    {notification.notificationType}
+                  </h1>
+                  <div
+                    className={`notification-description ${
+                      expanded[notification.id] ? "expanded" : ""
+                    }`}
+                  >
+                    {notification.content}
+                  </div>
+                  <Button
+                    variant="text"
+                    sx={{ color: "#90caf9" }}
+                    onClick={() => handleToggleExpand(notification.id)}
+                  >
+                    {expanded[notification.id] ? "Show Less" : "View More"}
+                  </Button>
+                  <div className="text-sm text-gray-400">
+                    {notification.CreatedAt}
+                  </div>
+                </div>
+              ))
+          ) : (
+            <div className="text-white mx-5">No notifications available</div>
+          )}
         </div>
 
-        {/* Notification List */}
-        <div className="text-white mx-5 mt-5">
-          {notifications.map((notification) => (
-            <div key={notification.id} className="mb-4 p-4 bg-[#404041] rounded-lg">
-              <h1 className="font-semibold text-lg text-white">{notification.title}</h1>
-              <div className={`notification-description ${expanded[notification.id] ? "expanded" : ""}`}>
-                {notification.description}
-              </div>
-              <Button
-                variant="text"
-                sx={{ color: "#90caf9" }}
-                onClick={() => handleToggleExpand(notification.id)}
-              >
-                {expanded[notification.id] ? "Show Less" : "View More"}
-              </Button>
-              <div className="text-sm text-gray-400">{notification.time}</div>
-            </div>
-          ))}
+        {/* Pagination controls */}
+        <div className="flex justify-between mx-5 mt-5">
+          <Button
+            variant="contained"
+            disabled={currentPage === 1}
+            onClick={handlePreviousPage}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="contained"
+            disabled={currentPage * notificationsPerPage >= totalNotifications}
+            onClick={handleNextPage}
+          >
+            Next
+          </Button>
         </div>
       </Box>
 

@@ -1,24 +1,51 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useSelector } from "react-redux"; // Import useSelector to access Redux store
+import { useSelector } from "react-redux";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { FaBell, FaEnvelope, FaUserCheck } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import axiosInstance from "../../lib/axiosInstance"; 
 
 const AdminNavbar = ({ pageTitle }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
-  const dropdownRef = useRef(null); 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
+  const user = useSelector((state) => state.auth.user); 
 
-  const user = useSelector((state) => state.auth.user);
-  console.log(user);
-  
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      setLoading(true);
+      try {
+        const response = await axiosInstance.get("/notifications");
+        
+        const filteredNotifications = response.data.results
+          .filter(
+            (notification) =>
+              notification.recipientType === "All" || notification.recipientType === "Admin"
+          )
+          .slice(0, 5); 
+
+        setNotifications(filteredNotifications);
+      } catch (err) {
+        console.error("Error fetching notifications:", err);
+        setError("Failed to fetch notifications");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, [user.role]); 
+
   const toggleDropdown = () => {
-    setIsDropdownOpen((prev) => !prev); 
+    setIsDropdownOpen((prev) => !prev);
   };
 
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setIsDropdownOpen(false); 
+      setIsDropdownOpen(false);
     }
   };
 
@@ -128,53 +155,34 @@ const AdminNavbar = ({ pageTitle }) => {
             <NotificationsIcon />
           </button>
           {isDropdownOpen && (
-            <div className="absolute right-0 top-full mt-2 bg-[#0d0d0d] text-white rounded-md shadow-lg z-30 w-[40rem]">
-              <div className="text-center py-2 font-bold border-b border-gray-600">
-                Recent Notifications
-              </div>
-              <ul className="py-2">
-                {[
-                  {
-                    title: "Notification Title 1",
-                    description: "This is a description of notification 1.",
-                    icon: <FaBell className="w-6 h-6 mr-4" />,
-                    time: "5 mins ago",
-                  },
-                  {
-                    title: "Notification Title 2",
-                    description: "This is a description of notification 2.",
-                    icon: <FaEnvelope className="w-6 h-6 mr-4" />,
-                    time: "10 mins ago",
-                  },
-                  {
-                    title: "Notification Title 3",
-                    description: "This is a description of notification 3.",
-                    icon: <FaUserCheck className="w-6 h-6 mr-4" />,
-                    time: "15 mins ago",
-                  },
-                ].map((notification, index) => (
-                  <li
-                    key={index}
-                    className="flex items-center h-20 px-4 py-2 hover:bg-[#404041] cursor-pointer ease-in-out transition"
-                  >
-                    {notification.icon}
-                    <div className="flex flex-col justify-center flex-grow overflow-hidden">
-                      <div className="font-semibold">
-                        {notification.title}
+            <div className="absolute right-0 top-full mt-3 bg-[#0d0d0d] text-white rounded-md shadow-lg z-30">
+              <div className="text-center py-2 font-bold border-b border-gray-600">Notifications</div>
+              {loading ? (
+                <div className="py-2 px-4 font-semibold text-lg text-white opacity-70">Loading...</div>
+              ) : error ? (
+                <div className="py-2 px-4 font-semibold text-lg text-white opacity-70">{error}</div>
+              ) : Array.isArray(notifications) && notifications.length > 0 ? (
+                <ul className="max-h-60 overflow-y-auto">
+                  {notifications.map((notification, index) => (
+                    <li key={index} className="flex items-center h-20 px-4 py-2 hover:bg-[#404041] cursor-pointer ease-in-out transition">
+                      <div className="flex flex-col justify-center flex-grow overflow-hidden">
+                        <div className="font-semibold">{notification.notificationType}</div>
+                        <div className="text-sm w-96 text-gray-400 overflow-hidden text-ellipsis whitespace-nowrap line-clamp-1">{notification.content}</div>
                       </div>
-                      <div className="text-sm text-gray-400 overflow-hidden text-ellipsis whitespace-nowrap">
-                        {notification.description}
-                      </div>
-                    </div>
-                    <span
-                      className="ml-4 text-xs text-gray-400"
-                      style={{ width: "100px", textAlign: "center" }}
-                    >
-                      {notification.time}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+                      <span className="ml-4 text-xs text-gray-400" style={{ width: "100px", textAlign: "center" }}>
+                        {notification.time}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="py-2 px-4 font-semibold text-lg text-white opacity-70">No notifications available</div>
+              )}
+              <Link to="/dashboard/notifications" onClick={dropdownRef}>
+                <button className="flex justify-end w-full my-3 px-3 text-sm hover:font-semibold ease-in-out transition duration-300">
+                  View All
+                </button>
+              </Link>
             </div>
           )}
         </div>

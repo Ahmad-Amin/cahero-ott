@@ -22,18 +22,18 @@ const NotificationManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen || !itemType) return null; // Ensure itemType is available
+  if (!isOpen || !itemType) return null; 
 
   const getStatusColor = (status) => {
     switch (status) {
       case "Pending":
-        return "#FFEA00"; // Color for Pending
+        return "#FFEA00";
       case "Sent":
-        return "#46d133"; // Color for Sent
+        return "#46d133"; 
       case "Failed":
-        return "#ff0726"; // Color for Failed
+        return "#ff0726"; 
       default:
-        return "white"; // Default color
+        return "white"; 
     }
   };
 
@@ -43,7 +43,6 @@ const NotificationManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
         ref={modalRef}
         className="relative bg-[#101011] border border-white rounded-2xl p-6 w-2/5 h-auto flex flex-col items-start justify-center py-10"
       >
-        {/* Cross Button */}
         <button
           className="absolute top-4 right-4 text-white text-lg font-bold hover:text-gray-400"
           onClick={onClose}
@@ -74,8 +73,8 @@ const NotificationManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
             </div>
             <h2 className="text-white text-base px-4 py-1">{itemType.timeSent}</h2>
           </div>
-          <h3 className="text-white text-base px-4 py-1">User: {itemType.Recipient}</h3>
-          <p className="text-white text-base px-4 pt-4 pb-2 opacity-60">Notification Description</p>
+          <h3 className="text-white text-base px-4 py-1">User /UserType: {itemType.recipientType}</h3>
+          <p className="text-white text-base px-4 pt-4 pb-2 opacity-60 text-ellipsis line-clamp-2">{itemType.content}</p>
         </div>
 
         <div className="w-full">
@@ -89,13 +88,13 @@ const NotificationManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
             <h1 className="flex-1 text-white text-base font-medium opacity-70">
               Delivery Method
             </h1>
-            <p className="text-white text-base font-medium">Email</p>
+            <p className="text-white text-base font-medium">{itemType.externalNotificationDelivery}</p>
           </div>
           <div className="flex flex-row w-full h-auto mb-4">
             <h1 className="flex-1 text-white text-base font-medium opacity-70">
               Recipient Email
             </h1>
-            <p className="text-white text-base font-medium">xyz@gmail.com</p>
+            <p className="text-white text-base font-medium">{itemType.specificRecipient}</p>
           </div>
           <div className="flex flex-row w-full h-auto mb-4">
             <h1 className="flex-1 text-white text-base font-medium opacity-70">
