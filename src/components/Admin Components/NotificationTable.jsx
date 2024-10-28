@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../lib/axiosInstance";
 import LoadingWrapper from "../../components/ui/LoadingWrapper"; // Adjust the import path as necessary
+import { toast } from "react-toastify";
 
 const NotificationTable = ({ onViewNotification }) => {
   const [notifications, setNotifications] = useState([]);
@@ -36,6 +37,19 @@ const NotificationTable = ({ onViewNotification }) => {
   };
 
   if (error) return <div>Error fetching notifications: {error}</div>;
+
+  const resentNotifications = async (notificationId) => {
+    try {
+      setLoading(true);
+      await axiosInstance.post(`/notifications/${notificationId}/resend`);
+      toast.success('Notification sent successfully!');
+      fetchNotifications();
+    } catch (e) {
+      console.error("Error resending notification:", e);
+      toast.error('Error sending notifications!');
+      setLoading(false);
+    }
+  };
 
   return (
     <LoadingWrapper loading={loading}>
@@ -99,7 +113,10 @@ const NotificationTable = ({ onViewNotification }) => {
                   >
                     View
                   </button>
-                  <button className="font-medium text-[#6a55ea] hover:bg-[#6a55ea] border border-[#6a55ea] hover:text-white rounded-lg h-8 w-auto px-3 ease-in-out transition duration-200">
+                  <button
+                    onClick={() => resentNotifications(notification.id)}
+                    className="font-medium text-[#6a55ea] hover:bg-[#6a55ea] border border-[#6a55ea] hover:text-white rounded-lg h-8 w-auto px-3 ease-in-out transition duration-200"
+                  >
                     Resend
                   </button>
                 </td>
