@@ -65,7 +65,7 @@ const EditNotifications = () => {
     try {
       const response = await axiosInstance.patch(`/notifications/${id}`, notificationData);
       console.log('Notification sent:', response.data);
-      toast.success('Notification Resend successfully!');
+      toast.success('Notification Edited successfully!');
       navigate("/dashboard/notifications");
     } catch (error) {
       console.error('Error sending notification:', error);
