@@ -83,9 +83,9 @@ function LoginedNavbar({ position = "relative" }) {
     <div className={`w-full h-20 flex items-center justify-end bg-transparent px-4 sm:px-10 ${position}`}>
       <div className="flex items-center justify-end gap-2 sm:gap-4 relative">
         <div className="h-auto w-auto text-white flex items-center">
-          <button>
+          {/* <button>
             <RiSearch2Line className="w-5 h-5 sm:w-6 sm:h-6" />
-          </button>
+          </button> */}
         </div>
 
         {/* Notification Icon */}

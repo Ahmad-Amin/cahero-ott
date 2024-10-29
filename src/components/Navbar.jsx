@@ -46,8 +46,10 @@ function Navbar({ position = "relative" }) {
   };
 
   return (
-    <div className={`w-full h-20 flex items-center justify-start bg-transparent ${position} mt-10 md:mt-0`}>
-      <SearchBar />
+    <div className={`w-full h-20 flex items-center justify-end bg-transparent ${position} mt-10 md:mt-0`}>
+      {/* <SearchBar /> */}
+      <div className=" w-ful"></div>
+      
 
       <div className="flex items-center justify-end">
         {currentUser ? ( 
