@@ -12,6 +12,7 @@ const NotificationTable = ({ onViewNotification }) => {
     try {
       const response = await axiosInstance.get("/notifications");
       setNotifications(response.data.results);
+      console.log("Data Fetched-> ",response.data.results)
     } catch (err) {
       setError(err.message);
     } finally {
@@ -36,7 +37,7 @@ const NotificationTable = ({ onViewNotification }) => {
     }
   };
 
-  if (error) return <div>Error fetching notifications: {error}</div>;
+  if (error) return <div className=" font-semibold text-xl text-white">Error fetching notifications: {error}</div>;
 
   const resentNotifications = async (notificationId) => {
     try {

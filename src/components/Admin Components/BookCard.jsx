@@ -9,17 +9,17 @@ import LoadingWrapper from "../ui/LoadingWrapper";
 const BookCardGrid = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
-  const [books, setBooks] = useState([]); // Ensure this starts as an array
+  const [books, setBooks] = useState([]); 
   const [loading, setLoading] = useState(false);
 
   const fetchBooks = async () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get("/books");
-      console.log(response.data.results); // Log the response data to check the structure
+      console.log(response.data); 
 
-      if (Array.isArray(response.data.results)) {
-        setBooks(response.data.results); // Set the fetched books data to state
+      if (Array.isArray(response.data)) {
+        setBooks(response.data); 
       } else {
         console.error("Books data is not an array");
       }

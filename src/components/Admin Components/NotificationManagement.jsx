@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
-import CloseIcon from "@mui/icons-material/Close"; // Import Close Icon
-
+import CloseIcon from "@mui/icons-material/Close";
+import { Link } from "react-router-dom";
 const NotificationManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
   const modalRef = useRef();
 
@@ -56,12 +56,11 @@ const NotificationManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
               Notifications Management
             </h2>
           </div>
+          <Link to={`/dashboard/notifications/edit-notification/${itemType.id}`}>
           <button className="text-white bg-[#6a55ea] hover:bg-[#5242b6] ease-in-out transition duration-300 w-36 h-12 rounded-lg">
             Edit
           </button>
-          <button className="border border-[#6a55ea] text-[#6a55ea] hover:bg-[#6a55ea] hover:text-white ease-in-out transition duration-300 w-36 h-12 rounded-lg">
-            Resend
-          </button>
+          </Link>
         </div>
 
         <div className="bg-black rounded-lg w-full h-auto my-3">

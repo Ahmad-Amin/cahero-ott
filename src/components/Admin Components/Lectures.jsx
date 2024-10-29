@@ -21,8 +21,8 @@ const Lectures = () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get("/lectures");
-      if (Array.isArray(response.data.results)) {
-        setUpcomingLectures(response.data.results);
+      if (Array.isArray(response.data)) {
+        setUpcomingLectures(response.data);
       } else {
         setError("Unexpected response format."); // Handle unexpected response format
       }

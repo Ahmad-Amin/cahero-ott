@@ -120,7 +120,7 @@ const NotificationsUser = () => {
                     {expanded[notification.id] ? "Show Less" : "View More"}
                   </Button>
                   <div className="text-sm text-gray-400">
-                    {notification.CreatedAt}
+                    {notification.createdAt.split("T")[0]}
                   </div>
                 </div>
               ))

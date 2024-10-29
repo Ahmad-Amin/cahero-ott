@@ -20,13 +20,13 @@ const Webinar = () => {
       try {
         setLoading(true);
         const response = await axiosInstance.get("/webinars");
-        const sortedResults = response.data.results.sort((a, b) => {
+        const sortedResults = response.data.sort((a, b) => {
           return new Date(b.createdAt) - new Date(a.createdAt);
         });
         setWebinars(sortedResults);
         
         const recoededResponse = await axiosInstance.get("/webinars?type=past");
-        const RecordedResults = recoededResponse.data.results.sort((a, b) => {
+        const RecordedResults = recoededResponse.data.sort((a, b) => {
           return new Date(b.createdAt) - new Date(a.createdAt);
         });
         setrecordedWebinars(RecordedResults);
@@ -82,7 +82,7 @@ const Webinar = () => {
         </div>
 
         <div
-          style={{ position: "relative", zIndex: 2 }}
+          style={{ position: "relative" }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mx-8 my-4"
         >
           {webinars.map((webinar) => (
@@ -110,7 +110,7 @@ const Webinar = () => {
         </div>
 
         <div
-          style={{ position: "relative", zIndex: 2 }}
+          style={{ position: "relative" }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mx-8 my-4"
         >
           {recordedWebinars.map((webinar) => (

@@ -21,7 +21,7 @@ function Allbooks() {
       try {
         setLoading(true);
         const response = await axiosInstance.get("/books");
-        const sortedResults = response.data.results.sort((a, b) => {
+        const sortedResults = response.data.sort((a, b) => {
           return new Date(b.createdAt) - new Date(a.createdAt);
         });
 
@@ -98,7 +98,7 @@ function Allbooks() {
         />
       {currentUser ? <LoginedNavbar  /> : <Navbar />}
       <div
-          style={{ position: "relative", zIndex: 2 }}
+          style={{ position: "relative" }}
           className="mt-12 flex justify-between items-center"
         >
           <p className="text-xl mx-8 text-white font-semibold">All Books</p>
@@ -109,7 +109,7 @@ function Allbooks() {
 
         <LoadingWrapper loading={loading} >
           <div
-            style={{ position: "relative", zIndex: 2 }}
+            style={{ position: "relative" }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mx-8 my-4"
           >
             {books.map((book) => (

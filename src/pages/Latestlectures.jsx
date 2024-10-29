@@ -6,7 +6,7 @@ import LoadingWrapper from "../components/ui/LoadingWrapper";
 import { Link } from "react-router-dom";
 
 function LatestLectures({ limit }) {
-  const navigate = useNavigate(); // Hook to handle navigation
+  const navigate = useNavigate(); 
 
   const [lectures, setLectures] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -16,16 +16,17 @@ function LatestLectures({ limit }) {
       try {
         setLoading(true);
         const response = await axiosInstance.get("/lectures");
-        setLectures(response.data.results);
+        setLectures(response.data); 
       } catch (e) {
         console.log("Error getting the lecture", e);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchLectures();
   }, []);
+  
 
   const displayedLectures = limit ? lectures.slice(0, limit) : lectures;
 

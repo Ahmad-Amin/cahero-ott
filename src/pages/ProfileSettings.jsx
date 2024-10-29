@@ -197,13 +197,13 @@ const ProfileSettings = () => {
               style={{ position: "relative", zIndex: 2 }}
               className="mt-10 mx-4 md:mx-8 flex flex-col md:flex-row justify-start"
             >
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center ">
                 <img
                   src={
-                    profileImage
+                    profileImage || `${process.env.PUBLIC_URL}/images/profile.png`
                   }
                   alt="Profile"
-                  className="w-64 h-64"
+                  className="w-64 h-64 rounded-lg"
                 />
                 {selectedFile ? (
                   <>

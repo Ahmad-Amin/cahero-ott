@@ -22,7 +22,7 @@ const PastWebinars = ({ limit }) => {
       try {
         setLoading(true);
         const response = await axiosInstance.get("/webinars?type=past");
-        const webinars = response.data?.results || []; 
+        const webinars = response.data || []; 
         if (limit) {
           setUpcomingWebinars(webinars.slice(0, limit)); // Limit the webinars if `limit` is passed
         } else {

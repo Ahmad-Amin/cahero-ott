@@ -41,6 +41,7 @@ import JoinStream from "./pages/stream/JoinStream";
 import StreamPage from "./pages/stream/StreamPage";
 import NotificationsUser from "./pages/notifications"
 import UserProtectedRoute from "./components/UserProtectedRoute"
+import EditNotifications from "./pages/Admin Pages/EditNotifications";
 function App() {
   return (
     <Provider store={store}>
@@ -128,6 +129,10 @@ function App() {
               <Route
                 path="webinars/:webinarId/webinar-lobby"
                 element={<WebinarStream/>}
+              />
+              <Route 
+              path="notifications/edit-notification/:id"
+              element= {<EditNotifications/>}
               />
             </Route>
           </Routes>

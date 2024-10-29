@@ -13,7 +13,7 @@ function RecommendedBooks() {
       try {
         setLoading(true);
         const response = await axiosInstance.get("/books");
-        const sortedResults = response.data.results.sort((a, b) => {
+        const sortedResults = response.data.sort((a, b) => {
           return new Date(b.createdAt) - new Date(a.createdAt);
         });
 

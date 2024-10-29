@@ -21,7 +21,7 @@ const Lectures = () => {
       try {
         setLoading(true);
         const response = await axiosInstance.get("/lectures");
-        setLectures(response.data.results);
+        setLectures(response.data);
       } catch (e) {
         console.log("Error getting the lecture", e);
       } finally {
@@ -64,7 +64,7 @@ const Lectures = () => {
           {currentUser ? <LoginedNavbar  /> : <Navbar />}
           </div>
           <div
-            style={{ position: "relative", zIndex: 2 }}
+            style={{ position: "relative" }}
             className="mt-12 flex justify-between items-center"
           >
             <p className="text-xl mx-8 text-white font-semibold">
