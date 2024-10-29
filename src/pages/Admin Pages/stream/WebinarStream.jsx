@@ -78,7 +78,6 @@ const WebinarStream = () => {
         .then((mediaStream) => {
           mediaStreamRef.current = mediaStream;
 
-          // Start the peer stream after getting the media stream
           setStreamStarted(true);
           initStream(); // Initialize the peer after starting the media stream
         })
@@ -115,7 +114,7 @@ const WebinarStream = () => {
 
   const endStream = async () => {
     try {
-      
+      axiosInstance.patch(`/webinars/${webinarId}/start-stream`, {isLive: false})
       if (mediaStreamRef.current) {
         mediaStreamRef.current.getTracks().forEach((track) => {
           track.stop();

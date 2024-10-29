@@ -91,12 +91,6 @@ const NotificationManagement = ({ isOpen, onClose, onConfirm, itemType }) => {
           </div>
           <div className="flex flex-row w-full h-auto mb-4">
             <h1 className="flex-1 text-white text-base font-medium opacity-70">
-              Recipient Email
-            </h1>
-            <p className="text-white text-base font-medium">{itemType.specificRecipient}</p>
-          </div>
-          <div className="flex flex-row w-full h-auto mb-4">
-            <h1 className="flex-1 text-white text-base font-medium opacity-70">
               Current Status
             </h1>
             <p

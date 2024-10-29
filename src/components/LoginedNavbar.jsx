@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MdOutlineNotifications, MdPerson } from "react-icons/md";
-import { RiSearch2Line } from "react-icons/ri";
 import axiosInstance from "../lib/axiosInstance";
 import { useDispatch } from "react-redux";
 import { logout } from "../Slice/AuthSlice";
@@ -11,27 +10,21 @@ function LoginedNavbar({ position = "relative" }) {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const profileDropdownRef = useRef(null);
-  const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState({ firstName: "", lastName: "", email: "", role: "" });
   const dispatch = useDispatch();
   const [notifications, setNotifications] = useState([]);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
         const response = await axiosInstance.get("/notifications");
-        // Filter the notifications based on recipientType
         const filteredNotifications = response.data.results.filter(
           (notification) => notification.recipientType === "All" || notification.recipientType === "User"
         );
-        const latestNotifications = filteredNotifications.slice(0, 5); // Get the latest 5 filtered notifications
+        const latestNotifications = filteredNotifications.slice(0, 5); 
         setNotifications(latestNotifications);
-        setLoading(false);
       } catch (err) {
         console.error("Error fetching notifications:", err);
-        setError("Failed to fetch notifications");
-        setLoading(false);
       }
     };
   
@@ -129,37 +122,37 @@ function LoginedNavbar({ position = "relative" }) {
             <h1 className="text-white ml-1 text-sm sm:text-md font-normal">{userData.firstName}</h1>
           </button>
           {isProfileDropdownOpen && (
-            <div className="absolute right-14 top-full mt-3 text-white rounded-md shadow-lg z-30 bg-[#0d0d0d]">
+            <div className="absolute right-1 top-full mt-3 text-white rounded-md shadow-lg z-30 bg-[#0d0d0d]">
               <div className="px-4 py-3 text-sm border-b-2">
-                <div className="text-lg">{userData.firstName}</div>
-                <div className="font-medium truncate">{userData.email}</div>
+                <div className="text-base font-bold">{userData.firstName}</div>
+                <div className="font-medium truncate opacity-60">{userData.email}</div>
               </div>
-              <ul className="py-2 text-sm">
+              <ul className="py-2 text-sm space-y-2">
                 <li>
-                  <Link to="/" className="block px-4 py-2 hover:bg-[#404041] cursor-pointer ease-in-out transition">
+                  <Link to="/" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
                     Dashboard
                   </Link>
                 </li>
                 <li>
-                  <Link to="/notifications" className="block px-4 py-2 hover:bg-[#404041] cursor-pointer ease-in-out transition">
+                  <Link to="/notifications" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
                     Notifications
                   </Link>
                 </li>
                 <li>
-                  <Link to="/profile-settings" className="block px-4 py-2 hover:bg-[#404041] cursor-pointer ease-in-out transition">
+                  <Link to="/profile-settings" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
                     Settings
                   </Link>
                 </li>
                 {userData.role === "admin" && (
                   <li>
-                    <Link to="/dashboard" className="block px-4 py-2 hover:bg-[#404041] cursor-pointer ease-in-out transition border-b-2">
+                    <Link to="/dashboard" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
                       Admin Panel
                     </Link>
                   </li>
                 )}
               </ul>
               <div className="py-2" onClick={handleSignOut}>
-                <Link to="/" className="block px-4 py-2 text-sm text-white hover:bg-red-700 cursor-pointer ease-in-out transition">
+                <Link to="/" className="block px-4 py-2 mx-2 rounded-lg text-sm text-white hover:bg-red-700 cursor-pointer ease-in-out transition">
                   Sign out
                 </Link>
               </div>

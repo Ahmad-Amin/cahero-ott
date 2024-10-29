@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../lib/axiosInstance"; 
+import { logout } from "../../Slice/AuthSlice";
 
 const AdminNavbar = ({ pageTitle }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -11,6 +12,9 @@ const AdminNavbar = ({ pageTitle }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const profileRef = useRef(null);
 
   const user = useSelector((state) => state.auth.user); 
 
@@ -43,9 +47,16 @@ const AdminNavbar = ({ pageTitle }) => {
     setIsDropdownOpen((prev) => !prev);
   };
 
+  const toggleProfileDropdown = () => {
+    setIsProfileDropdownOpen((prev) => !prev);
+  };
+
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
       setIsDropdownOpen(false);
+    }
+    if (profileRef.current && !profileRef.current.contains(event.target)) {
+      setIsProfileDropdownOpen(false);
     }
   };
 
@@ -69,6 +80,10 @@ const AdminNavbar = ({ pageTitle }) => {
   const handleLanguageChange = (language, flag) => {
     setSelectedLanguage({ name: language, flag });
     setIsOpen(false);
+  };
+
+  const handleSignOut = () => {
+    dispatch(logout())
   };
 
   return (
@@ -187,7 +202,12 @@ const AdminNavbar = ({ pageTitle }) => {
           )}
         </div>
 
-        <div className="flex flex-row items-center cursor-pointer gap-5 mr-6">
+        <div className="flex justify-between items-center gap-8">
+        <div
+          className="flex flex-row items-center cursor-pointer gap-5 mr-6 relative"
+          ref={profileRef}
+          onClick={toggleProfileDropdown}
+        >
           <img
             src={`${process.env.PUBLIC_URL}/images/ProfileA.png`}
             alt="Profile"
@@ -198,6 +218,42 @@ const AdminNavbar = ({ pageTitle }) => {
             <p className="text-sm opacity-70">{user?.role || "Role"}</p>
           </div>
           <KeyboardArrowDownIcon />
+          {isProfileDropdownOpen && (
+            <div className="absolute right-1 top-full mt-3 text-white rounded-md shadow-lg z-30 bg-[#0d0d0d]">
+              <div className="px-4 py-3 text-sm border-b-2">
+                <div className="text-base font-bold">{user.firstName}</div>
+                <div className="font-medium truncate opacity-60">{user.email}</div>
+              </div>
+              <ul className="py-2 text-sm space-y-2">
+                <li>
+                  <Link to="/dashboard" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
+                    Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/dashboard/notifications" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
+                    Notifications
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/dashboard/profile" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
+                    Settings
+                  </Link>
+                </li>
+                  <li>
+                    <Link to="/" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
+                      User Panel
+                    </Link>
+                  </li>
+              </ul>
+              <div className="py-2" onClick={handleSignOut}>
+                <Link to="/" className="block px-4 py-2 mx-2 rounded-lg text-sm text-white hover:bg-red-700 cursor-pointer ease-in-out transition">
+                  Sign out
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
         </div>
       </div>
     </div>

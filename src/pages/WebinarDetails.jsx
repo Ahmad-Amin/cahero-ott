@@ -9,6 +9,7 @@ import axiosInstance from "../lib/axiosInstance";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
 import { useSelector } from 'react-redux';
 import Navbar from "../components/Navbar";
+import UpcomingWebinars from "../pages/UpcomingWebinars"
 const drawerWidth = 280;
 
 const WebinarDetails = () => {
@@ -145,42 +146,8 @@ const WebinarDetails = () => {
               </div>
             </div>
           </div>}
-          <div>
-            <h1
-              style={{ position: "relative", zIndex: 2 }}
-              className="text-white text-2xl font-semibold ml-4 md:ml-8 mt-16 p-4"
-            >
-              Related Webinars
-            </h1>
-            <div
-              style={{ position: "relative", zIndex: 2 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mx-4 md:mx-8 my-4"
-            >
-              <WebinarCard
-                title="Tokyo Train"
-                year="2022"
-                genre="Webinar Genre"
-                image={`${process.env.PUBLIC_URL}/images/Tokyotrain.png`}
-              />
-              <WebinarCard
-                title="Moon Fall"
-                year="2023"
-                genre="Webinar Genre"
-                image={`${process.env.PUBLIC_URL}/images/Moonfall.png`}
-              />
-              <WebinarCard
-                title="Life in Paris"
-                year="2022"
-                genre="Webinar Genre"
-                image={`${process.env.PUBLIC_URL}/images/LifeinParis.png`}
-              />
-              <WebinarCard
-                title="House of Gucci"
-                year="2021"
-                genre="Webinar Genre"
-                image={`${process.env.PUBLIC_URL}/images/HouseofGucci.png`}
-              />
-            </div>
+          <div className="mt-20">
+              <UpcomingWebinars limit={4}/>
           </div>
         </LoadingWrapper>
       </Box>

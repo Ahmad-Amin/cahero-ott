@@ -1,13 +1,16 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux"; 
 import { Navigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { logout } from "../Slice/AuthSlice";
 
 const ProtectedRoute = ({ children }) => {
   const { user, token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!user || !token) {
+      dispatch(logout());
       toast.error("You need to log in to access this page.", {
         position: "top-right",
         autoClose: 3000,

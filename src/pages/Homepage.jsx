@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   AppBar,
   Box,
@@ -17,13 +17,25 @@ import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import TuneIcon from "@mui/icons-material/Tune";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../Slice/AuthSlice";
 
 const drawerWidth = 280;
 
 export default function Homepage({ window }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { token, user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (!token || !user) {
+      dispatch(logout());
+      navigate("/");
+    }
+  }, [token, user, dispatch, navigate]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -62,7 +74,13 @@ export default function Homepage({ window }) {
           const isActive =
             location.pathname === item.link ||
             (item.link === "/all-books" &&
-              location.pathname.startsWith("/all-books"));
+              location.pathname.startsWith("/all-books")) ||
+            (item.link === "/webinar" &&
+              location.pathname.startsWith("/webinar")) ||
+            (item.link === "/documentaries" &&
+              location.pathname.startsWith("/documentaries")) ||
+            (item.link === "/subscription-plans" &&
+              location.pathname.startsWith("/subscription-plans"));
 
           return (
             <ListItem key={item.text} disablePadding>

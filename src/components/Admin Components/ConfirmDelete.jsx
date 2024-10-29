@@ -41,7 +41,8 @@ const ConfirmDelete = ({ isOpen, onClose, onConfirm, itemType }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div
         ref={modalRef}
         className="bg-[#101011] border border-white rounded-2xl p-6 w-1/3 h-1/3 flex items-center justify-center"
@@ -78,6 +79,7 @@ const ConfirmDelete = ({ isOpen, onClose, onConfirm, itemType }) => {
           </div>
         </LoadingWrapper>
       </div>
+    </div>
     </div>
   );
 };
