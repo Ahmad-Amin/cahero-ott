@@ -137,10 +137,10 @@ const navigate = useNavigate();
                   <option className="bg-[#101011] text-white" value="All">
                     All
                   </option>
-                  <option className="bg-[#101011] text-white" value="Admin">
+                  <option className="bg-[#101011] text-white" value="Admins">
                     Admins
                   </option>
-                  <option className="bg-[#101011] text-white" value="User">
+                  <option className="bg-[#101011] text-white" value="Users">
                     Users
                   </option>
                 </select>
