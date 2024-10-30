@@ -177,7 +177,7 @@ const navigate = useNavigate();
                 onChange={handleChange}
                 className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 appearance-none"
               >
-                <option className="bg-[#101011] text-white" value="none">
+                <option className="bg-[#101011] text-white" value="None">
                   None
                 </option>
                 <option className="bg-[#101011] text-white" value="All">
