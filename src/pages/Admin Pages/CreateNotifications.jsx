@@ -12,7 +12,7 @@ const CreateNotifications = () => {
     notificationType: "",
     recipientType: "",
     specificRecipient: "",
-    externalNotificationDelivery: "none",
+    externalNotificationDelivery: "None",
     content: ""
   });
 const navigate = useNavigate();
