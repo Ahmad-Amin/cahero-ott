@@ -178,16 +178,10 @@ const navigate = useNavigate();
                 className="w-full h-16 rounded-xl border-2 border-white text-white focus:border-none bg-transparent px-3 appearance-none"
               >
                 <option className="bg-[#101011] text-white" value="None">
-                  None
+                Website
                 </option>
                 <option className="bg-[#101011] text-white" value="All">
-                  All
-                </option>
-                <option className="bg-[#101011] text-white" value="Email">
-                  Email
-                </option>
-                <option className="bg-[#101011] text-white" value="Phone Number">
-                  Phone Number
+                Website + Email
                 </option>
               </select>
             </div>

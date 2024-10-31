@@ -39,7 +39,6 @@ const Dashboard = () => {
           <Banner />
         </Box>
 
-        {/* Upcoming Webinars Section */}
         <Box
           sx={{
             position: "relative",
@@ -54,18 +53,17 @@ const Dashboard = () => {
           sx={{
             position: "relative",
             zIndex: 2,
-            mt: { xs: 4, sm: 8 }, // Adjust margin for mobile
+            mt: { xs: 4, sm: 8 }, 
           }}
         >
           <Recommendedbooks />
         </Box>
 
-        {/* Latest Lectures Section */}
         <Box
           sx={{
             position: "relative",
             zIndex: 2,
-            mt: { xs: 4, sm: 8 }, // Adjust margin for mobile
+            mt: { xs: 4, sm: 8 }, 
           }}
         >
           <Latestlectures limit={3} />
