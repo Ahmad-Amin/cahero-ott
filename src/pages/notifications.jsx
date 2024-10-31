@@ -21,8 +21,7 @@ const NotificationsUser = () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get("/notifications");
-      console.log("Full API response: ", response);
-      setNotifications(response.data.results); // Load all notifications
+      setNotifications(response.data.results); 
     } catch (err) {
       console.error("Error fetching notifications: ", err);
       setError("Failed to fetch notifications");
@@ -137,7 +136,7 @@ const NotificationsUser = () => {
           <div className="pagination text-white mx-5 mt-5 flex justify-center">
             <button
               variant="text"
-              className="px-4 py-2 bg-[#5a49c8] text-white rounded-md mr-2 disabled:opacity-50"
+              className="px-4 py-2 bg-[#5a49c8] text-white rounded-md mr-2 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={currentPage === 1}
               onClick={() => handlePageChange(currentPage - 1)}
             >
@@ -146,7 +145,7 @@ const NotificationsUser = () => {
             <span className="px-4 py-2 text-white border-2 rounded-md">{currentPage} of {totalPages}</span>
             <button
               variant="text"
-              className="px-4 py-2 ml-2 bg-[#5a49c8] text-white rounded-md mr-2 disabled:opacity-50"
+              className="px-4 py-2 ml-2 bg-[#5a49c8] text-white rounded-md mr-2 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={currentPage === totalPages}
               onClick={() => handlePageChange(currentPage + 1)}
             >
