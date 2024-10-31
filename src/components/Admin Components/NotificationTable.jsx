@@ -7,12 +7,14 @@ const NotificationTable = ({ onViewNotification }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const notificationsPerPage = 20;
 
   const fetchNotifications = async () => {
     try {
       const response = await axiosInstance.get("/notifications");
       setNotifications(response.data.results);
-      console.log("Data Fetched-> ",response.data.results)
+      console.log("Data Fetched-> ", response.data.results);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -37,20 +39,29 @@ const NotificationTable = ({ onViewNotification }) => {
     }
   };
 
-  if (error) return <div className=" font-semibold text-xl text-white">Error fetching notifications: {error}</div>;
-
   const resentNotifications = async (notificationId) => {
     try {
       setLoading(true);
       await axiosInstance.post(`/notifications/${notificationId}/resend`);
-      toast.success('Notification sent successfully!');
+      toast.success("Notification sent successfully!");
       fetchNotifications();
     } catch (e) {
       console.error("Error resending notification:", e);
-      toast.error('Error sending notifications!');
+      toast.error("Error sending notifications!");
       setLoading(false);
     }
   };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(notifications.length / notificationsPerPage);
+  const indexOfLastNotification = currentPage * notificationsPerPage;
+  const indexOfFirstNotification = indexOfLastNotification - notificationsPerPage;
+  const currentNotifications = notifications.slice(indexOfFirstNotification, indexOfLastNotification);
+
+  const goToNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const goToPreviousPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+
+  if (error) return <div className="font-semibold text-xl text-white">Error fetching notifications: {error}</div>;
 
   return (
     <LoadingWrapper loading={loading}>
@@ -58,53 +69,26 @@ const NotificationTable = ({ onViewNotification }) => {
         <table className="w-full text-base text-left rtl:text-right text-white">
           <thead className="text-lg text-white uppercase bg-transparent">
             <tr>
-              <th scope="col" className="px-6 py-3">
-                Notification type
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Recipient
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Data Sent
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Time Sent
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Status
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Action
-              </th>
+              <th scope="col" className="px-6 py-3">Notification type</th>
+              <th scope="col" className="px-6 py-3">Recipient</th>
+              <th scope="col" className="px-6 py-3">Data Sent</th>
+              <th scope="col" className="px-6 py-3">Time Sent</th>
+              <th scope="col" className="px-6 py-3">Status</th>
+              <th scope="col" className="px-6 py-3">Action</th>
             </tr>
           </thead>
           <tbody>
-            {notifications.map((notification) => (
-              <tr
-                key={notification.id}
-                className="bg-transparent border-b border-[#878788]"
-              >
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-white whitespace-nowrap"
-                >
+            {currentNotifications.map((notification) => (
+              <tr key={notification.id} className="bg-transparent border-b border-[#878788]">
+                <th scope="row" className="px-6 py-4 font-medium text-white whitespace-nowrap">
                   {notification.notificationType}
                 </th>
                 <td className="px-6 py-4">{notification.recipientType}</td>
-                <td
-                  className="px-6 py-4 w-56 text-ellipsis whitespace-nowrap line-clamp-1"
-                  title={notification.content}
-                >
+                <td className="px-6 py-4 w-56 text-ellipsis whitespace-nowrap line-clamp-1" title={notification.content}>
                   {notification.content}
                 </td>
-
-                <td className="px-6 py-4">
-                  {notification.createdAt.split("T")[0]}
-                </td>
-                <td
-                  className="px-6 py-4"
-                  style={{ color: getStatusColor(notification.status) }}
-                >
+                <td className="px-6 py-4">{notification.createdAt.split("T")[0]}</td>
+                <td className="px-6 py-4" style={{ color: getStatusColor(notification.status) }}>
                   {notification.status}
                 </td>
                 <td className="px-6 py-4">
@@ -125,6 +109,25 @@ const NotificationTable = ({ onViewNotification }) => {
             ))}
           </tbody>
         </table>
+        
+        {/* Pagination Controls */}
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={goToPreviousPage}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-500 text-white rounded-md mr-2 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="px-4 py-2 text-white">{currentPage} of {totalPages}</span>
+          <button
+            onClick={goToNextPage}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-500 text-white rounded-md ml-2 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </LoadingWrapper>
   );
