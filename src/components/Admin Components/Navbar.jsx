@@ -19,6 +19,23 @@ const AdminNavbar = ({ pageTitle }) => {
   const user = useSelector((state) => state.auth.user); 
 
   useEffect(() => {
+    // Initialize the EventSource connection
+    const eventSource = new EventSource('https://cahero-ott-f285594fd4fa.herokuapp.com/api/notificationStream');
+    
+    eventSource.onmessage = function(event) {
+      const notification = JSON.parse(event.data);
+      
+      // Update state to include the new notification
+      setNotifications((prevNotifications) => [notification, ...prevNotifications]);
+    };
+
+    // Cleanup function to close EventSource connection on component unmount
+    return () => {
+      eventSource.close();
+    };
+  }, []);
+
+  useEffect(() => {
     const fetchNotifications = async () => {
       setLoading(true);
       try {
