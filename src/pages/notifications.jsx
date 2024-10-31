@@ -14,34 +14,42 @@ const NotificationsUser = () => {
   const [expanded, setExpanded] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalNotifications, setTotalNotifications] = useState(0);
-  const notificationsPerPage = 15;
+  const pageSize = 20; 
+
+  const fetchNotifications = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.get("/notifications");
+      console.log("Full API response: ", response);
+      setNotifications(response.data.results); // Load all notifications
+    } catch (err) {
+      console.error("Error fetching notifications: ", err);
+      setError("Failed to fetch notifications");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const response = await axiosInstance.get("/notifications", {
-          params: {
-            page: currentPage, // Include current page
-            limit: notificationsPerPage, // Limit the number of notifications
-          },
-        });
-        console.log("Full API response: ", response);
-        setNotifications(response.data.results);
-        setTotalNotifications(response.data.total); // Set total notifications from API response
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching notifications: ", err);
-        setError("Failed to fetch notifications");
-        setLoading(false);
-      }
+    fetchNotifications();
+
+    const eventSource = new EventSource("/notifications/events");
+
+    eventSource.onmessage = (event) => {
+      const newNotification = JSON.parse(event.data);
+      setNotifications((prevNotifications) => [newNotification, ...prevNotifications]);
     };
 
-    fetchNotifications();
-  }, [currentPage]); // Fetch notifications when currentPage changes
+    eventSource.onerror = () => {
+      console.error("Error in event stream");
+      eventSource.close(); 
+    };
+
+    return () => {
+      eventSource.close(); 
+    };
+  }, []);
 
   const handleToggleExpand = (id) => {
     setExpanded((prevState) => ({
@@ -50,16 +58,14 @@ const NotificationsUser = () => {
     }));
   };
 
-  const handleNextPage = () => {
-    if (currentPage * notificationsPerPage < totalNotifications) {
-      setCurrentPage((prevPage) => prevPage + 1);
-    }
-  };
+  const totalPages = Math.ceil(notifications.length / pageSize);
+  const paginatedNotifications = notifications.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage((prevPage) => prevPage - 1);
-    }
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   if (loading) {
@@ -90,12 +96,12 @@ const NotificationsUser = () => {
         <div className="font-bold text-4xl text-white mx-5">Notifications</div>
 
         <div className="text-white mx-5 mt-5">
-          {Array.isArray(notifications) && notifications.length > 0 ? (
-            notifications
+          {Array.isArray(paginatedNotifications) && paginatedNotifications.length > 0 ? (
+            paginatedNotifications
               .filter(
                 (notification) =>
                   notification.recipientType === "All" ||
-                  notification.recipientType === "users"
+                  notification.recipientType === "Users"
               )
               .map((notification) => (
                 <div
@@ -127,24 +133,26 @@ const NotificationsUser = () => {
           ) : (
             <div className="text-white mx-5">No notifications available</div>
           )}
-        </div>
 
-        {/* Pagination controls */}
-        <div className="flex justify-between mx-5 mt-5">
-          <Button
-            variant="contained"
-            disabled={currentPage === 1}
-            onClick={handlePreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="contained"
-            disabled={currentPage * notificationsPerPage >= totalNotifications}
-            onClick={handleNextPage}
-          >
-            Next
-          </Button>
+          <div className="pagination text-white mx-5 mt-5 flex justify-center">
+            <button
+              variant="text"
+              className="px-4 py-2 bg-[#5a49c8] text-white rounded-md mr-2 disabled:opacity-50"
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+            >
+              Previous
+            </button>
+            <span className="px-4 py-2 text-white border-2 rounded-md">{currentPage} of {totalPages}</span>
+            <button
+              variant="text"
+              className="px-4 py-2 ml-2 bg-[#5a49c8] text-white rounded-md mr-2 disabled:opacity-50"
+              disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(currentPage + 1)}
+            >
+              Next
+            </button>
+          </div>
         </div>
       </Box>
 

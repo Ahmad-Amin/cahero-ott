@@ -52,7 +52,6 @@ const NotificationTable = ({ onViewNotification }) => {
     }
   };
 
-  // Pagination calculations
   const totalPages = Math.ceil(notifications.length / notificationsPerPage);
   const indexOfLastNotification = currentPage * notificationsPerPage;
   const indexOfFirstNotification = indexOfLastNotification - notificationsPerPage;
@@ -115,15 +114,15 @@ const NotificationTable = ({ onViewNotification }) => {
           <button
             onClick={goToPreviousPage}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-gray-500 text-white rounded-md mr-2 disabled:opacity-50"
+            className="px-4 py-2 bg-[#5a49c8] text-white rounded-md mr-2 disabled:opacity-50"
           >
             Previous
           </button>
-          <span className="px-4 py-2 text-white">{currentPage} of {totalPages}</span>
+          <span className="px-4 py-2 text-white border-2 rounded-md">{currentPage} of {totalPages}</span>
           <button
             onClick={goToNextPage}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-gray-500 text-white rounded-md ml-2 disabled:opacity-50"
+            className="px-4 py-2 bg-[#5a49c8] text-white rounded-md ml-2 disabled:opacity-50"
           >
             Next
           </button>
