@@ -38,7 +38,7 @@ function LoginedNavbar({ position = "relative" }) {
       try {
         const response = await axiosInstance.get("/notifications");
         const filteredNotifications = response.data.results.filter(
-          (notification) => notification.recipientType === "All" || notification.recipientType === "User"
+          (notification) => notification.recipientType === "All" || notification.recipientType === "Users"
         );
         const latestNotifications = filteredNotifications.slice(0, 5); 
         setNotifications(latestNotifications);

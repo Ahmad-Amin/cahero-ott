@@ -44,7 +44,7 @@ const AdminNavbar = ({ pageTitle }) => {
         const filteredNotifications = response.data.results
           .filter(
             (notification) =>
-              notification.recipientType === "All" || notification.recipientType === "Admin"
+              notification.recipientType === "All" || notification.recipientType === "Admins"
           )
           .slice(0, 5); 
 
