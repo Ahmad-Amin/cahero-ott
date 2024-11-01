@@ -20,17 +20,20 @@ function LoginedNavbar({ position = "relative" }) {
   
     eventSource.onmessage = function(event) {
       const notification = JSON.parse(event.data);
-      
-      setNotifications((prevNotifications) => [notification, ...prevNotifications]);
-      console.log("Notifications: ", notification); 
   
-      toast.info(`New Notification: ${notification.notificationType}`);
+      if (notification.recipientType === "All" || notification.recipientType === "Users") {
+  
+        setNotifications((prevNotifications) => [notification, ...prevNotifications]);
+        console.log("Notifications: ", notification);
+        toast.info(`New Notification: ${notification.notificationType}`);  
+      }
     };
   
     return () => {
       eventSource.close();
     };
   }, []);
+  
   
 
   useEffect(() => {

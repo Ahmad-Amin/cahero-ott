@@ -5,7 +5,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../lib/axiosInstance"; 
 import { logout } from "../../Slice/AuthSlice";
-
+import { toast } from "react-toastify";
 const AdminNavbar = ({ pageTitle }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -19,17 +19,19 @@ const AdminNavbar = ({ pageTitle }) => {
   const user = useSelector((state) => state.auth.user); 
 
   useEffect(() => {
-    // Initialize the EventSource connection
     const eventSource = new EventSource('https://cahero-ott-f285594fd4fa.herokuapp.com/api/notificationStream');
-    
+  
     eventSource.onmessage = function(event) {
       const notification = JSON.parse(event.data);
-      
-      // Update state to include the new notification
-      setNotifications((prevNotifications) => [notification, ...prevNotifications]);
+  
+      if (notification.recipientType === "All" || notification.recipientType === "Admins") {
+  
+        setNotifications((prevNotifications) => [notification, ...prevNotifications]);
+        console.log("Notifications: ", notification);
+        toast.info(`New Notification: ${notification.notificationType}`);  
+      }
     };
-
-    // Cleanup function to close EventSource connection on component unmount
+  
     return () => {
       eventSource.close();
     };

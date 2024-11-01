@@ -31,23 +31,21 @@ const NotificationsUser = () => {
   };
 
   useEffect(() => {
-    fetchNotifications();
-
-    const eventSource = new EventSource("/notifications/events");
-
-    eventSource.onmessage = (event) => {
-      const newNotification = JSON.parse(event.data);
-      setNotifications((prevNotifications) => [newNotification, ...prevNotifications]);
-    };
-
-    eventSource.onerror = () => {
-      console.error("Error in event stream");
-      eventSource.close(); 
+    const eventSource = new EventSource('https://cahero-ott-f285594fd4fa.herokuapp.com/api/notificationStream');
+    
+    eventSource.onmessage = function(event) {
+      const notification = JSON.parse(event.data);
+      
+      setNotifications((prevNotifications) => [notification, ...prevNotifications]);
     };
 
     return () => {
-      eventSource.close(); 
+      eventSource.close();
     };
+  }, []);
+
+  useEffect(() => {
+    fetchNotifications();
   }, []);
 
   const handleToggleExpand = (id) => {
