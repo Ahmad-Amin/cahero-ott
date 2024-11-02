@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import axiosInstance from "../../lib/axiosInstance";
 import LoadingWrapper from "../ui/LoadingWrapper";
 
-const BookCardGrid = () => {
+const BookCardGrid = ({ searchQuery }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [books, setBooks] = useState([]); 
@@ -15,7 +15,7 @@ const BookCardGrid = () => {
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get("/books");
+      const response = await axiosInstance.get(`/books?search=${searchQuery}`);
       console.log(response.data); 
 
       if (Array.isArray(response.data)) {
@@ -31,8 +31,8 @@ const BookCardGrid = () => {
   };
 
   useEffect(() => {
-    fetchBooks(); // Call the fetch function on mount
-  }, []);
+    fetchBooks(); // Call the fetch function whenever the searchQuery changes
+  }, [searchQuery]); // Include searchQuery in the dependency array
 
   const handleDeleteConfirm = async () => {
     if (itemToDelete) {

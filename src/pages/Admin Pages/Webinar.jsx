@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box, Divider } from "@mui/material";
+import { Box } from "@mui/material";
 import UpcommingWebinars from "../../components/Admin Components/UpcommingWebinars";
 import { Link } from "react-router-dom";
 import { HiOutlineAdjustments } from "react-icons/hi";
 import { FiSearch } from "react-icons/fi";
-import LoadingWrapper from "../../components/ui/LoadingWrapper";
 
 const Webinars = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -88,7 +87,7 @@ const Webinars = () => {
                           id="dropdown"
                           className="absolute right-0 mt-5 mr-2 bg-[#404041] w-auto h-auto text-[#d0d0d0] rounded-lg shadow-lg flex flex-col z-10"
                         >
-                          <div>
+                          {/* <div>
                             {["Today", "This week", "This month"].map((option, index) => (
                               <div key={option}>
                                 <div className="flex items-center justify-start px-10 w-56 h-12">
@@ -104,7 +103,7 @@ const Webinars = () => {
                                 {index < 2 && <Divider className="bg-[#393e40]" />}
                               </div>
                             ))}
-                          </div>
+                          </div> */}
                         </div>
                       )}
                     </div>

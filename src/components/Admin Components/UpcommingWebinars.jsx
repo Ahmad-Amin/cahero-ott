@@ -4,7 +4,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axiosInstance from "../../lib/axiosInstance";
 import LoadingWrapper from "../ui/LoadingWrapper";
 import ConfirmDelete from "./ConfirmDelete";
@@ -15,15 +15,14 @@ const UpcomingWebinars = ({ limit, searchQuery }) => {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [upcomingWebinars, setUpcomingWebinars] = useState([]);
 
-  const location = useLocation();
-
   useEffect(() => {
     const fetchWebinars = async () => {
       try {
         setLoading(true);
-        // Use the searchQuery in the API request
-        const response = await axiosInstance.get(`/webinars?search=${searchQuery}`);
-        const webinars = response.data || []; // Ensure webinars is always an array
+        // Construct the API endpoint based on searchQuery
+        const apiEndpoint = searchQuery ? `/webinars?search=${searchQuery}` : '/webinars';
+        const response = await axiosInstance.get(apiEndpoint);
+        const webinars = response.data || []; 
         if (limit) {
           setUpcomingWebinars(webinars.slice(0, limit));
         } else {
@@ -64,7 +63,7 @@ const UpcomingWebinars = ({ limit, searchQuery }) => {
     <>
       <LoadingWrapper loading={loading}>
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
-          {upcomingWebinars?.length > 0 &&
+          {upcomingWebinars.length > 0 &&
             upcomingWebinars.map((webinar, index) => (
               <div
                 key={index}
@@ -144,7 +143,7 @@ const UpcomingWebinars = ({ limit, searchQuery }) => {
               </div>
             ))}
         </div>
-        {upcomingWebinars?.length === 0 && !loading && (
+        {upcomingWebinars.length === 0 && !loading && (
           <h1 className="text-white font-semibold text-2xl text-center w-full">
             There are no upcoming webinars
           </h1>

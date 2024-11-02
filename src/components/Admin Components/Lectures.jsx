@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import axiosInstance from "../../lib/axiosInstance"; // Import your Axios instance
 import LoadingWrapper from "../ui/LoadingWrapper";
 
-const Lectures = () => {
+const Lectures = ({ searchQuery }) => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const [itemToDelete, setItemToDelete] = useState(null); // State to store the selected item for deletion
   const [upcomingLectures, setUpcomingLectures] = useState([]); // State to store the fetched lectures
@@ -20,8 +20,8 @@ const Lectures = () => {
   const fetchLectures = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get("/lectures");
-      if (Array.isArray(response.data)) {
+      const response = await axiosInstance.get(`/lectures?search=${searchQuery}`);
+      if (Array.isArray(response.data || [])) {
         setUpcomingLectures(response.data);
       } else {
         setError("Unexpected response format."); // Handle unexpected response format
@@ -35,8 +35,8 @@ const Lectures = () => {
   };
 
   useEffect(() => {
-    fetchLectures(); // Call the fetch function on mount
-  }, []);
+    fetchLectures(); // Call the fetch function whenever searchQuery changes
+  }, [searchQuery]); // Adding searchQuery to the dependency array
 
   const handleDeleteConfirm = async () => {
     if (itemToDelete) {
