@@ -95,10 +95,9 @@ const NotificationsUser = () => {
         <div className="text-white mx-5 mt-5">
           {Array.isArray(paginatedNotifications) && paginatedNotifications.length > 0 ? (
             paginatedNotifications
-              .filter(
-                (notification) =>
-                  notification.recipientType === "All" ||
-                  notification.recipientType === "Users"
+              .filter((notification) =>
+                (currentUser.role === "admin" && (notification.recipientType === "Admins" || notification.recipientType === "All")) ||
+                (currentUser.role === "user" && (notification.recipientType === "Users" || notification.recipientType === "All"))
               )
               .map((notification) => (
                 <div

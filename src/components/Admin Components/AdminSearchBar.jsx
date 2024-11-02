@@ -6,7 +6,7 @@ import { Divider } from "@mui/material";
 import axiosInstance from "../lib/axiosInstance";
 import LoadingWrapper from "./ui/LoadingWrapper";
 
-const SearchBar = ({ showAdjustments = true }) => {
+const AdminSearchBar = ({ showAdjustments = true }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -185,4 +185,4 @@ const SearchBar = ({ showAdjustments = true }) => {
   );
 };
 
-export default SearchBar;
+export default AdminSearchBar;
