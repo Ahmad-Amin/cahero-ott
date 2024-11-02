@@ -31,22 +31,19 @@ const Webinars = () => {
     };
   }, []);
 
+  // Debounce the search query
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 2000); // Wait for 2 seconds after user stops typing
+
+    // Cleanup function to clear timeout if typing continues
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+
   // Handle the search input change
   const handleSearchChange = (event) => {
-    const value = event.target.value;
-    setSearchQuery(value);
-
-    // Debounce the query
-    if (value) {
-      const timeoutId = setTimeout(() => {
-        setDebouncedQuery(value);
-      }, 2000); // Wait for 2 seconds after user stops typing
-
-      // Cleanup function to clear timeout if typing continues
-      return () => clearTimeout(timeoutId);
-    } else {
-      setDebouncedQuery(""); // Reset the debounced query if input is empty
-    }
+    setSearchQuery(event.target.value);
   };
 
   return (
