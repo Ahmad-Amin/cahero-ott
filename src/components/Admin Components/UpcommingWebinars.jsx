@@ -9,7 +9,7 @@ import axiosInstance from "../../lib/axiosInstance";
 import LoadingWrapper from "../ui/LoadingWrapper";
 import ConfirmDelete from "./ConfirmDelete";
 
-const UpcomingWebinars = ({ limit }) => {
+const UpcomingWebinars = ({ limit, searchQuery }) => {
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
@@ -21,10 +21,11 @@ const UpcomingWebinars = ({ limit }) => {
     const fetchWebinars = async () => {
       try {
         setLoading(true);
-        const response = await axiosInstance.get("/webinars");
+        // Use the searchQuery in the API request
+        const response = await axiosInstance.get(`/webinars?search=${searchQuery}`);
         const webinars = response.data || []; // Ensure webinars is always an array
         if (limit) {
-          setUpcomingWebinars(webinars.slice(0, limit)); // Limit the webinars if `limit` is passed
+          setUpcomingWebinars(webinars.slice(0, limit));
         } else {
           setUpcomingWebinars(webinars);
         }
@@ -37,7 +38,7 @@ const UpcomingWebinars = ({ limit }) => {
     };
 
     fetchWebinars();
-  }, [limit]);
+  }, [limit, searchQuery]); // Include searchQuery as a dependency
 
   const handleDeleteConfirm = async () => {
     if (itemToDelete) {
@@ -73,7 +74,7 @@ const UpcomingWebinars = ({ limit }) => {
                   <img
                     src={webinar.coverImageUrl || "default-image-url.jpg"}
                     alt={webinar.title}
-                    className=" w-44 h-48 object-cover rounded-lg"
+                    className="w-44 h-48 object-cover rounded-lg"
                   />
                 </div>
 

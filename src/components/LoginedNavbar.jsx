@@ -5,6 +5,8 @@ import { useDispatch } from "react-redux";
 import { logout } from "../Slice/AuthSlice";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+
 function LoginedNavbar({ position = "relative" }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -13,6 +15,7 @@ function LoginedNavbar({ position = "relative" }) {
   const [userData, setUserData] = useState({ firstName: "", lastName: "", email: "", role: "" });
   const dispatch = useDispatch();
   const [notifications, setNotifications] = useState([]);
+  const currentUser = useSelector((state) => state.auth.user);
 
 
   useEffect(() => {
@@ -40,9 +43,10 @@ function LoginedNavbar({ position = "relative" }) {
     const fetchNotifications = async () => {
       try {
         const response = await axiosInstance.get("/notifications");
-        const filteredNotifications = response.data.results.filter(
-          (notification) => notification.recipientType === "All" || notification.recipientType === "Users"
-        );
+        const filteredNotifications = response.data.results.filter((notification) =>
+          (currentUser.role === "admin" && (notification.recipientType === "Admins" || notification.recipientType === "All")) ||
+          (currentUser.role === "user" && (notification.recipientType === "Users" || notification.recipientType === "All"))
+        )
         const latestNotifications = filteredNotifications.slice(0, 5); 
         setNotifications(latestNotifications);
       } catch (err) {
