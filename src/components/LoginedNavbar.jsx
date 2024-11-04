@@ -94,9 +94,15 @@ function LoginedNavbar({ position = "relative" }) {
         setUserData({ firstName, lastName, email, role });
       })
       .catch((error) => {
-        console.error("Error fetching user data:", error);
+        if (error.response?.data?.error === "JWT Expired") {
+          dispatch(logout());
+          toast.error("Session expired. Please log in again.");
+        } else {
+          console.error("Error fetching user data:", error);
+        }
       });
   }, [dispatch]);
+  
 
   return (
     <div className={`w-full h-20 flex items-center justify-end bg-transparent px-4 sm:px-10 ${position}`}>
