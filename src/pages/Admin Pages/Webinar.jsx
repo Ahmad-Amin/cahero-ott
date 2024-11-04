@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { Box } from "@mui/material";
 import UpcommingWebinars from "../../components/Admin Components/UpcommingWebinars";
 import { Link } from "react-router-dom";
-import { HiOutlineAdjustments } from "react-icons/hi";
 import { FiSearch } from "react-icons/fi";
 
 const Webinars = () => {
@@ -34,7 +33,7 @@ const Webinars = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedQuery(searchQuery);
-    }, 2000); // Wait for 2 seconds after user stops typing
+    }, 1000); 
 
     // Cleanup function to clear timeout if typing continues
     return () => clearTimeout(timeoutId);
@@ -76,12 +75,12 @@ const Webinars = () => {
                       className="w-full h-full px-1 bg-transparent outline-none text-white font-normal text-sm sm:text-base"
                       onChange={handleSearchChange}
                     />
-                    <div className="relative">
+                    {/*<div className="relative">
                       <HiOutlineAdjustments
                         className="mx-2 text-xl sm:text-3xl text-white cursor-pointer"
                         onClick={toggleDropdown}
                       />
-                      {isDropdownOpen && (
+                       {isDropdownOpen && (
                         <div
                           ref={dropdownRef}
                           id="dropdown"
@@ -103,10 +102,10 @@ const Webinars = () => {
                                 {index < 2 && <Divider className="bg-[#393e40]" />}
                               </div>
                             ))}
-                          </div> */}
+                          </div>
                         </div>
-                      )}
-                    </div>
+                      )} 
+                    </div>*/}
                   </div>
                 </div>
               </div>

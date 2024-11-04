@@ -9,18 +9,17 @@ import { Link } from "react-router-dom";
 import axiosInstance from "../../lib/axiosInstance"; // Import your Axios instance
 import LoadingWrapper from "../ui/LoadingWrapper";
 
-const Lectures = ({ searchQuery }) => {
+const Lectures = ({ searchQuery, datefilter }) => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const [itemToDelete, setItemToDelete] = useState(null); // State to store the selected item for deletion
   const [upcomingLectures, setUpcomingLectures] = useState([]); // State to store the fetched lectures
   const [error, setError] = useState(null); // State to handle errors
   const [loading, setLoading] = useState(false); 
 
-  // Fetch lectures function
   const fetchLectures = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get(`/lectures?search=${searchQuery}`);
+      const response = await axiosInstance.get(`/lectures?search=${searchQuery}&target=${datefilter}`);
       if (Array.isArray(response.data || [])) {
         setUpcomingLectures(response.data);
       } else {
@@ -36,7 +35,7 @@ const Lectures = ({ searchQuery }) => {
 
   useEffect(() => {
     fetchLectures(); // Call the fetch function whenever searchQuery changes
-  }, [searchQuery]); // Adding searchQuery to the dependency array
+  }, [searchQuery, datefilter]); // Adding searchQuery to the dependency array
 
   const handleDeleteConfirm = async () => {
     if (itemToDelete) {
@@ -129,7 +128,11 @@ const Lectures = ({ searchQuery }) => {
           </div>
         ))}
       </div>
-
+      {upcomingLectures?.length === 0 && !loading && (
+          <h1 className="text-white font-semibold text-2xl text-center w-full">
+            There are no Lectures Available
+          </h1>
+        )}
       <ConfirmDelete
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)} // Close modal

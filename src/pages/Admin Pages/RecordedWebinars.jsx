@@ -10,6 +10,8 @@ const RecordedWebinars = () => {
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const [debouncedQuery, setDebouncedQuery] = useState(""); // State for debounced query
   const dropdownRef = useRef(null);
+  const [selectedDateFilter, setSelectedDateFilter] = useState(""); // Track selected filter value
+
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -31,13 +33,18 @@ const RecordedWebinars = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedQuery(searchQuery);
-    }, 2000); // Wait for 2 seconds after user stops typing
+    }, 1000); // Wait for 2 seconds after user stops typing
 
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
+  };
+
+  const handleDropdownSelect = (value) => {
+    setSelectedDateFilter(value); // Update selected filter value
+    setIsDropdownOpen(false); // Close dropdown after selecting an option
   };
   return (
     <>
@@ -81,16 +88,26 @@ const RecordedWebinars = () => {
                       className="absolute right-0 mt-5 mr-2 bg-[#404041] w-auto h-auto text-[#d0d0d0] rounded-lg shadow-lg flex flex-col z-10"
                     >
                       <div>
-                        {["Today", "This week", "This month"].map((option, index) => (
-                          <div key={option}>
-                            <div className="flex items-center justify-start px-10 w-56 h-12">
+                        {[
+                          { label: "None", value: "" },
+                          { label: "Today", value: "today" },
+                          { label: "This Week", value: "this_week" },
+                          { label: "This Month", value: "this_month" },
+                        ].map((option, index) => (
+                          <div key={option.value}>
+                            <div
+                              className="flex items-center justify-start px-10 w-56 h-12"
+                              onClick={() => handleDropdownSelect(option.value)} 
+                            >
                               <label className="flex items-center w-full h-full cursor-pointer">
                                 <input
                                   type="radio"
                                   name="dateOption"
                                   className="appearance-none w-5 h-5 border-2 border-white rounded-full cursor-pointer checked:bg-white checked:border-transparent"
+                                  checked={selectedDateFilter === option.value}
+                                  readOnly
                                 />
-                                <span className="ml-3">{option}</span>
+                                <span className="ml-3">{option.label}</span>
                               </label>
                             </div>
                             {index < 2 && <Divider className="bg-[#393e40]" />}
@@ -104,7 +121,7 @@ const RecordedWebinars = () => {
             </div>
           </div>
           </div>
-          <PastWebinars searchQuery={debouncedQuery} />
+          <PastWebinars searchQuery={debouncedQuery} datefilter={selectedDateFilter} />
         </div>
       </Box>
     </>

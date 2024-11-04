@@ -9,7 +9,7 @@ import axiosInstance from "../../lib/axiosInstance";
 import LoadingWrapper from "../ui/LoadingWrapper";
 import ConfirmDelete from "./ConfirmDelete";
 
-const PastWebinars = ({ limit, searchQuery }) => {
+const PastWebinars = ({ limit, searchQuery, datefilter }) => {
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
@@ -20,7 +20,7 @@ const PastWebinars = ({ limit, searchQuery }) => {
       try {
         setLoading(true);
         const searchParam = searchQuery ? `&search=${searchQuery}` : ""; // Set search parameter based on query
-        const response = await axiosInstance.get(`/webinars?type=past${searchParam}`);
+        const response = await axiosInstance.get(`/webinars?type=past${searchParam}&target=${datefilter}`);
         const webinars = response.data || []; 
         if (limit) {
           setUpcomingWebinars(webinars.slice(0, limit)); // Limit the webinars if `limit` is passed
@@ -36,7 +36,7 @@ const PastWebinars = ({ limit, searchQuery }) => {
     };
 
     fetchWebinars();
-  }, [limit, searchQuery]); // Add searchQuery to the dependency array
+  }, [limit, searchQuery, datefilter]); 
 
   const handleDeleteConfirm = async () => {
     if (itemToDelete) {
@@ -137,7 +137,7 @@ const PastWebinars = ({ limit, searchQuery }) => {
         </div>
         {upcomingWebinars?.length === 0 && !loading && (
           <h1 className="text-white font-semibold text-2xl text-center w-full">
-            There are no past webinars
+            There are no Webinars Available
           </h1>
         )}
       </LoadingWrapper>

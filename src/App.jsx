@@ -37,7 +37,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import WebinarStream from "./pages/Admin Pages/stream/WebinarStream";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import JoinStream from "./pages/stream/JoinStream";
 import StreamPage from "./pages/stream/StreamPage";
 import NotificationsUser from "./pages/notifications"
 import UserProtectedRoute from "./components/UserProtectedRoute"

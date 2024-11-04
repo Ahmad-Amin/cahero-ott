@@ -145,7 +145,7 @@ const UpcomingWebinars = ({ limit, searchQuery }) => {
         </div>
         {upcomingWebinars.length === 0 && !loading && (
           <h1 className="text-white font-semibold text-2xl text-center w-full">
-            There are no upcoming webinars
+            There are no Webinars Available
           </h1>
         )}
       </LoadingWrapper>

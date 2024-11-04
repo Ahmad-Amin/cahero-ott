@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import axiosInstance from "../../lib/axiosInstance";
 import LoadingWrapper from "../ui/LoadingWrapper";
 
-const BookCardGrid = ({ searchQuery }) => {
+const BookCardGrid = ({ searchQuery, dateFilter }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [books, setBooks] = useState([]); 
@@ -15,7 +15,7 @@ const BookCardGrid = ({ searchQuery }) => {
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get(`/books?search=${searchQuery}`);
+      const response = await axiosInstance.get(`/books?search=${searchQuery}&target=${dateFilter}`);
       console.log(response.data); 
 
       if (Array.isArray(response.data)) {
@@ -31,15 +31,14 @@ const BookCardGrid = ({ searchQuery }) => {
   };
 
   useEffect(() => {
-    fetchBooks(); // Call the fetch function whenever the searchQuery changes
-  }, [searchQuery]); // Include searchQuery in the dependency array
+    fetchBooks(); 
+  }, [searchQuery, dateFilter]);
 
   const handleDeleteConfirm = async () => {
     if (itemToDelete) {
       try {
         await axiosInstance.delete(`/books/${itemToDelete.id}`);
 
-        // Remove the deleted book from state
         setBooks((prevBooks) =>
           prevBooks.filter((book) => book.id !== itemToDelete.id)
         );
