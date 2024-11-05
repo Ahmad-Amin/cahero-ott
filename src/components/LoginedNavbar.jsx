@@ -19,7 +19,7 @@ function LoginedNavbar({ position = "relative" }) {
 
 
   useEffect(() => {
-    const eventSource = new EventSource('https://cahero-ott-f285594fd4fa.herokuapp.com/api/notificationStream');
+    const eventSource = new EventSource(`https://cahero-ott-f285594fd4fa.herokuapp.com/api/notificationStream?role=${currentUser.role}`);
   
     eventSource.onmessage = function(event) {
       const notification = JSON.parse(event.data);
