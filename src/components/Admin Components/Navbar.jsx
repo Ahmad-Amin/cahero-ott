@@ -25,9 +25,7 @@ const AdminNavbar = ({ pageTitle }) => {
       const notification = JSON.parse(event.data);
   
       if (notification.recipientType === "All" || notification.recipientType === "Admins") {
-  
         setNotifications((prevNotifications) => [notification, ...prevNotifications]);
-        console.log("Notifications: ", notification);
         toast.info(`New Notification: ${notification.notificationType}`);  
       }
     };

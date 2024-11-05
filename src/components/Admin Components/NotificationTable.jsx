@@ -14,7 +14,6 @@ const NotificationTable = ({ onViewNotification }) => {
     try {
       const response = await axiosInstance.get("/notifications");
       setNotifications(response.data.results);
-      console.log("Data Fetched-> ", response.data.results);
     } catch (err) {
       setError(err.message);
     } finally {

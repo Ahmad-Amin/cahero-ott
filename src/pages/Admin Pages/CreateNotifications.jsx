@@ -28,12 +28,10 @@ const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Notification Data Before Submission:", notificationData);
     setLoading(true); 
 
     try {
       const response = await axiosInstance.post('/notifications', notificationData);
-      console.log('Notification sent:', response.data);
       toast.success('Notification sent successfully!');
       navigate("/dashboard/notifications") 
     } catch (error) {
