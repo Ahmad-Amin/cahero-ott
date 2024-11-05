@@ -41,6 +41,7 @@ import StreamPage from "./pages/stream/StreamPage";
 import NotificationsUser from "./pages/notifications"
 import UserProtectedRoute from "./components/UserProtectedRoute"
 import EditNotifications from "./pages/Admin Pages/EditNotifications";
+import Community from "./pages/Community";
 function App() {
   return (
     <Provider store={store}>
@@ -70,6 +71,7 @@ function App() {
                 path="/subscription-plans"
                 element={<SubscriptionPlans />}
               />
+              <Route path="/community" element={<Community />} />
             </Route>
 
             <Route

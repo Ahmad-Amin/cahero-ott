@@ -113,7 +113,7 @@ const Webinar = () => {
         </div>
         <div
           style={{ position: "relative", zIndex: 2 }}
-          className="mt-12 flex flex-rows items-center"
+          className="mt-5 flex flex-rows items-center"
         >
           <p className="flex-1 text-xl mx-8 text-white font-semibold">
             {isSearchActive ? "Search Results" : "Recommended Webinars"}

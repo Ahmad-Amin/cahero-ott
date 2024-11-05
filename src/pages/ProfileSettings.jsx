@@ -189,7 +189,7 @@ const ProfileSettings = () => {
           <div className="mr-10">
             <div
               style={{ position: "relative", zIndex: 2 }}
-              className="mx-4 md:mx-8 mt-14 text-white text-xl font-semibold"
+              className="mx-4 md:mx-8 mt-5 text-white text-xl font-semibold"
             >
               Profile Settings
             </div>

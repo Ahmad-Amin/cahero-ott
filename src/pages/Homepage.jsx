@@ -17,6 +17,7 @@ import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import TuneIcon from "@mui/icons-material/Tune";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import GroupsIcon from '@mui/icons-material/Groups';
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../Slice/AuthSlice";
@@ -56,6 +57,11 @@ export default function Homepage({ window }) {
       icon: <CalendarTodayIcon />,
       link: "/subscription-plans",
     },
+    {
+      text: "Community",
+      icon: <GroupsIcon/>,
+      link: "/community"
+    }
   ];
 
   const drawer = (

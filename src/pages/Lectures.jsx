@@ -76,7 +76,6 @@ const Lectures = () => {
     setIsDropdownOpen(false);
   };
 
-  // Check if search or filter is active
   const isSearchActive = searchQuery || selectedDateFilter;
 
   return (
@@ -111,7 +110,7 @@ const Lectures = () => {
           </div>
           <div
             style={{ position: "relative" }}
-            className="mt-12 flex flex-rows items-center"
+            className="mt-5 flex flex-rows items-center"
           >
             <p className="flex-1 text-xl mx-8 text-white font-semibold">
             {isSearchActive ? "Search Results" : "All Documentaries"}

@@ -20,7 +20,6 @@ const SubscriptionPlans = () => {
       component="main"
       sx={{
         flexGrow: 1,
-        p: { xs: 2, sm: 3 },
         width: { sm: `calc(100% - ${drawerWidth}px)` },
         backgroundColor: "#131213",
         minHeight: "100vh",
@@ -40,12 +39,13 @@ const SubscriptionPlans = () => {
           zIndex: 1,
         }}
       />
+      
       {currentUser ? <LoginedNavbar /> : <Navbar />}
 
       <div>
         <div
           style={{ position: "relative", zIndex: 2 }}
-          className="mx-4 md:mx-8 mt-10 text-white text-xl font-semibold"
+          className="mx-4 md:mx-8 mt-5 text-white text-xl font-semibold"
         >
           Subscription Plans
         </div>

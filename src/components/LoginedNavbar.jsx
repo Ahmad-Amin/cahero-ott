@@ -6,7 +6,7 @@ import { logout } from "../Slice/AuthSlice";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-
+import { useNavigate } from "react-router-dom";
 function LoginedNavbar({ position = "relative" }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -17,7 +17,7 @@ function LoginedNavbar({ position = "relative" }) {
   const [notifications, setNotifications] = useState([]);
   const currentUser = useSelector((state) => state.auth.user);
 
-
+const navigate = useNavigate();
   useEffect(() => {
     const eventSource = new EventSource(`https://cahero-ott-f285594fd4fa.herokuapp.com/api/notificationStream?role=${currentUser.role}`);
   
@@ -95,6 +95,7 @@ function LoginedNavbar({ position = "relative" }) {
         if (error.response?.data?.error === "JWT Expired") {
           dispatch(logout());
           toast.error("Session expired. Please log in again.");
+          navigate("/")
         } else {
           console.error("Error fetching user data:", error);
         }
