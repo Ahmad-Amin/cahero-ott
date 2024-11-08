@@ -15,6 +15,8 @@ import axiosInstance from "../lib/axiosInstance";
 import { toast } from "react-toastify";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
+import { ThumbsUpIcon } from "lucide-react";
+import { ThumbUp } from "@mui/icons-material";
 const drawerWidth = 280;
 
 const Community = () => {
@@ -120,7 +122,7 @@ const Community = () => {
     try {
       setLoading(true);
       await axiosInstance.delete(`/posts/${postId}/comments/${commentId}`);
-      toast.success("Comment deleted successfully");
+      toast.error("Comment deleted successfully");
       fetchAllPosts();
     } catch (e) {
       const errorMessage =
@@ -129,6 +131,16 @@ const Community = () => {
       toast.error(errorMessage);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const likeThePost = async (postId) => {
+    try {
+      const response = await axiosInstance.post(`/posts/${postId}/like`);
+      toast.info(response.data.message);
+      fetchAllPosts();
+    } catch (e) {
+      console.log("Error liking the post");
     }
   };
 
@@ -147,7 +159,7 @@ const Community = () => {
           overflow: "hidden",
         }}
       >
-        <LoadingWrapper loading={fetchingPost} >
+        <LoadingWrapper loading={fetchingPost}>
           <Box
             sx={{
               position: "absolute",
@@ -188,11 +200,15 @@ const Community = () => {
                           className="w-full h-full object-cover"
                         />
                       </div>
-
                       <div className="w-4/5">
                         <h2 className="text-[#b1b1b1] font-semibold">
-                          {post.createdBy.firstName}
+                          {post.createdBy?.firstName +
+                            " " +
+                            post.createdBy?.lastName}
                         </h2>
+                        <p className="text-xs text-[#b1b1b1]">
+                          {post.createdBy.email}
+                        </p>
                       </div>
                     </div>
                     <div className="border-b-2 border-[#232323]">
@@ -209,8 +225,16 @@ const Community = () => {
                         </div>
                       )}
                       <div className="flex flex-row my-8">
-                        <div className="flex flex-row">
-                          <ThumbUpAltIcon className="text-white ml-8 mr-3" />
+                        <div
+                          className="flex flex-row cursor-pointer"
+                          onClick={() => likeThePost(post.id)}
+                        >
+                          {post.likedBy?.includes(currentUser.id) ? (
+                            <ThumbUpAltIcon className="text-white ml-8 mr-3" />
+                          ) : (
+                            <ThumbsUpIcon className="text-white ml-8 mr-3" />
+                          )}
+
                           <p className="text-white">{post.likes || 0} Likes</p>
                         </div>
                         <div className="flex flex-row">

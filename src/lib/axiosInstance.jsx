@@ -2,8 +2,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const axiosInstance = axios.create({
-  // baseURL: "https://cahero-ott-f285594fd4fa.herokuapp.com/api",
-  baseURL: "http://localhost:3003/api",
+  baseURL: "https://cahero-ott-f285594fd4fa.herokuapp.com/api",
+  // baseURL: "http://localhost:3003/api",
 });
 
 axiosInstance.interceptors.request.use(
