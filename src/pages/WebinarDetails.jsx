@@ -3,13 +3,13 @@ import { Box } from "@mui/material";
 import LoginedNavbar from "../components/LoginedNavbar";
 import { FaRegHeart } from "react-icons/fa";
 import { FaStar } from "react-icons/fa6";
-import WebinarCard from "../pages/WebinarCard";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
 import { useSelector } from 'react-redux';
 import Navbar from "../components/Navbar";
-import UpcomingWebinars from "../pages/UpcomingWebinars"
+import RatingsReviews from "../components/RatingsReview";
+import Comments from "../components/Comments";
 const drawerWidth = 280;
 
 const WebinarDetails = () => {
@@ -73,7 +73,7 @@ const WebinarDetails = () => {
           overflow: "hidden",
         }}
       >
-        <LoadingWrapper loading={loading}>
+        
           <Box
             sx={{
               position: "absolute",
@@ -83,9 +83,9 @@ const WebinarDetails = () => {
               height: "100%",
               background:
                 "linear-gradient(to right, #220e37 0%, rgba(34, 14, 55, 0) 100%)",
-              zIndex: 1,
             }}
           />
+          <LoadingWrapper loading={loading}>
           <div>
           {currentUser ? <LoginedNavbar  /> : <Navbar />}
 
@@ -136,7 +136,7 @@ const WebinarDetails = () => {
                     isWatchNowEnabled ? "bg-[#6a55ea]" : "bg-gray-500"
                   }`}
                   onClick={handleWatchNow}
-                  disabled={!isWatchNowEnabled} // Disable if not live
+                  disabled={!isWatchNowEnabled}
                 >
                   Watch Now
                 </button>
@@ -146,8 +146,11 @@ const WebinarDetails = () => {
               </div>
             </div>
           </div>}
-          <div className="mt-20">
-              <UpcomingWebinars limit={4}/>
+          <div className="mt-20 w-1/2">
+              <RatingsReviews className="z-20" />
+          </div>
+          <div className="mt-10 w-2/3">
+            <Comments/>
           </div>
         </LoadingWrapper>
       </Box>

@@ -87,6 +87,8 @@ export default function Homepage({ window }) {
               location.pathname.startsWith("/documentaries")) ||
             (item.link === "/subscription-plans" &&
               location.pathname.startsWith("/subscription-plans"));
+              (item.link === "/community" &&
+                location.pathname.startsWith("/community"));
 
           return (
             <ListItem key={item.text} disablePadding>
@@ -129,7 +131,7 @@ export default function Homepage({ window }) {
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
-  const shouldHideSidebar = location.pathname.includes("/documentaries/");
+  const shouldHideSidebar = location.pathname.includes("/documentaries/details/");
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -162,7 +164,6 @@ export default function Homepage({ window }) {
           sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
           aria-label="menu navigation"
         >
-          {/* Mobile Drawer */}
           <Drawer
             container={container}
             variant="temporary"

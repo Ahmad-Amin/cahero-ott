@@ -42,6 +42,7 @@ import NotificationsUser from "./pages/notifications"
 import UserProtectedRoute from "./components/UserProtectedRoute"
 import EditNotifications from "./pages/Admin Pages/EditNotifications";
 import Community from "./pages/Community";
+import LectureDetails from "./pages/LectureDetails"
 function App() {
   return (
     <Provider store={store}>
@@ -58,7 +59,8 @@ function App() {
               <Route path="/webinar" element={<Webinar />} />
               <Route path="/webinar/:id" element={<WebinarDetails />} />
               <Route path="/documentaries" element={<Lectures />} />
-              <Route path="/documentaries/:id" element={<VideoPlayer />} />
+              <Route path="/documentaries/details/:id" element={<VideoPlayer />} />
+              <Route path="/documentaries/:id" element={<LectureDetails />} />
               <Route path="/profile-settings" element={
                 <UserProtectedRoute>
                 <ProfileSettings />

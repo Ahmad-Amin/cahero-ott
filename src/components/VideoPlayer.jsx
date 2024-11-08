@@ -3,7 +3,6 @@ import { MdArrowBack } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
 import ReactPlayer from "react-player";
-import { FaPause, FaPlay, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 
 const VideoPlayer = () => {
   const navigate = useNavigate();

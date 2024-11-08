@@ -13,6 +13,8 @@ import axiosInstance from "../lib/axiosInstance";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
 import Navbar from "../components/Navbar";
 import { useSelector } from 'react-redux';
+import RatingsReviews from "../components/RatingsReview";
+import Comments from "../components/Comments";
 
 const drawerWidth = 280;
 
@@ -174,7 +176,7 @@ const BookDetails = () => {
                 </Box>
               </Box>
 
-              {/* Conditionally render AudioPlayer inside the Box */}
+              
             </Box>
           </Box>
           <Box
@@ -191,6 +193,12 @@ const BookDetails = () => {
             <Typography className="text-white font-light text-sm mt-2 opacity-70">
               {book.description}
             </Typography>
+            <div className="mt-20 w-1/2">
+            <RatingsReviews/>
+            </div>
+            <div className="mt-10 w-2/3">
+              <Comments/>
+            </div>
           </Box>
           {isAudioPlaying && (
             <Box sx={{ mt: 3 }}>
