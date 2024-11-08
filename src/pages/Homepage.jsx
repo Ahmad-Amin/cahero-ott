@@ -69,7 +69,7 @@ export default function Homepage({ window }) {
       <div className="p-2 flex items-center">
         <Link to={"/"}>
           <img
-            src={`${process.env.PUBLIC_URL}/images/Cahero.png`}
+            src={`${process.env.PUBLIC_URL}/images/Cahero_Legacy.png`}
             alt="Logo"
             className="h-auto w-auto"
           />
