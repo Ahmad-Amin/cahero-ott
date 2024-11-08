@@ -1,10 +1,16 @@
 import React, { useRef, useEffect, useState } from "react";
-import { FiFileText, FiLink, FiVideo, FiImage } from "react-icons/fi"; 
-import CloseIcon from "@mui/icons-material/Close"
+import { FiFileText, FiLink, FiVideo, FiImage } from "react-icons/fi";
+import CloseIcon from "@mui/icons-material/Close";
+import axiosInstance from "../lib/axiosInstance";
+import { toast } from "react-toastify";
+import LoadingWrapper from "./ui/LoadingWrapper";
+
 const CreatePostModal = ({ isOpen, onClose, onPost }) => {
   const modalRef = useRef();
+  const fileInputRef = useRef();
   const [loading, setLoading] = useState(false);
   const [postContent, setPostContent] = useState("");
+  const [imageLink, setImageLink] = useState("");
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -35,9 +41,47 @@ const CreatePostModal = ({ isOpen, onClose, onPost }) => {
 
   const handlePost = async () => {
     setLoading(true);
-    await onPost(postContent); 
+    await onPost(postContent, imageLink);
     setLoading(false);
-    setPostContent(""); 
+    setPostContent("");
+    setImageLink("");
+    onClose();
+  };
+
+  const handleImageClick = () => {
+    fileInputRef.current.click(); // Trigger file input click
+  };
+
+  const handleImageUpload = async (event) => {
+    try {
+      setLoading(true);
+      const file = event.target.files[0];
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        console.log("Sending image file:", formData.get("file"));
+        const imageResponse = await axiosInstance.post(
+          "/upload/image",
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+        setImageLink(imageResponse.data.fileUrl);
+        toast.success("File uploaded successfully");
+      }
+    } catch (e) {
+      console.log("Error uploading the image", e);
+      toast.error("Error uploading the image");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleContentChange = (e) => {
+    if (e.target.value.length <= 1000) {
+      setPostContent(e.target.value);
+    }
   };
 
   if (!isOpen) return null;
@@ -50,36 +94,41 @@ const CreatePostModal = ({ isOpen, onClose, onPost }) => {
         role="dialog"
         aria-labelledby="modal-title"
       >
-        
         <button
-          onClick={onClose} 
+          onClick={onClose}
           className="flex justify-end mb-7 text-white hover:text-gray-400 transition ease-in-out"
         >
           <CloseIcon />
         </button>
         <div className="flex flex-row">
-          <h2 className="flex-1 text-white text-xl font-semibold mb-4" id="modal-title">
+          <h2
+            className="flex-1 text-white text-xl font-semibold mb-4"
+            id="modal-title"
+          >
             Create Post
           </h2>
-          
+
           <div className="flex justify-end gap-4 mb-6 text-gray-400">
-            <FiFileText className="text-2xl cursor-pointer hover:text-white" />
-            <FiLink className="text-2xl cursor-pointer hover:text-white" />
-            <FiVideo className="text-2xl cursor-pointer hover:text-white" />
-            <FiImage className="text-2xl cursor-pointer hover:text-white" />
+            <span>{imageLink ? "File Uploaded!" : ""}</span>
+            <FiImage
+              className="text-2xl cursor-pointer hover:text-white"
+              onClick={handleImageClick}
+            />
           </div>
         </div>
-        
+
         <div className="flex flex-col gap-2 mb-4">
           <textarea
-            className="w-full h-40 p-2 rounded-lg bg-[#202022] text-white resize-none outline-none "
+            className="w-full h-40 p-2 rounded-lg bg-[#202022] text-white resize-none outline-none"
             value={postContent}
-            onChange={(e) => setPostContent(e.target.value)}
+            onChange={handleContentChange}
             placeholder="What you want to Share"
           />
+          <p className="text-right text-gray-400 text-sm">
+            {postContent.length}/1000 characters
+          </p>
         </div>
 
-        
         <div className="w-full flex justify-center">
           <button
             onClick={handlePost}
@@ -92,6 +141,15 @@ const CreatePostModal = ({ isOpen, onClose, onPost }) => {
           </button>
         </div>
       </div>
+
+      {/* Hidden file input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        accept="image/*"
+        onChange={handleImageUpload}
+      />
     </div>
   );
 };

@@ -81,18 +81,18 @@ const ProfileSettings = () => {
 
   const handleSave = (field) => {
     setLoading(true);
-  
     const updatedUser = {
       firstName,
       lastName,
       email,
       phoneNumber,
-      bio,
+      boi: bio ? bio : undefined,
       role,
-      profileImageUrl: profileImage,
+      profileImageUrl: profileImage ? profileImage : undefined,
     };
+
     axiosInstance
-      .patch("/me", updatedUser, {
+      .patch(`/users/${currentUser.id}`, updatedUser, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(() => {
