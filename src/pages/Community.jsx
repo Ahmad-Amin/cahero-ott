@@ -8,25 +8,26 @@ import CreatePostModal from "../components/CreatePostModal";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ShareIcon from "@mui/icons-material/Share";
 import CommentIcon from "@mui/icons-material/Comment";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import MoodIcon from "@mui/icons-material/Mood";
 import SendIcon from "@mui/icons-material/Send";
 import axiosInstance from "../lib/axiosInstance";
 import { toast } from "react-toastify";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
 import { ThumbsUpIcon } from "lucide-react";
-import { ThumbUp } from "@mui/icons-material";
+
 const drawerWidth = 280;
 
 const Community = () => {
   const currentUser = useSelector((state) => state.auth.user);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [communityPosts, setCommunityPosts] = useState([]);
-  const [commentText, setCommentText] = useState("");
+  const [commentText, setCommentText] = useState({});
   const [addingComment, setAddingComment] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fetchingPost, setFetchingPosts] = useState(false);
+  const [fetchingUsers, setFetchingUsers] = useState(false);
+
+  const [users, setUsers] = useState([]);
 
   const members = [
     {
@@ -49,11 +50,26 @@ const Community = () => {
     },
   ];
 
+  const fetchAllUsers = async () => {
+    try {
+      setFetchingUsers(true);
+      const response = await axiosInstance.get("/users");
+      setUsers(response.data.results);
+    } catch (e) {
+      console.log("Error fetching all users", e);
+    } finally {
+      setFetchingUsers(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllUsers();
+  }, []);
+
   const fetchAllPosts = async () => {
     try {
       setFetchingPosts(true);
       const response = await axiosInstance.get("/posts");
-      console.log(response.data);
       setCommunityPosts(response.data);
     } catch (e) {
       console.log(e);
@@ -65,18 +81,6 @@ const Community = () => {
   useEffect(() => {
     fetchAllPosts();
   }, []);
-
-  useEffect(() => {
-    if (isModalOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [isModalOpen]);
 
   const handleCreateClick = () => {
     setIsModalOpen(true);
@@ -96,7 +100,6 @@ const Community = () => {
       fetchAllPosts();
     } catch (e) {
       console.log("Error creating the post");
-    } finally {
     }
   };
 
@@ -104,16 +107,15 @@ const Community = () => {
     try {
       setAddingComment(true);
       await axiosInstance.post(`/posts/${postId}/comments`, {
-        comment: commentText,
+        comment: commentText[postId],
       });
       toast.success("Comment added successfully");
-      setCommentText("");
+      setCommentText((prev) => ({ ...prev, [postId]: "" })); // Clear the comment text for this post
       fetchAllPosts();
     } catch (e) {
       console.log("Error creating the comment");
-      toast.success("Error creating the comment");
+      toast.error("Error creating the comment");
     } finally {
-      setCommentText("");
       setAddingComment(false);
     }
   };
@@ -122,11 +124,11 @@ const Community = () => {
     try {
       setLoading(true);
       await axiosInstance.delete(`/posts/${postId}/comments/${commentId}`);
-      toast.error("Comment deleted successfully");
+      toast.success("Comment deleted successfully");
       fetchAllPosts();
     } catch (e) {
       const errorMessage =
-        e.response.data.message || "Error deleting the comment";
+        e.response?.data?.message || "Error deleting the comment";
       console.log("Error deleting the comment", e);
       toast.error(errorMessage);
     } finally {
@@ -136,8 +138,7 @@ const Community = () => {
 
   const likeThePost = async (postId) => {
     try {
-      const response = await axiosInstance.post(`/posts/${postId}/like`);
-      toast.info(response.data.message);
+      await axiosInstance.post(`/posts/${postId}/like`);
       fetchAllPosts();
     } catch (e) {
       console.log("Error liking the post");
@@ -180,7 +181,7 @@ const Community = () => {
               Community
             </p>
             <button
-              className="bg-[#6a55ea] hover:bg-[#5242b6] ease-in-out transition duration-300 w-auto px-5 h-9 text-white font-semibold mr-10 rounded-lg "
+              className="bg-[#6a55ea] hover:bg-[#5242b6] transition duration-300 w-auto px-5 h-9 text-white font-semibold mr-10 rounded-lg "
               onClick={handleCreateClick}
             >
               Create
@@ -190,8 +191,11 @@ const Community = () => {
           <div className="flex flex-row mt-5">
             <div className="flex-1 flex-col mr-5 space-y-5 z-10 flex justify-center">
               {communityPosts.map((post) => (
-                <div className="bg-[#101011] w-4/6 mx-8 rounded-lg border-2 border-[#404041]">
-                  <div key={post.id}>
+                <div
+                  key={post.id}
+                  className="bg-[#101011] w-4/6 mx-8 rounded-lg border-2 border-[#404041]"
+                >
+                  <div>
                     <div className="flex flex-row items-center bg-transparent w-full h-16 mt-2 border-b-2 border-[#232323]">
                       <div className="w-10 h-10 rounded-full overflow-hidden mx-5">
                         <img
@@ -262,8 +266,13 @@ const Community = () => {
                             />
                           </div>
                           <textarea
-                            value={commentText}
-                            onChange={(e) => setCommentText(e.target.value)}
+                            value={commentText[post.id] || ""}
+                            onChange={(e) =>
+                              setCommentText({
+                                ...commentText,
+                                [post.id]: e.target.value,
+                              })
+                            }
                             type="text"
                             className="bg-black h-9 text-white rounded-full w-full border border-[#b1b1b1] resize-none outline-none pt-1 pl-3"
                             placeholder="Write your Comment.."
@@ -271,12 +280,6 @@ const Community = () => {
                         </div>
                       </div>
                       <div className="flex flex-row m-5 space-x-3">
-                        {/* <div className="w-10 h-10 rounded-full border border-[#b1b1b1] flex items-center justify-center">
-                        <AttachFileIcon className="text-[#b1b1b1]" />
-                      </div> */}
-                        {/* <div className="w-10 h-10 rounded-full border border-[#b1b1b1] flex items-center justify-center">
-                        <MoodIcon className="text-[#b1b1b1]" />
-                      </div> */}
                         <div
                           onClick={() => addCommentToPost(post.id)}
                           className="w-10 h-10 rounded-full border border-[#6a55ea] flex items-center justify-center cursor-pointer"
@@ -288,7 +291,7 @@ const Community = () => {
                     <LoadingWrapper loading={loading}>
                       <div className="px-8 flex flex-col gap-5 my-5">
                         {post.comments.map((comment) => (
-                          <div className="">
+                          <div key={comment.id}>
                             <div className="flex flex-row gap-3 items-center">
                               <div className="w-10 h-10 rounded-full overflow-hidden">
                                 <img
@@ -346,28 +349,34 @@ const Community = () => {
                 height: "calc(100vh - 100px)",
               }}
             >
-              <h1 className="text-white text-lg font-semibold mb-2">Members</h1>
-              {members.map((member) => (
-                <div
-                  key={member.id}
-                  className="flex flex-row items-center bg-black w-full h-16 border-b-2 border-[#232323]"
-                >
-                  <div className="w-10 h-10 rounded-full overflow-hidden mx-5">
-                    <img
-                      src={member.avatar}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+              <LoadingWrapper loading={fetchingUsers} >
+                <h1 className="text-white text-lg font-semibold mb-2">
+                  Members
+                </h1>
+                {users.map((member) => (
+                  <div
+                    key={member.id}
+                    className="flex flex-row items-center bg-black w-full h-16 border-b-2 border-[#232323]"
+                  >
+                    <div className="w-10 h-10 rounded-full overflow-hidden mx-5">
+                      <img
+                        src={member.profileImageUrl ? member.profileImageUrl : `${process.env.PUBLIC_URL}/images/Rectangle.png`}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
 
-                  <div className="w-4/5">
-                    <h2 className="text-[#b1b1b1] font-semibold">
-                      {member.name}
-                    </h2>
-                    <p className="text-[#b1b1b1] font-light">{member.email}</p>
+                    <div className="w-4/5">
+                      <h2 className="text-[#b1b1b1] font-semibold">
+                        {member.firstName + " " + member.lastName}
+                      </h2>
+                      <p className="text-[#b1b1b1] font-light">
+                        {member.email}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </LoadingWrapper>
             </div>
           </div>
         </LoadingWrapper>
