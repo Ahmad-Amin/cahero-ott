@@ -1,44 +1,64 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import StarIcon from "@mui/icons-material/Star";
-const RatingsReviews = () => {
-  const totalReviews = 129;
-  const averageRating = 4.5;
-  const ratings = [
-    { stars: 5, count: 80 },
-    { stars: 4, count: 30 },
-    { stars: 3, count: 10 },
-    { stars: 2, count: 5 },
-    { stars: 1, count: 4 },
-  ];
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import axiosInstance from "../lib/axiosInstance";
+import { useParams } from "react-router-dom";
+
+const RatingsReviews = ({ type }) => {
+  const { id } = useParams();
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    const fetchReviewStats = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/${type}s/${id}/reviews/stats`
+        );
+        setStats(response.data);
+      } catch (error) {
+        console.error("Failed to fetch review stats", error);
+      } 
+    };
+
+    fetchReviewStats();
+  }, [type, id]);
 
   return (
-    <div className="ratings-container bg-transparent p-6 rounded-lg text-white">
+    <div className="ratings-container bg-transparent p-6 rounded-lg text-white h-60">
       <h2 className="text-2xl font-semibold">Ratings & Reviews</h2>
       <p className="text-sm text-gray-400 mt-1">
         Rating and reviews are verified and are from people who use the service
       </p>
       <div className="flex items-center mt-4">
         <div className="text-center mr-6">
-          <p className="text-4xl font-bold">{averageRating}</p>
+          <p className="text-4xl font-bold">{stats?.averageRating}</p>
           <p className="text-yellow-400 flex items-center">
-            {[...Array(Math.round(averageRating))].map((_, index) => (
-              <StarIcon key={index} fontSize="small" />
-            ))}
+            {[...Array(5)].map((_, index) =>
+              index < Math.round(stats?.averageRating) ? (
+                <StarIcon key={index} fontSize="small" />
+              ) : (
+                <StarBorderIcon key={index} fontSize="small" />
+              )
+            )}
           </p>
-          <p className="text-sm">{totalReviews} reviews</p>
+          <p className="text-sm">{stats?.totalReviews} reviews</p>
         </div>
         <div className="flex-1">
-          {ratings.map((rating) => {
-            const percentage = (rating.count / totalReviews) * 100;
+          {stats?.ratings.map((rating) => {
+            const percentage =
+              stats?.totalReviews > 0
+                ? (rating.count / stats?.totalReviews) * 100
+                : 0;
             return (
               <div key={rating.stars} className="flex items-center mb-2">
                 <p className="w-6 text-sm">{rating.stars}</p>
-                <div className="flex-1 h-3 bg-white rounded-lg overflow-hidden mx-2">
+                <div className="flex-1 h-3 bg-gray-700 rounded-lg overflow-hidden mx-2">
                   <div
                     style={{ width: `${percentage}%` }}
                     className="h-full bg-blue-500"
                   ></div>
                 </div>
+                <p className="text-sm">{rating.count}</p>
               </div>
             );
           })}

@@ -18,6 +18,11 @@ const LectureDetails = () => {
   const [Lecture, setLecture] = useState(null);
   const currentUser = useSelector((state) => state.auth.user); 
   const { id: lectureId } = useParams();
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleCommentAdded = () => {
+    setRefreshKey((prevKey) => prevKey + 1); 
+  };
 
   useEffect(() => {
     const fetchLecture = async () => {
@@ -105,10 +110,10 @@ const LectureDetails = () => {
             </div>
           )}
           <div className="mt-20 w-1/2">
-            <RatingsReviews className="z-20" />
+            <RatingsReviews type='lecture' key={refreshKey} className="z-20" />
           </div>
           <div className="mt-10 w-2/3">
-            <Comments />
+            <Comments onCommentAdded={handleCommentAdded} type="lecture" />
           </div>
         </LoadingWrapper>
       </Box>

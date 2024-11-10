@@ -1,9 +1,11 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { store } from "../store";
+import { logout } from "../Slice/AuthSlice";
 
 const axiosInstance = axios.create({
-  baseURL: "https://cahero-ott-f285594fd4fa.herokuapp.com/api",
-  // baseURL: "http://localhost:3003/api",
+  // baseURL: "https://cahero-ott-f285594fd4fa.herokuapp.com/api",
+  baseURL: "http://localhost:3003/api",
 });
 
 axiosInstance.interceptors.request.use(
@@ -16,6 +18,22 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      error.response &&
+      error.response.data &&
+      error.response.data.error === "jwt expired"
+    ) {
+      store.dispatch(logout());
+
+      Cookies.remove("token");
+    }
     return Promise.reject(error);
   }
 );

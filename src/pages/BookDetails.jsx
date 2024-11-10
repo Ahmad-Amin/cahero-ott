@@ -12,18 +12,23 @@ import { useParams } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
 import Navbar from "../components/Navbar";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 import RatingsReviews from "../components/RatingsReview";
 import Comments from "../components/Comments";
 
 const drawerWidth = 280;
 
 const BookDetails = () => {
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false); 
-  const navigate = useNavigate(); 
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const navigate = useNavigate();
   const [book, setBook] = useState({});
   const [loading, setLoading] = useState(false);
-  const currentUser = useSelector((state) => state.auth.user); 
+  const currentUser = useSelector((state) => state.auth.user);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleCommentAdded = () => {
+    setRefreshKey((prevKey) => prevKey + 1); 
+  };
 
   const { id: bookId } = useParams();
 
@@ -71,8 +76,8 @@ const BookDetails = () => {
               zIndex: 0,
             }}
           />
-      {currentUser ? <LoginedNavbar  /> : <Navbar />}
-      <Link to={'/all-books'} >
+          {currentUser ? <LoginedNavbar /> : <Navbar />}
+          <Link to={"/all-books"}>
             <button
               style={{ zIndex: 3 }}
               className="relative flex items-center bg-transparent text-white mx-5 opacity-75 hover:opacity-100 text-lg font-semibold"
@@ -175,8 +180,6 @@ const BookDetails = () => {
                   </Link>
                 </Box>
               </Box>
-
-              
             </Box>
           </Box>
           <Box
@@ -193,13 +196,13 @@ const BookDetails = () => {
             <Typography className="text-white font-light text-sm mt-2 opacity-70">
               {book.description}
             </Typography>
-            <div className="mt-20 w-1/2">
-            <RatingsReviews/>
+          </Box>
+          <div className="mt-20 w-1/2">
+              <RatingsReviews type="book" key={refreshKey} className="relative z-20" />
             </div>
             <div className="mt-10 w-2/3">
-              <Comments/>
+              <Comments onCommentAdded={handleCommentAdded} type="book" />
             </div>
-          </Box>
           {isAudioPlaying && (
             <Box sx={{ mt: 3 }}>
               <AudioPlayer playing={isAudioPlaying} />
