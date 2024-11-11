@@ -13,7 +13,7 @@ import axiosInstance from "../lib/axiosInstance";
 import { toast } from "react-toastify";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
-import { ThumbsUpIcon } from "lucide-react";
+import { ThumbsUpIcon, Trash2Icon } from "lucide-react";
 
 const drawerWidth = 280;
 
@@ -22,33 +22,10 @@ const Community = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [communityPosts, setCommunityPosts] = useState([]);
   const [commentText, setCommentText] = useState({});
-  const [addingComment, setAddingComment] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fetchingPost, setFetchingPosts] = useState(false);
   const [fetchingUsers, setFetchingUsers] = useState(false);
-
   const [users, setUsers] = useState([]);
-
-  const members = [
-    {
-      id: 1,
-      name: "Jane Smith",
-      email: "jane@example.com",
-      avatar: `${process.env.PUBLIC_URL}/images/Rectangle.png`,
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane@example.com",
-      avatar: `${process.env.PUBLIC_URL}/images/Rectangle.png`,
-    },
-    {
-      id: 3,
-      name: "Jane Smith",
-      email: "jane@example.com",
-      avatar: `${process.env.PUBLIC_URL}/images/Rectangle.png`,
-    },
-  ];
 
   const fetchAllUsers = async () => {
     try {
@@ -105,18 +82,15 @@ const Community = () => {
 
   const addCommentToPost = async (postId) => {
     try {
-      setAddingComment(true);
       await axiosInstance.post(`/posts/${postId}/comments`, {
         comment: commentText[postId],
       });
       toast.success("Comment added successfully");
-      setCommentText((prev) => ({ ...prev, [postId]: "" })); // Clear the comment text for this post
+      setCommentText((prev) => ({ ...prev, [postId]: "" })); 
       fetchAllPosts();
     } catch (e) {
       console.log("Error creating the comment");
       toast.error("Error creating the comment");
-    } finally {
-      setAddingComment(false);
     }
   };
 
@@ -145,6 +119,18 @@ const Community = () => {
     }
   };
 
+  const handleDeletePost = async (postId) => {
+    try {
+      await axiosInstance.delete(`posts/${postId}`);
+      toast.success("Post deleted successfully");
+      fetchAllPosts();
+    } catch (e) {
+      console.log("Error deleting the post");
+      toast.error("Error deleting the post");
+    } finally {
+    }
+  };
+
   return (
     <>
       <Box
@@ -160,7 +146,7 @@ const Community = () => {
           overflow: "hidden",
         }}
       >
-        <LoadingWrapper loading={fetchingPost}>
+        <LoadingWrapper loading={fetchingPost || loading}>
           <Box
             sx={{
               position: "absolute",
@@ -204,15 +190,25 @@ const Community = () => {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className="w-4/5">
-                        <h2 className="text-[#b1b1b1] font-semibold">
-                          {post.createdBy?.firstName +
-                            " " +
-                            post.createdBy?.lastName}
-                        </h2>
-                        <p className="text-xs text-[#b1b1b1]">
-                          {post.createdBy.email}
-                        </p>
+                      <div className="flex flex-row flex-1 items-center justify-between">
+                        <div className="flex-1">
+                          <h2 className="text-[#b1b1b1] font-semibold">
+                            {post.createdBy?.firstName +
+                              " " +
+                              post.createdBy?.lastName}
+                          </h2>
+                          <p className="text-xs text-[#b1b1b1]">
+                            {post.createdBy.email}
+                          </p>
+                        </div>
+                        {post.createdBy.id === currentUser.id && (
+                          <div className=" pr-3">
+                            <Trash2Icon
+                              onClick={() => handleDeletePost(post.id)}
+                              className="cursor-pointer text-red-700"
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="border-b-2 border-[#232323]">
@@ -288,50 +284,45 @@ const Community = () => {
                         </div>
                       </div>
                     </div>
-                    <LoadingWrapper loading={loading}>
-                      <div className="px-8 flex flex-col gap-5 my-5">
-                        {post.comments.map((comment) => (
-                          <div key={comment.id}>
-                            <div className="flex flex-row gap-3 items-center">
-                              <div className="w-10 h-10 rounded-full overflow-hidden">
-                                <img
-                                  src={comment.user.profileImageUrl}
-                                  alt="Profile"
-                                  className="w-full h-full object-center"
-                                />
-                              </div>
-                              <div className="flex flex-row justify-between items-center flex-1">
-                                <div className="text-white text-xs">
-                                  <p className="text-sm">
-                                    {comment.user.firstName +
-                                      " " +
-                                      comment.user.lastName}
-                                  </p>
-                                  <p className="text-slate-300">
-                                    {comment.user.email}
-                                  </p>
-                                </div>
-                                {comment.user.email === currentUser.email && (
-                                  <div className="text-red-700">
-                                    <DeleteOutlineIcon
-                                      className="text-[#e53939] hover:text-[#b22c2c] cursor-pointer"
-                                      onClick={() =>
-                                        handleDeleteMyComment(
-                                          post.id,
-                                          comment.id
-                                        )
-                                      }
-                                    />
-                                  </div>
-                                )}
-                              </div>
+                    <div className="px-8 flex flex-col gap-5 my-5">
+                      {post.comments.map((comment) => (
+                        <div key={comment.id}>
+                          <div className="flex flex-row gap-3 items-center">
+                            <div className="w-10 h-10 rounded-full overflow-hidden">
+                              <img
+                                src={comment.user.profileImageUrl}
+                                alt="Profile"
+                                className="w-full h-full object-center"
+                              />
                             </div>
-                            <p className="text-white mt-4">{comment.comment}</p>
-                            <div className="border-b border-gray-600 mt-2"></div>
+                            <div className="flex flex-row justify-between items-center flex-1">
+                              <div className="text-white text-xs">
+                                <p className="text-sm">
+                                  {comment.user.firstName +
+                                    " " +
+                                    comment.user.lastName}
+                                </p>
+                                <p className="text-slate-300">
+                                  {comment.user.email}
+                                </p>
+                              </div>
+                              {comment.user.email === currentUser.email && (
+                                <div className="text-red-700">
+                                  <DeleteOutlineIcon
+                                    className="text-[#e53939] hover:text-[#b22c2c] cursor-pointer"
+                                    onClick={() =>
+                                      handleDeleteMyComment(post.id, comment.id)
+                                    }
+                                  />
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        ))}
-                      </div>
-                    </LoadingWrapper>
+                          <p className="text-white mt-4">{comment.comment}</p>
+                          <div className="border-b border-gray-600 mt-2"></div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -349,7 +340,7 @@ const Community = () => {
                 height: "calc(100vh - 100px)",
               }}
             >
-              <LoadingWrapper loading={fetchingUsers} >
+              <LoadingWrapper loading={fetchingUsers}>
                 <h1 className="text-white text-lg font-semibold mb-2">
                   Members
                 </h1>
@@ -360,7 +351,11 @@ const Community = () => {
                   >
                     <div className="w-10 h-10 rounded-full overflow-hidden mx-5">
                       <img
-                        src={member.profileImageUrl ? member.profileImageUrl : `${process.env.PUBLIC_URL}/images/Rectangle.png`}
+                        src={
+                          member.profileImageUrl
+                            ? member.profileImageUrl
+                            : `${process.env.PUBLIC_URL}/images/Rectangle.png`
+                        }
                         alt=""
                         className="w-full h-full object-cover"
                       />
