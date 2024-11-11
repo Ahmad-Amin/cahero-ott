@@ -8,9 +8,11 @@ import LoadingWrapper from "./ui/LoadingWrapper";
 const CreatePostModal = ({ isOpen, onClose, onPost }) => {
   const modalRef = useRef();
   const fileInputRef = useRef();
+  const VideoInputRef = useRef();
   const [loading, setLoading] = useState(false);
   const [postContent, setPostContent] = useState("");
-  const [imageLink, setImageLink] = useState("");
+  const [assetLink, setAssetLink] = useState("");
+  const [assetType, setAssetType] = useState("");
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -41,15 +43,20 @@ const CreatePostModal = ({ isOpen, onClose, onPost }) => {
 
   const handlePost = async () => {
     setLoading(true);
-    await onPost(postContent, imageLink);
+    await onPost(postContent, assetLink, assetType);
     setLoading(false);
     setPostContent("");
-    setImageLink("");
+    setAssetLink("");
+    setAssetType("");
     onClose();
   };
 
   const handleImageClick = () => {
     fileInputRef.current.click(); // Trigger file input click
+  };
+
+  const handleVideoClick = () => {
+    VideoInputRef.current.click();
   };
 
   const handleImageUpload = async (event) => {
@@ -67,7 +74,35 @@ const CreatePostModal = ({ isOpen, onClose, onPost }) => {
             headers: { "Content-Type": "multipart/form-data" },
           }
         );
-        setImageLink(imageResponse.data.fileUrl);
+        setAssetLink(imageResponse.data.fileUrl);
+        setAssetType("image");
+        toast.success("File uploaded successfully");
+      }
+    } catch (e) {
+      console.log("Error uploading the image", e);
+      toast.error("Error uploading the image");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVideoUpload = async (event) => {
+    try {
+      setLoading(true);
+      const file = event.target.files[0];
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        console.log("Sending image file:", formData.get("file"));
+        const imageResponse = await axiosInstance.post(
+          "/upload/video",
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+        setAssetLink(imageResponse.data.fileUrl);
+        setAssetType("video");
         toast.success("File uploaded successfully");
       }
     } catch (e) {
@@ -100,46 +135,52 @@ const CreatePostModal = ({ isOpen, onClose, onPost }) => {
         >
           <CloseIcon />
         </button>
-        <div className="flex flex-row">
-          <h2
-            className="flex-1 text-white text-xl font-semibold mb-4"
-            id="modal-title"
-          >
-            Create Post
-          </h2>
+        <LoadingWrapper loading={loading}>
+          <div className="flex flex-row">
+            <h2
+              className="flex-1 text-white text-xl font-semibold mb-4"
+              id="modal-title"
+            >
+              Create Post
+            </h2>
 
-          <div className="flex justify-end gap-4 mb-6 text-gray-400">
-            <span>{imageLink ? "File Uploaded!" : ""}</span>
-            <FiImage
-              className="text-2xl cursor-pointer hover:text-white"
-              onClick={handleImageClick}
-            />
+            <div className="flex justify-end gap-4 mb-6 text-gray-400">
+              <span>{assetLink ? "File Uploaded!" : ""}</span>
+              <FiImage
+                className="text-2xl cursor-pointer hover:text-white"
+                onClick={handleImageClick}
+              />
+              <FiVideo
+                className="text-2xl cursor-pointer hover:text-white"
+                onClick={handleVideoClick}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="flex flex-col gap-2 mb-4">
-          <textarea
-            className="w-full h-40 p-2 rounded-lg bg-[#202022] text-white resize-none outline-none"
-            value={postContent}
-            onChange={handleContentChange}
-            placeholder="What you want to Share"
-          />
-          <p className="text-right text-gray-400 text-sm">
-            {postContent.length}/1000 characters
-          </p>
-        </div>
+          <div className="flex flex-col gap-2 mb-4">
+            <textarea
+              className="w-full h-40 p-2 rounded-lg bg-[#202022] text-white resize-none outline-none"
+              value={postContent}
+              onChange={handleContentChange}
+              placeholder="What you want to Share"
+            />
+            <p className="text-right text-gray-400 text-sm">
+              {postContent.length}/1000 characters
+            </p>
+          </div>
 
-        <div className="w-full flex justify-center">
-          <button
-            onClick={handlePost}
-            disabled={loading}
-            className={`w-32 px-5 h-12 bg-[#6a55ea] text-white rounded-lg font-semibold ${
-              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#5a48c9]"
-            } transition duration-200`}
-          >
-            {loading ? "Posting..." : "Post"}
-          </button>
-        </div>
+          <div className="w-full flex justify-center">
+            <button
+              onClick={handlePost}
+              disabled={loading}
+              className={`w-32 px-5 h-12 bg-[#6a55ea] text-white rounded-lg font-semibold ${
+                loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#5a48c9]"
+              } transition duration-200`}
+            >
+              Post
+            </button>
+          </div>
+        </LoadingWrapper>
       </div>
 
       {/* Hidden file input */}
@@ -149,6 +190,14 @@ const CreatePostModal = ({ isOpen, onClose, onPost }) => {
         style={{ display: "none" }}
         accept="image/*"
         onChange={handleImageUpload}
+      />
+
+      <input
+        type="file"
+        ref={VideoInputRef}
+        style={{ display: "none" }}
+        accept="video/*"
+        onChange={handleVideoUpload}
       />
     </div>
   );

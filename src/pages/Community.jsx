@@ -67,11 +67,12 @@ const Community = () => {
     setIsModalOpen(false);
   };
 
-  const handlePostUpload = async (content, imageLink) => {
+  const handlePostUpload = async (content, imageLink, type) => {
     try {
       await axiosInstance.post("/posts", {
         content,
-        image: imageLink,
+        assetUrl: imageLink,
+        type,
       });
       toast.success("Post created successfully");
       fetchAllPosts();
@@ -86,7 +87,7 @@ const Community = () => {
         comment: commentText[postId],
       });
       toast.success("Comment added successfully");
-      setCommentText((prev) => ({ ...prev, [postId]: "" })); 
+      setCommentText((prev) => ({ ...prev, [postId]: "" }));
       fetchAllPosts();
     } catch (e) {
       console.log("Error creating the comment");
@@ -215,10 +216,20 @@ const Community = () => {
                       <p className="text-white m-8 font-light ">
                         {post.content} {post?.hashtags}
                       </p>
-                      {post.image && (
+                      {post.type === "image" && post.assetUrl && (
                         <div className=" w-full h-[500px] overflow-hidden px-8 my-8">
                           <img
-                            src={post.image}
+                            src={post.assetUrl}
+                            alt=""
+                            className="w-full h-full rounded-lg object-cover"
+                          />
+                        </div>
+                      )}
+                      {post.type === "video" && post.assetUrl && (
+                        <div className="w-full h-[500px] overflow-hidden px-8 my-8">
+                          <video
+                            controls
+                            src={post.assetUrl}
                             alt=""
                             className="w-full h-full rounded-lg object-center"
                           />
