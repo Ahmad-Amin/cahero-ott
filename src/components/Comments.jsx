@@ -13,17 +13,13 @@ import LoadingWrapper from "./ui/LoadingWrapper";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import { useSelector } from "react-redux";
 import { formatDate } from "../utils/helper_functions";
+import { Trash2Icon } from "lucide-react";
 
 const urlBasedOnType = (type, id) => {
-  if (type === "webinar") {
-    return `/webinars/${id}/reviews`;
-  } else if (type === "lecture") {
-    return `/lectures/${id}/reviews`;
-  } else if (type === "book") {
-    return `/books/${id}/reviews`;
-  }else {
-    return "";
-  }
+  if (type === "webinar") return `/webinars/${id}/reviews`;
+  if (type === "lecture") return `/lectures/${id}/reviews`;
+  if (type === "book") return `/books/${id}/reviews`;
+  return "";
 };
 
 const Comments = ({ type, onCommentAdded }) => {
@@ -33,8 +29,8 @@ const Comments = ({ type, onCommentAdded }) => {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const { user } = useSelector((state) => state.auth);
+  const [replyTexts, setReplyTexts] = useState({});
 
-  // Track anchorEl and commentId for the currently open menu
   const [menuAnchor, setMenuAnchor] = useState({
     anchorEl: null,
     commentId: null,
@@ -67,16 +63,13 @@ const Comments = ({ type, onCommentAdded }) => {
     fetchReviews();
   }, [fetchReviews]);
 
-  const handleRating = (rate) => {
-    setRating(rate);
-  };
+  const handleRating = (rate) => setRating(rate);
 
   const handleSubmitReview = async () => {
     if (!commentText || rating === 0) {
       toast.error("Please provide a review and rating");
       return;
     }
-
     try {
       const newReview = { content: commentText, rating };
       await axiosInstance.post(baseApiPath, newReview);
@@ -99,9 +92,25 @@ const Comments = ({ type, onCommentAdded }) => {
       onCommentAdded();
       fetchReviews();
     } catch (error) {
-      const errorMessage = `Failed to delete review: ${error.response.data.error}`;
       console.error("Failed to delete review", error);
-      toast.error(errorMessage);
+      toast.error("Failed to delete review");
+    } finally {
+      handleClose();
+      setLoading(false);
+    }
+  };
+
+  const deleteReviewReply = async (commentId, replyId) => {
+    try {
+      setLoading(true);
+      await axiosInstance.delete(
+        `${baseApiPath}/${commentId}/replies/${replyId}`
+      );
+      toast.success("Reply deleted successfully");
+      fetchReviews();
+    } catch (error) {
+      console.error("Failed to delete reply", error);
+      toast.error("Failed to delete reply");
     } finally {
       handleClose();
       setLoading(false);
@@ -113,10 +122,32 @@ const Comments = ({ type, onCommentAdded }) => {
     try {
       await axiosInstance.post(url);
       fetchReviews();
-    } catch (e) {
-      console.log("Error Toggling the like", e);
+    } catch (error) {
+      console.error("Error toggling like", error);
       toast.error("Error toggling the like");
     }
+  };
+
+  const handleSubmitReply = async (reviewId) => {
+    const replyText = replyTexts[reviewId];
+
+    if (!replyText) {
+      toast.error("Please provide a reply text");
+      return;
+    }
+    try {
+      const reply = { content: replyText };
+      await axiosInstance.post(`${baseApiPath}/${reviewId}/replies`, reply);
+      toast.success("Reply added successfully");
+      setReplyTexts((prev) => ({ ...prev, [reviewId]: "" }));
+      fetchReviews();
+    } catch (error) {
+      console.error("Failed to submit reply", error);
+    }
+  };
+
+  const handleReplyTextChange = (reviewId, text) => {
+    setReplyTexts((prev) => ({ ...prev, [reviewId]: text }));
   };
 
   return (
@@ -142,9 +173,6 @@ const Comments = ({ type, onCommentAdded }) => {
             </div>
           </div>
           <div className="flex flex-row m-5 space-x-3">
-            {/* <div className="w-10 h-10 rounded-full border border-[#b1b1b1] flex items-center justify-center">
-              <MoodIcon className="text-[#b1b1b1]" />
-            </div> */}
             <div
               className="w-10 h-10 rounded-full border border-[#6a55ea] flex items-center justify-center cursor-pointer"
               onClick={handleSubmitReview}
@@ -154,10 +182,10 @@ const Comments = ({ type, onCommentAdded }) => {
           </div>
         </div>
         <div className="pl-20">
-          <Rating initialValue={rating} onClick={handleRating} />{" "}
+          <Rating initialValue={rating} onClick={handleRating} />
         </div>
       </div>
-      <div className=" flex justify-center items-center py-10" >
+      <div className="flex justify-center items-center py-10">
         {!loading && commentsData.length === 0 && (
           <p className="text-3xl text-white">No Reviews</p>
         )}
@@ -216,22 +244,20 @@ const Comments = ({ type, onCommentAdded }) => {
             <div className="border-b-2 border-[#232323]">
               <p className="text-white m-5 font-light">{comment.content}</p>
               <div className="flex flex-row my-5">
-                <div className="flex flex-row">
-                  <div
-                    className="cursor-pointer"
-                    onClick={() => handleToggleLike(comment.id)}
-                  >
-                    {comment.likes.includes(user.id) ? (
-                      <ThumbUpAltIcon className="text-white ml-8 mr-3" />
-                    ) : (
-                      <ThumbUpOutlined className="text-white ml-8 mr-3" />
-                    )}
-                  </div>
+                <div
+                  className="flex flex-row cursor-pointer"
+                  onClick={() => handleToggleLike(comment.id)}
+                >
+                  {comment.likes.includes(user.id) ? (
+                    <ThumbUpAltIcon className="text-white ml-8 mr-3" />
+                  ) : (
+                    <ThumbUpOutlined className="text-white ml-8 mr-3" />
+                  )}
                   <p className="text-white">{comment.likeCount} Likes</p>
                 </div>
                 <div className="flex flex-row">
                   <ChatIcon className="text-white ml-8 mr-3" />
-                  <p className="text-white">{comment.replies} Replies</p>
+                  <p className="text-white">{comment.replies.length} Replies</p>
                 </div>
               </div>
             </div>
@@ -247,20 +273,61 @@ const Comments = ({ type, onCommentAdded }) => {
                   </div>
                   <textarea
                     type="text"
-                    className="bg-black h-9 rounded-full w-full border border-[#b1b1b1] resize-none outline-none pt-1 pl-3"
+                    value={replyTexts[comment.id] || ""}
+                    onChange={(e) =>
+                      handleReplyTextChange(comment.id, e.target.value)
+                    }
+                    className="bg-black text-white h-9 rounded-full w-full border border-[#b1b1b1] resize-none outline-none pt-1 pl-3"
                     placeholder="Write your Reply.."
                   />
                 </div>
               </div>
               <div className="flex flex-row m-5 space-x-3">
-                {/* <div className="w-10 h-10 rounded-full border border-[#b1b1b1] flex items-center justify-center">
-                  <MoodIcon className="text-[#b1b1b1]" />
-                </div> */}
-                <div className="w-10 h-10 rounded-full border border-[#6a55ea] flex items-center justify-center">
+                <div
+                  className="w-10 h-10 rounded-full border border-[#6a55ea] flex items-center justify-center cursor-pointer"
+                  onClick={() => handleSubmitReply(comment.id)}
+                >
                   <SendIcon className="text-[#6a55ea]" />
                 </div>
               </div>
             </div>
+            {comment.replies.map((reply) => (
+              <div
+                key={reply.id}
+                className="pl-20 text-white border-b border-[#404041] py-3"
+              >
+                <div className="flex items-center mx-3 mb-3">
+                  <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
+                    <img
+                      src={`${process.env.PUBLIC_URL}/images/Rectangle.png`}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex flex-row items-center justify-between flex-1">
+                    <div>
+                      <h2 className="text-sm font-semibold">
+                        {reply.createdBy.firstName +
+                          " " +
+                          reply.createdBy.lastName}
+                      </h2>
+                      <p className="font-light text-xs">
+                        {formatDate(reply.createdAt)}
+                      </p>
+                    </div>
+                    {reply.createdBy.id === user.id && (
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => deleteReviewReply(comment.id, reply.id)}
+                      >
+                        <Trash2Icon className="text-red-600" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <p className="text-sm ml-16">{reply.content}</p>
+              </div>
+            ))}
           </div>
         </div>
       ))}
