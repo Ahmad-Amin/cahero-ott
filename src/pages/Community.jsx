@@ -14,8 +14,17 @@ import { toast } from "react-toastify";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
 import { ThumbsUpIcon, Trash2Icon } from "lucide-react";
+import { pdfjs, Document, Page } from "react-pdf";
+import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import "react-pdf/dist/esm/Page/TextLayer.css";
+import PDFViewer from "../components/PDFViewer";
 
 const drawerWidth = 280;
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.mjs",
+  import.meta.url
+).toString();
 
 const Community = () => {
   const currentUser = useSelector((state) => state.auth.user);
@@ -233,6 +242,11 @@ const Community = () => {
                             alt=""
                             className="w-full h-full rounded-lg object-center"
                           />
+                        </div>
+                      )}
+                      {post.type === "document" && post.assetUrl && (
+                        <div className="w-full px-8 my-8">
+                          <PDFViewer link={post.assetUrl} />
                         </div>
                       )}
                       <div className="flex flex-row my-8">

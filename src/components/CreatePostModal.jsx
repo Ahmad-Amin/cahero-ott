@@ -7,32 +7,57 @@ import LoadingWrapper from "./ui/LoadingWrapper";
 
 const CreatePostModal = ({ isOpen, onClose, onPost }) => {
   const modalRef = useRef();
-  const fileInputRef = useRef();
-  const VideoInputRef = useRef();
   const [loading, setLoading] = useState(false);
   const [postContent, setPostContent] = useState("");
   const [assetLink, setAssetLink] = useState("");
   const [assetType, setAssetType] = useState("");
 
+  // Refs for file inputs
+  const fileInputRefs = {
+    image: useRef(),
+    video: useRef(),
+    document: useRef(),
+  };
+
+  // Helper function to handle clicks for file inputs
+  const handleFileClick = (type) => {
+    if (!assetType) fileInputRefs[type].current.click();
+  };
+
+  // Upload handler to manage different file types
+  const handleUpload = async (event, type) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axiosInstance.post(`/upload/${type}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setAssetLink(response.data.fileUrl);
+      setAssetType(type);
+      toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully`);
+    } catch (e) {
+      console.error(`Error uploading the ${type}`, e);
+      toast.error(`Error uploading the ${type}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Consolidated modal close and outside-click handling
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        onClose();
-      }
+      if (modalRef.current && !modalRef.current.contains(event.target)) onClose();
     };
-
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
+    const handleKeyDown = (event) => event.key === "Escape" && onClose();
 
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
       document.addEventListener("keydown", handleKeyDown);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleKeyDown);
     }
 
     return () => {
@@ -51,72 +76,8 @@ const CreatePostModal = ({ isOpen, onClose, onPost }) => {
     onClose();
   };
 
-  const handleImageClick = () => {
-    fileInputRef.current.click(); // Trigger file input click
-  };
-
-  const handleVideoClick = () => {
-    VideoInputRef.current.click();
-  };
-
-  const handleImageUpload = async (event) => {
-    try {
-      setLoading(true);
-      const file = event.target.files[0];
-      if (file) {
-        const formData = new FormData();
-        formData.append("file", file);
-        console.log("Sending image file:", formData.get("file"));
-        const imageResponse = await axiosInstance.post(
-          "/upload/image",
-          formData,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          }
-        );
-        setAssetLink(imageResponse.data.fileUrl);
-        setAssetType("image");
-        toast.success("File uploaded successfully");
-      }
-    } catch (e) {
-      console.log("Error uploading the image", e);
-      toast.error("Error uploading the image");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVideoUpload = async (event) => {
-    try {
-      setLoading(true);
-      const file = event.target.files[0];
-      if (file) {
-        const formData = new FormData();
-        formData.append("file", file);
-        console.log("Sending image file:", formData.get("file"));
-        const imageResponse = await axiosInstance.post(
-          "/upload/video",
-          formData,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          }
-        );
-        setAssetLink(imageResponse.data.fileUrl);
-        setAssetType("video");
-        toast.success("File uploaded successfully");
-      }
-    } catch (e) {
-      console.log("Error uploading the image", e);
-      toast.error("Error uploading the image");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleContentChange = (e) => {
-    if (e.target.value.length <= 1000) {
-      setPostContent(e.target.value);
-    }
+    if (e.target.value.length <= 1000) setPostContent(e.target.value);
   };
 
   if (!isOpen) return null;
@@ -143,16 +104,19 @@ const CreatePostModal = ({ isOpen, onClose, onPost }) => {
             >
               Create Post
             </h2>
-
             <div className="flex justify-end gap-4 mb-6 text-gray-400">
               <span>{assetLink ? "File Uploaded!" : ""}</span>
               <FiImage
-                className="text-2xl cursor-pointer hover:text-white"
-                onClick={handleImageClick}
+                className={`text-2xl cursor-pointer ${!assetType ? "hover:text-white" : "opacity-50"}`}
+                onClick={() => handleFileClick("image")}
               />
               <FiVideo
-                className="text-2xl cursor-pointer hover:text-white"
-                onClick={handleVideoClick}
+                className={`text-2xl cursor-pointer ${!assetType ? "hover:text-white" : "opacity-50"}`}
+                onClick={() => handleFileClick("video")}
+              />
+              <FiFileText
+                className={`text-2xl cursor-pointer ${!assetType ? "hover:text-white" : "opacity-50"}`}
+                onClick={() => handleFileClick("document")}
               />
             </div>
           </div>
@@ -183,21 +147,27 @@ const CreatePostModal = ({ isOpen, onClose, onPost }) => {
         </LoadingWrapper>
       </div>
 
-      {/* Hidden file input */}
+      {/* Hidden file inputs for uploading files */}
       <input
         type="file"
-        ref={fileInputRef}
+        ref={fileInputRefs.image}
         style={{ display: "none" }}
         accept="image/*"
-        onChange={handleImageUpload}
+        onChange={(e) => handleUpload(e, "image")}
       />
-
       <input
         type="file"
-        ref={VideoInputRef}
+        ref={fileInputRefs.video}
         style={{ display: "none" }}
         accept="video/*"
-        onChange={handleVideoUpload}
+        onChange={(e) => handleUpload(e, "video")}
+      />
+      <input
+        type="file"
+        ref={fileInputRefs.document}
+        style={{ display: "none" }}
+        accept="application/pdf"
+        onChange={(e) => handleUpload(e, "document")}
       />
     </div>
   );
