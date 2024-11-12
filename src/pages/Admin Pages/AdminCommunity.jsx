@@ -42,7 +42,7 @@ const AdminCommunity = () => {
 
   const openViewMoreModal = (postId) => {
     setIsViewMoreModalOpen(postId);
-  };  
+  };
   const closeViewMoreModal = () => {
     setIsViewMoreModalOpen(null);
   };
@@ -102,13 +102,29 @@ const AdminCommunity = () => {
     try {
       await axiosInstance.post("/posts", {
         content,
-        assetUrl: imageLink,
-        type,
+        assetUrl: imageLink || undefined,
+        type: type || undefined,
       });
       toast.success("Post created successfully");
       fetchAllPosts();
     } catch (e) {
       console.log("Error creating the post");
+    }
+  };
+
+  const handlePostUpdate = async (id, content, assetUrl, type) => {
+    try {
+      await axiosInstance.patch(`/posts/${id}`, {
+        content,
+        assetUrl: assetUrl || undefined,
+        type: type || undefined,
+      });
+      toast.success("Post updated successfully");
+      fetchAllPosts();
+      setIsEditModalOpen(false);
+    } catch (e) {
+      console.log("Error updating the post");
+      toast.error("Error updating the post");
     }
   };
 
@@ -199,7 +215,7 @@ const AdminCommunity = () => {
               {communityPosts.map((post) => (
                 <div
                   key={post.id}
-                  className="bg-[#101011] w-4/6 mx-8 rounded-lg border-2 border-[#404041]"
+                  className="bg-[#101011] w-4/6 mx-8 rounded-lg border-2 border-[#404041] relative"
                 >
                   <div>
                     <div className="flex flex-row items-center bg-transparent w-full h-16 mt-2 border-b-2 border-[#232323]">
@@ -222,23 +238,23 @@ const AdminCommunity = () => {
                           </p>
                         </div>
                         {currentUser.role === "admin" && (
-                          <div>
+                          <div className="px-4">
                             <MoreVertIcon
                               className="text-white cursor-pointer"
                               onClick={() => openViewMoreModal(post.id)}
+                            />
+
+                            {/* Modal per post instance */}
+                            <ViewMoreModal
+                              open={isViewMoreModalOpen === post.id}
+                              onClose={closeViewMoreModal}
+                              onEdit={() => handleEdit(post)}
+                              onDelete={() => handleDeletePost(post.id)}
                             />
                           </div>
                         )}
                       </div>
                     </div>
-
-                    {/* Modal per post instance */}
-                    <ViewMoreModal
-                      open={isViewMoreModalOpen === post.id}
-                      onClose={closeViewMoreModal}
-                      onEdit={() => handleEdit(post)}
-                      onDelete={() => handleDeletePost(post.id)}
-                    />
 
                     <div className="border-b-2 border-[#232323]">
                       <p className="text-white m-8 font-light ">
@@ -429,6 +445,7 @@ const AdminCommunity = () => {
           handleCloseEditModal();
         }}
         onPost={handlePostUpload}
+        onUpdate={handlePostUpdate}
         itemType="post"
         editData={editData}
       />

@@ -6,7 +6,7 @@ const ViewMoreModal = ({ open, onClose, onEdit, onDelete }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50"
+      className=" absolute top-0 right-0 bg-black bg-opacity-10 flex items-center justify-center z-50"
       onClick={onClose}
     >
       <div
