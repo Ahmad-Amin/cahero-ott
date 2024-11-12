@@ -22,8 +22,9 @@ import GroupIcon from "@mui/icons-material/Group";
 import LaptopIcon from "@mui/icons-material/Laptop";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import PaymentsIcon from "@mui/icons-material/Payments";
+import GroupsIcon from '@mui/icons-material/Groups';
 import { logout } from "../../Slice/AuthSlice"; // Import your logout action
-import {  useDispatch } from "react-redux"; // Import useSelector and useDispatch
+import { useDispatch } from "react-redux"; // Import useSelector and useDispatch
 
 const drawerWidth = 280;
 
@@ -35,11 +36,10 @@ export default function AdminPanelLayout() {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  const dispatch = useDispatch(); // Create a dispatch function
+  const dispatch = useDispatch(); 
 
   const handleLogout = async () => {
     try {
-
       dispatch(logout());
       navigate("/");
     } catch (error) {
@@ -72,6 +72,8 @@ export default function AdminPanelLayout() {
         return "Profile";
       case "notifications":
         return "Notifications";
+      case "admin-community":
+        return "Community";
       default:
         return "Dashboard";
     }
@@ -95,6 +97,11 @@ export default function AdminPanelLayout() {
       icon: <PaymentsIcon />,
       link: "/dashboard/subscription",
     },
+    {
+      text: "Community",
+      icon: <GroupsIcon />,
+      link: "/dashboard/admin-community",
+    },
     { text: "Users", icon: <CalendarTodayIcon />, link: "/dashboard/users" },
     {
       text: "Book Creation",
@@ -114,11 +121,11 @@ export default function AdminPanelLayout() {
       <div>
         <div className="p-2 flex items-center">
           <Link to={"/"}>
-          <img
-            src={`${process.env.PUBLIC_URL}/images/Cahero_Legacy.png`}
-            alt="Logo"
-            className="h-auto w-auto"
-          />
+            <img
+              src={`${process.env.PUBLIC_URL}/images/Cahero_Legacy.png`}
+              alt="Logo"
+              className="h-auto w-auto"
+            />
           </Link>
         </div>
         <List className="mx-6 space-y-2">

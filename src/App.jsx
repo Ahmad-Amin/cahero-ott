@@ -43,6 +43,7 @@ import UserProtectedRoute from "./components/UserProtectedRoute"
 import EditNotifications from "./pages/Admin Pages/EditNotifications";
 import Community from "./pages/Community";
 import LectureDetails from "./pages/LectureDetails"
+import AdminCommunity from "./pages/Admin Pages/AdminCommunity";
 function App() {
   return (
     <Provider store={store}>
@@ -122,6 +123,10 @@ function App() {
               <Route
                 path="book-creation/:id/manage-book"
                 element={<ManageBook />}
+              />
+              <Route
+                path="admin-community"
+                element={<AdminCommunity />}
               />
               <Route path="profile" element={<Profile />} />
               <Route path="notifications" element={<Notifications />} />

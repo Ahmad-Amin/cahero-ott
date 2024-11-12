@@ -55,7 +55,7 @@ const RatingsReviews = ({ type }) => {
                 <div className="flex-1 h-3 bg-gray-700 rounded-lg overflow-hidden mx-2">
                   <div
                     style={{ width: `${percentage}%` }}
-                    className="h-full bg-blue-500"
+                    className="h-full bg-blue-500 rounded-lg"
                   ></div>
                 </div>
                 <p className="text-sm">{rating.count}</p>
