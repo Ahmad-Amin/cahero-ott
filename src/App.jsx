@@ -45,6 +45,7 @@ import Community from "./pages/Community";
 import LectureDetails from "./pages/LectureDetails"
 import AdminCommunity from "./pages/Admin Pages/AdminCommunity";
 function App() {
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
@@ -70,10 +71,10 @@ function App() {
                 } />
               <Route path="/webinar/:id/user-lobby" element={<StreamPage />} />
               <Route path="/notifications" element={<NotificationsUser />} />
-              <Route
+              {/* <Route
                 path="/subscription-plans"
                 element={<SubscriptionPlans />}
-              />
+              /> */}
               <Route path="/community" element={<Community />} />
             </Route>
 

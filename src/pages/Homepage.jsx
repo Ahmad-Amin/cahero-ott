@@ -21,6 +21,8 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../Slice/AuthSlice";
+import LoginedNavbar from "../components/LoginedNavbar";
+import Navbar from "../components/Navbar";
 
 const drawerWidth = 280;
 
@@ -30,6 +32,8 @@ export default function Homepage({ window }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { token, user } = useSelector((state) => state.auth);
+  const currentUser = useSelector((state) => state.auth.user); 
+
 
   useEffect(() => {
     if (!token || !user) {
@@ -52,11 +56,11 @@ export default function Homepage({ window }) {
       link: "/documentaries",
     },
     { text: "Profile Settings", icon: <TuneIcon />, link: "/profile-settings" },
-    {
-      text: "Subscription Plans",
-      icon: <CalendarTodayIcon />,
-      link: "/subscription-plans",
-    },
+    // {
+    //   text: "Subscription Plans",
+    //   icon: <CalendarTodayIcon />,
+    //   link: "/subscription-plans",
+    // },
     {
       text: "Community",
       icon: <GroupsIcon/>,
@@ -69,7 +73,7 @@ export default function Homepage({ window }) {
       <div className="p-2 flex items-center">
         <Link to={"/"}>
           <img
-            src={`${process.env.PUBLIC_URL}/images/Cahero_Legacy.png`}
+            src={`${process.env.PUBLIC_URL}/images/Cahero Legacy.png`}
             alt="Logo"
             className="h-auto w-auto"
           />
@@ -85,8 +89,8 @@ export default function Homepage({ window }) {
               location.pathname.startsWith("/webinar")) ||
             (item.link === "/documentaries" &&
               location.pathname.startsWith("/documentaries")) ||
-            (item.link === "/subscription-plans" &&
-              location.pathname.startsWith("/subscription-plans"));
+            // (item.link === "/subscription-plans" &&
+            //   location.pathname.startsWith("/subscription-plans"));
               (item.link === "/community" &&
                 location.pathname.startsWith("/community"));
 
@@ -156,6 +160,7 @@ export default function Homepage({ window }) {
             <MenuIcon />
           </IconButton>
         </Box>
+        {/* <div>{currentUser ? <LoginedNavbar /> : <Navbar />}</div> */}
       </AppBar>
 
       {!shouldHideSidebar && (

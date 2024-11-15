@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import StarIcon from "@mui/icons-material/Star";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
+import { FaStar } from "react-icons/fa6";
+import { FaRegStar } from "react-icons/fa";
 import axiosInstance from "../lib/axiosInstance";
 import { useParams } from "react-router-dom";
 
@@ -24,7 +24,7 @@ const RatingsReviews = ({ type }) => {
   }, [type, id]);
 
   return (
-    <div className="ratings-container bg-transparent p-6 rounded-lg text-white h-60">
+    <div className="ratings-container bg-transparent p-6 rounded-lg ml-5 text-white h-60">
       <h2 className="text-2xl font-semibold">Ratings & Reviews</h2>
       <p className="text-sm text-gray-400 mt-1">
         Rating and reviews are verified and are from people who use the service
@@ -32,12 +32,12 @@ const RatingsReviews = ({ type }) => {
       <div className="flex items-center mt-4">
         <div className="text-center mr-6">
           <p className="text-4xl font-bold">{stats?.averageRating}</p>
-          <p className="text-yellow-400 flex items-center">
+          <p className="text-yellow-400 flex items-center gap-2 my-2">
             {[...Array(5)].map((_, index) =>
               index < Math.round(stats?.averageRating) ? (
-                <StarIcon key={index} fontSize="small" />
+                <FaStar key={index} fontSize="medium" />
               ) : (
-                <StarBorderIcon key={index} fontSize="small" />
+                <FaRegStar key={index} fontSize="medium" />
               )
             )}
           </p>

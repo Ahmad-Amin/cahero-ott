@@ -86,7 +86,7 @@ const ProfileSettings = () => {
       lastName,
       email,
       phoneNumber,
-      boi: bio ? bio : undefined,
+      bio,
       role,
       profileImageUrl: profileImage ? profileImage : undefined,
     };
@@ -195,7 +195,7 @@ const ProfileSettings = () => {
             </div>
             <div
               style={{ position: "relative", zIndex: 2 }}
-              className="mt-10 mx-4 md:mx-8 flex flex-col md:flex-row justify-start"
+              className="mt-10 mx-4 md:mx-8 flex flex-col md:flex-row justify-start items-center"
             >
               <div className="flex flex-col items-center ">
                 <img
@@ -227,7 +227,7 @@ const ProfileSettings = () => {
                   </label>
                 )}
               </div>
-              <div className="mt-10 ml-10 w-auto flex-1">
+              <div className="ml-10 w-auto flex-1">
                 <div className="flex justify-between items-center">
                   {isEditing.profile ? (
                     <div>
@@ -268,22 +268,6 @@ const ProfileSettings = () => {
                       </button>
                     )}
                   </div>
-                </div>
-
-                <div className="flex justify-between mt-4 flex-wrap">
-                  <p className="text-white opacity-85 text-lg font-normal mr-4">
-                    No Address Available
-                  </p>
-                </div>
-                <div className="flex justify-between mt-4 flex-wrap">
-                  <p className="text-white opacity-65 text-lg font-thin mr-4">
-                    Member Since 2024
-                  </p>
-                </div>
-                <div className="flex justify-between mt-4 flex-wrap">
-                  <p className="text-white opacity-65 text-lg font-thin mr-4">
-                    Hired&nbsp;&nbsp;&nbsp;24&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Posted&nbsp;20&nbsp;Reviews
-                  </p>
                 </div>
               </div>
             </div>

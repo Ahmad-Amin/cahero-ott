@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import LoginedNavbar from "../components/LoginedNavbar";
 import { FaRegHeart } from "react-icons/fa";
-import { FaStar } from "react-icons/fa6";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
 import { useSelector } from 'react-redux';
 import Navbar from "../components/Navbar";
@@ -10,6 +9,9 @@ import RatingsReviews from "../components/RatingsReview";
 import Comments from "../components/Comments";
 import { Link, useParams } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
+import { FaStar } from "react-icons/fa6";
+import { FaRegStar } from "react-icons/fa";
+const type = "lecture";
 
 const drawerWidth = 280;
 
@@ -19,6 +21,8 @@ const LectureDetails = () => {
   const currentUser = useSelector((state) => state.auth.user); 
   const { id: lectureId } = useParams();
   const [refreshKey, setRefreshKey] = useState(0);
+  const [stats, setStats] = useState(0);
+
 
   const handleCommentAdded = () => {
     setRefreshKey((prevKey) => prevKey + 1); 
@@ -38,6 +42,24 @@ const LectureDetails = () => {
     fetchLecture();
   }, [lectureId]);
 
+
+  useEffect(() => {
+    const fetchReviewStats = async () => {
+      try {
+        setLoading(true);
+        const response = await axiosInstance.get(
+          `/${type}s/${lectureId}/reviews/stats`
+        );
+        setStats(response.data);
+      } catch (error) {
+        console.error("Failed to fetch review stats", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviewStats();
+  }, [type, lectureId]);
   return (
     <>
       <Box
@@ -78,23 +100,30 @@ const LectureDetails = () => {
               <div className="mt-10 mx-5 w-full lg:w-2/4">
                 <div className="flex justify-between items-center">
                   <h1 className="text-white text-3xl font-semibold">{Lecture.title}</h1>
-                  <div className="mx-0 flex items-center gap-1">
-                    <FaStar className="text-[#FFC01E]" />
-                    <FaStar className="text-[#FFC01E]" />
-                    <FaStar className="text-[#FFC01E]" />
-                    <FaStar className="text-[#FFC01E]" />
-                    <FaStar className="text-[#FFC01E]" />
-                    <p className="text-white text-sm font-medium mx-2">7/10</p>
-                  </div>
+                  <div className="mx-0 flex items-center gap-1 text-[#FFC01E]">
+                {[...Array(5)].map((_, index) =>
+                  index < Math.round(stats?.averageRating) ? (
+                    <FaStar key={index} fontSize="medium" />
+                  ) : (
+                    <FaRegStar key={index} fontSize="medium" />
+                  )
+                )}
+                <p className="text-white text-lg font-medium">
+                  {stats.averageRating}
+                </p>
+              </div>
                 </div>
-                <div className="flex justify-between mt-2 flex-wrap">
-                  <p className="text-white text-lg font-medium mr-4">Category: {Lecture.category}</p>
+                <div className="flex mt-2 flex-wrap">
+                  <p className="text-white font-semibold mr-4">Category: </p>
+                  <p className="text-white font-normal opacity-80">{Lecture.category}</p>
                 </div>
-                <div className="flex justify-between mt-2 flex-wrap">
-                  <p className="text-white text-lg font-medium mr-4">Duration: {Lecture.duration}</p>
+                <div className="flex mt-2 flex-wrap">
+                  <p className="text-white font-semibold mr-4">Duration: </p>
+                  <p className="text-white font-normal opacity-80">{Lecture.duration}</p>
                 </div>
                 <div className="mt-5 mr-0">
-                  <p className="text-white text-base line-clamp-1 text-ellipsis">{Lecture.description}</p>
+                <p className="text-white font-semibold mr-4">Description: </p>
+                  <p className="text-white text-base font-normal opacity-80 line-clamp-1 text-ellipsis">{Lecture.description}</p>
                 </div>
                 <div className="flex flex-col md:flex-row items-center">
                   <Link to={`/documentaries/details/${lectureId}`}>

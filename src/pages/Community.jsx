@@ -1,5 +1,5 @@
 // Community.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef  } from "react";
 import { Box } from "@mui/material";
 import { useSelector } from "react-redux";
 import LoginedNavbar from "../components/LoginedNavbar";
@@ -35,6 +35,10 @@ const Community = () => {
   const [fetchingPost, setFetchingPosts] = useState(false);
   const [fetchingUsers, setFetchingUsers] = useState(false);
   const [users, setUsers] = useState([]);
+  const [isMembersVisible, setIsMembersVisible] = useState(false); // New state for members dropdown
+  const dropdownRef = useRef(null);
+
+
 
   const fetchAllUsers = async () => {
     try {
@@ -141,6 +145,32 @@ const Community = () => {
     }
   };
 
+  const toggleMembersDropdown = () => {
+    setIsMembersVisible((prev) => !prev);
+  };
+
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsMembersVisible(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsMembersVisible(false);
+      }
+    };
+  
+    document.addEventListener("mousedown", handleClickOutside);
+  
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMembersVisible]);
+  
+
   return (
     <>
       <Box
@@ -182,14 +212,20 @@ const Community = () => {
             >
               Create
             </button>
+            <button
+              className="bg-[#6a55ea] hover:bg-[#5242b6] transition duration-300 w-auto px-5 h-9 text-white font-semibold mr-20 rounded-lg"
+              onClick={toggleMembersDropdown}
+            >
+              {isMembersVisible ? "Hide Members" : "View Members"}
+            </button>
           </div>
 
-          <div className="flex flex-row mt-5">
-            <div className="flex-1 flex-col mr-5 space-y-5 z-10 flex justify-center">
+          <div className="flex mt-5">
+            <div className="flex flex-col mx-5 space-y-5 w-11/12 z-10">
               {communityPosts.map((post) => (
                 <div
                   key={post.id}
-                  className="bg-[#101011] w-4/6 mx-8 rounded-lg border-2 border-[#404041]"
+                  className="bg-[#101011] w-full mx-8 rounded-lg border-2 border-[#404041]"
                 >
                   <div>
                     <div className="flex flex-row items-center bg-transparent w-full h-16 mt-2 border-b-2 border-[#232323]">
@@ -353,51 +389,48 @@ const Community = () => {
               ))}
             </div>
 
-            <div
-              className="members-section flex flex-col w-1/4 mx-8 pl-5"
+             {isMembersVisible && (
+              <div
+              ref={dropdownRef}
+              className="members-dropdown bg-black p-4 rounded-lg shadow-lg w-1/4 absolute top-[150] right-[10px] z-50"
               style={{
-                position: "fixed",
-                right: "0px",
-                top: "100px",
-                paddingRight: "1rem",
-                marginTop: "20px",
-                overflowY: "auto",
-                height: "calc(100vh - 100px)",
+                maxHeight: "500px", // Limits the height of the dropdown
+                overflowY: "auto", // Enables scrolling for overflowing content
+                display: "flex",
+                flexDirection: "column",
               }}
             >
-              <LoadingWrapper loading={fetchingUsers}>
-                <h1 className="text-white text-lg font-semibold mb-2">
-                  Members
-                </h1>
-                {users.map((member) => (
-                  <div
-                    key={member.id}
-                    className="flex flex-row items-center bg-black w-full h-16 border-b-2 border-[#232323]"
-                  >
-                    <div className="w-10 h-10 rounded-full overflow-hidden mx-5">
-                      <img
-                        src={
-                          member.profileImageUrl
-                            ? member.profileImageUrl
-                            : `${process.env.PUBLIC_URL}/images/Rectangle.png`
-                        }
-                        alt=""
-                        className="w-full h-full object-cover"
-                      />
+            
+                <LoadingWrapper loading={fetchingUsers}>
+                  <h1 className="text-white text-lg font-semibold mb-2">
+                    Members
+                  </h1>
+                  {users.map((member) => (
+                    <div
+                      key={member.id}
+                      className="flex flex-row items-center border-b border-[#232323] py-2"
+                    >
+                      <div className="w-10 h-10 rounded-full overflow-hidden mx-3">
+                        <img
+                          src={
+                            member.profileImageUrl
+                              ? member.profileImageUrl
+                              : `${process.env.PUBLIC_URL}/images/Rectangle.png`
+                          }
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <h2 className="text-[#b1b1b1] font-semibold">
+                          {member.firstName + " " + member.lastName}
+                        </h2>
+                      </div>
                     </div>
-
-                    <div className="w-4/5">
-                      <h2 className="text-[#b1b1b1] font-semibold">
-                        {member.firstName + " " + member.lastName}
-                      </h2>
-                      <p className="text-[#b1b1b1] font-light">
-                        {member.email}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </LoadingWrapper>
-            </div>
+                  ))}
+                </LoadingWrapper>
+              </div>
+            )}
           </div>
         </LoadingWrapper>
       </Box>

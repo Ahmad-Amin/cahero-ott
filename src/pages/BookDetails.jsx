@@ -15,6 +15,7 @@ import Navbar from "../components/Navbar";
 import { useSelector } from "react-redux";
 import RatingsReviews from "../components/RatingsReview";
 import Comments from "../components/Comments";
+const type = "book";
 
 const drawerWidth = 280;
 
@@ -25,9 +26,10 @@ const BookDetails = () => {
   const [loading, setLoading] = useState(false);
   const currentUser = useSelector((state) => state.auth.user);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [stats, setStats] = useState(0);
 
   const handleCommentAdded = () => {
-    setRefreshKey((prevKey) => prevKey + 1); 
+    setRefreshKey((prevKey) => prevKey + 1);
   };
 
   const { id: bookId } = useParams();
@@ -48,6 +50,23 @@ const BookDetails = () => {
     fetchBook();
   }, [bookId]);
 
+  useEffect(() => {
+    const fetchReviewStats = async () => {
+      try {
+        setLoading(true);
+        const response = await axiosInstance.get(
+          `/${type}s/${bookId}/reviews/stats`
+        );
+        setStats(response.data);
+      } catch (error) {
+        console.error("Failed to fetch review stats", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviewStats();
+  }, [type, bookId]);
   return (
     <>
       <Box
@@ -73,7 +92,6 @@ const BookDetails = () => {
               height: "100%",
               background:
                 "linear-gradient(to right, #220e37 0%, rgba(34, 14, 55, 0) 100%)",
-              zIndex: 0,
             }}
           />
           {currentUser ? <LoginedNavbar /> : <Navbar />}
@@ -110,39 +128,36 @@ const BookDetails = () => {
               <Typography className="text-white !text-2xl font-medium">
                 {book.title}
               </Typography>
-              <Typography className="text-white text-base font-normal">
-                {book.author}
+              <Typography className="text-white text-base font-normal opacity-70">
+                by {book.author}
               </Typography>
-              <Box className="flex items-center gap-1 mt-2">
-                <FaStar className="text-[#FFC01E]" />
-                <FaStar className="text-[#FFC01E]" />
-                <FaStar className="text-[#FFC01E]" />
-                <FaStar className="text-[#FFC01E]" />
-                <FaRegStar className="text-[#FFC01E]" />
-                <Typography className="text-white text-lg font-normal">
-                  4.0
-                </Typography>
-              </Box>
-              <Box className="flex items-center gap-2 mt-2">
-                {["Fantasy", "Drama", "Fiction"].map((genre) => (
-                  <Box
-                    key={genre}
-                    className="border border-white rounded-xl text-white text-xs font-semibold px-3 py-1"
-                  >
-                    {genre}
-                  </Box>
-                ))}
+              <div className="mt-2 flex items-center gap-1 text-[#FFC01E]">
+                {[...Array(5)].map((_, index) =>
+                  index < Math.round(stats?.averageRating) ? (
+                    <FaStar key={index} fontSize="medium" />
+                  ) : (
+                    <FaRegStar key={index} fontSize="medium" />
+                  )
+                )}
+                <p className="text-white text-lg font-medium">
+                  {stats.averageRating}
+                </p>
+              </div>
+              <Box className="flex items-center gap-2 mt-2 ">
+                <p className="text-white font-semibold">Genre:</p> <p className="text-white font-normal opacity-80">
+                {book.genre}
+                </p>
               </Box>
               <Box className="flex items-center mt-3 gap-3">
                 <Box className="flex items-center mt-3">
                   <Button
                     variant="contained"
-                    onClick={() => setIsAudioPlaying(true)} // Set state to true on button click
+                    onClick={() => setIsAudioPlaying(true)} 
                     sx={{
-                      backgroundColor: "#6a55ea", // Your desired color
+                      backgroundColor: "#6a55ea", 
                       color: "white",
                       "&:hover": {
-                        backgroundColor: "#5a47d1", // Darker shade on hover
+                        backgroundColor: "#5a47d1", 
                       },
                       height: "64px",
                       width: "160px",
@@ -198,11 +213,15 @@ const BookDetails = () => {
             </Typography>
           </Box>
           <div className="mt-20 w-1/2">
-              <RatingsReviews type="book" key={refreshKey} className="relative z-20" />
-            </div>
-            <div className="mt-10 w-2/3">
-              <Comments onCommentAdded={handleCommentAdded} type="book" />
-            </div>
+            <RatingsReviews
+              type="book"
+              key={refreshKey}
+              className="relative z-20"
+            />
+          </div>
+          <div className="mt-10 w-2/3">
+            <Comments onCommentAdded={handleCommentAdded} type="book" />
+          </div>
           {isAudioPlaying && (
             <Box sx={{ mt: 3 }}>
               <AudioPlayer playing={isAudioPlaying} />

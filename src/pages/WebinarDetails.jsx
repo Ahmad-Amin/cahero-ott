@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import LoginedNavbar from "../components/LoginedNavbar";
 import { FaRegHeart } from "react-icons/fa";
 import { FaStar } from "react-icons/fa6";
+import { FaRegStar } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
@@ -11,7 +12,7 @@ import Navbar from "../components/Navbar";
 import RatingsReviews from "../components/RatingsReview";
 import Comments from "../components/Comments";
 const drawerWidth = 280;
-
+const type = "webinar";
 const WebinarDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -21,9 +22,10 @@ const WebinarDetails = () => {
   const [loading, setLoading] = useState(false);
   const currentUser = useSelector((state) => state.auth.user);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [stats, setStats] = useState(0);
 
   const handleCommentAdded = () => {
-    setRefreshKey((prevKey) => prevKey + 1); 
+    setRefreshKey((prevKey) => prevKey + 1);
   };
 
   // Fetch webinar details
@@ -56,6 +58,24 @@ const WebinarDetails = () => {
       }
     })();
   }, [id]);
+
+  useEffect(() => {
+    const fetchReviewStats = async () => {
+      try {
+        setLoading(true);
+        const response = await axiosInstance.get(
+          `/${type}s/${id}/reviews/stats`
+        );
+        setStats(response.data);
+      } catch (error) {
+        console.error("Failed to fetch review stats", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviewStats();
+  }, [type, id]);
 
   const handleWatchNow = () => {
     if (isWatchNowEnabled) {
@@ -94,8 +114,9 @@ const WebinarDetails = () => {
           {webinar && (
             <div
               style={{ position: "relative", zIndex: 2 }}
-              className="mt-12 mx-4 md:mx-8 flex flex-row flex-wrap justify-start"
+              className="mt-12 mx-4 md:mx-8 flex flex-row items-center justify-start"
             >
+              <div>
               <img
                 src={
                   webinar.coverImageUrl ||
@@ -104,25 +125,35 @@ const WebinarDetails = () => {
                 alt=""
                 className="w-full rounded-xl md:w-[288px] h-[296px]"
               />
-              <div className="mt-10 mx-5 w-full lg:w-2/4">
+              </div>
+              <div className="mt-10 mx-5 w-full lg:w-2/4 ">
                 <div className="flex justify-between items-center">
                   <h1 className="text-white text-3xl font-semibold">
                     {webinar.title}
                   </h1>
-                  <div className="mx-0 flex items-center gap-1">
-                    <FaStar className="text-[#FFC01E]" />
-                    <p className="text-white text-lg font-medium">7.8/10</p>
+                  <div className="mx-0 flex items-center gap-1 text-[#FFC01E]">
+                    {[...Array(5)].map((_, index) =>
+                      index < Math.round(stats?.averageRating) ? (
+                        <FaStar key={index} fontSize="medium" />
+                      ) : (
+                        <FaRegStar key={index} fontSize="medium" />
+                      )
+                    )}
+                    <p className="text-white text-lg font-medium">
+                      {stats.averageRating}
+                    </p>
                   </div>
                 </div>
                 <div className="flex justify-between mt-2 flex-wrap">
                   <p className="text-white text-lg font-medium mr-4">
-                    {webinar.startDate.split("-")[0]}
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climate
-                    Change&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2h 38m
+                    {webinar.startDate.split("T")[0]}
                   </p>
                 </div>
-                <div className="mt-5 mr-0">
-                  <p className="text-white text-base">{webinar.description}</p>
+                <div className="text-lg font-medium mr-4">
+                <p className="text-[#b2b2b2]">{webinar.startTime} - {webinar.endTime}</p>
+                </div>
+                <div className="mt-2 mr-0">
+                  <p className="text-white text-base line-clamp-1 text-ellipsis">{webinar.description}</p>
                 </div>
                 <div>
                   {webinarLiveStatus && (

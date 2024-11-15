@@ -1,16 +1,16 @@
 import { Typography } from "@mui/material";
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { FaPlay, FaPause } from "react-icons/fa"; 
+import { FaPlay, FaPause } from "react-icons/fa";
 import axiosInstance from "../lib/axiosInstance";
 import { useParams } from "react-router-dom";
 
 const AudioPlayer = ({ playing = false }) => {
-  const [isPlaying, setIsPlaying] = useState(playing); 
-  const [progress, setProgress] = useState(0); 
-  const [isDragging, setIsDragging] = useState(false); 
-  const audioRef = useRef(null); 
+  const [isPlaying, setIsPlaying] = useState(playing);
+  const [progress, setProgress] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const audioRef = useRef(null);
   const [book, setBook] = useState({});
-  const progressBarRef = useRef(null); 
+  const progressBarRef = useRef(null);
 
   const { id: bookId } = useParams();
 
@@ -73,10 +73,13 @@ const AudioPlayer = ({ playing = false }) => {
     }
   }, []);
 
-  const handleMouseDown = useCallback((e) => {
-    setIsDragging(true);
-    handleSeek(e); // Immediately seek to the position where the drag starts
-  }, [handleSeek]);
+  const handleMouseDown = useCallback(
+    (e) => {
+      setIsDragging(true);
+      handleSeek(e); // Immediately seek to the position where the drag starts
+    },
+    [handleSeek]
+  );
 
   const handleMouseMove = useCallback(
     (e) => {
@@ -96,7 +99,7 @@ const AudioPlayer = ({ playing = false }) => {
 
     if (audioElement) {
       // Ensure the audio metadata is loaded before calculating progress
-      audioElement.addEventListener("loadedmetadata", updateProgress); 
+      audioElement.addEventListener("loadedmetadata", updateProgress);
       audioElement.addEventListener("timeupdate", updateProgress); // Update progress on time update
       audioElement.addEventListener("play", updateProgress); // Force progress update when playback starts
     }
@@ -121,11 +124,14 @@ const AudioPlayer = ({ playing = false }) => {
   }
 
   return (
-    <div style={{ zIndex: 2 }} className="absolute bottom-0 left-0 w-full">
+    <div
+      style={{ zIndex: 2, width: "83.844%" }}
+      className="fixed bottom-0 left-280"
+    >
       <div
         ref={progressBarRef}
         className="h-1 bg-[#e0d4fd] cursor-pointer"
-        onMouseDown={handleMouseDown} 
+        onMouseDown={handleMouseDown}
       >
         <div
           className="h-full bg-[#6a55ea]"
