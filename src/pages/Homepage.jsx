@@ -143,11 +143,7 @@ export default function Homepage({ window }) {
       <AppBar
         position="fixed"
         sx={{
-<<<<<<< Updated upstream
           width: { sm: `calc(100% - ${drawerWidth}px)` }, // Use backticks here
-=======
-          width: { sm: `calc(100% - ${drawerWidth}px`) },
->>>>>>> Stashed changes
           ml: { sm: `${drawerWidth}px` },
           backgroundColor: "transparent",
           boxShadow: "none",

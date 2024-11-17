@@ -82,6 +82,7 @@ const ProfileSettings = () => {
   const handleSave = (field) => {
     setLoading(true);
     const updatedUser = {
+      id: currentUser.id,
       firstName,
       lastName,
       email,
