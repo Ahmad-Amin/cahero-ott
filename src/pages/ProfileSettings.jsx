@@ -69,7 +69,6 @@ const ProfileSettings = () => {
         });
     }
   }, [dispatch, user, token]);
-  console.log(profileImage)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "firstName") setFirstName(value);
