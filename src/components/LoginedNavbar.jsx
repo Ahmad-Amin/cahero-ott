@@ -7,6 +7,13 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+
 function LoginedNavbar({ position = "relative" }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -160,28 +167,33 @@ const navigate = useNavigate();
               </div>
               <ul className="py-2 text-sm space-y-2">
                 <li>
-                  <Link to="/" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
+                  <Link to="/" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition items-center">
+                    <DashboardOutlinedIcon className="mr-2"/>
                     Dashboard
                   </Link>
                 </li>
                 <li>
                   <Link to="/notifications" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
+                    <NotificationsNoneOutlinedIcon className="mr-2"/>
                     Notifications
                   </Link>
                 </li>
                 <li>
                   <Link to="/favourites" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
+                    <FavoriteBorderOutlinedIcon className="mr-2"/>
                     Favourites
                   </Link>
                 </li>
                 <li>
                   <Link to="/profile-settings" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
+                    <SettingsOutlinedIcon className="mr-2"/>
                     Settings
                   </Link>
                 </li>
                 {userData.role === "admin" && (
                   <li>
                     <Link to="/dashboard" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
+                      <AdminPanelSettingsOutlinedIcon className="mr-2"/>
                       Admin Panel
                     </Link>
                   </li>
@@ -189,6 +201,7 @@ const navigate = useNavigate();
               </ul>
               <div className="py-2" onClick={handleSignOut}>
                 <Link to="/" className="block px-4 py-2 mx-2 rounded-lg text-sm text-white hover:bg-red-700 cursor-pointer ease-in-out transition">
+                <LogoutOutlinedIcon className="mr-2"/>
                   Sign out
                 </Link>
               </div>

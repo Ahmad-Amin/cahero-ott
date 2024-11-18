@@ -3,33 +3,62 @@ import { useSelector, useDispatch } from "react-redux";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Link } from "react-router-dom";
-import axiosInstance from "../../lib/axiosInstance"; 
+import axiosInstance from "../../lib/axiosInstance";
 import { logout } from "../../Slice/AuthSlice";
 import { toast } from "react-toastify";
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
+import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+
 const AdminNavbar = ({ pageTitle }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [currentUser, setCurrentUser] = useState(false);
   const dispatch = useDispatch();
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const profileRef = useRef(null);
 
-  const user = useSelector((state) => state.auth.user); 
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
-    const eventSource = new EventSource(`https://cahero-ott-f285594fd4fa.herokuapp.com/api/notificationStream?role=${user.role}`);
-  
-    eventSource.onmessage = function(event) {
-      const notification = JSON.parse(event.data);
-  
-      if (notification.recipientType === "All" || notification.recipientType === "Admins") {
-        setNotifications((prevNotifications) => [notification, ...prevNotifications]);
-        toast.info(`New Notification: ${notification.notificationType}`);  
+    const fetchuser = async () => {
+      try {
+        const response = await axiosInstance.get("/me");
+        setCurrentUser(response.data);
+      } catch (e) {
+        console.log("Error getting User Data", e);
       }
     };
-  
+    fetchuser();
+  }, []);
+
+  console.log(currentUser);
+
+  useEffect(() => {
+    const eventSource = new EventSource(
+      `https://cahero-ott-f285594fd4fa.herokuapp.com/api/notificationStream?role=${user.role}`
+    );
+
+    eventSource.onmessage = function (event) {
+      const notification = JSON.parse(event.data);
+
+      if (
+        notification.recipientType === "All" ||
+        notification.recipientType === "Admins"
+      ) {
+        setNotifications((prevNotifications) => [
+          notification,
+          ...prevNotifications,
+        ]);
+        toast.info(`New Notification: ${notification.notificationType}`);
+      }
+    };
+
     return () => {
       eventSource.close();
     };
@@ -40,13 +69,14 @@ const AdminNavbar = ({ pageTitle }) => {
       setLoading(true);
       try {
         const response = await axiosInstance.get("/notifications");
-        
+
         const filteredNotifications = response.data.results
           .filter(
             (notification) =>
-              notification.recipientType === "All" || notification.recipientType === "Admins"
+              notification.recipientType === "All" ||
+              notification.recipientType === "Admins"
           )
-          .slice(0, 5); 
+          .slice(0, 5);
 
         setNotifications(filteredNotifications);
       } catch (err) {
@@ -58,7 +88,7 @@ const AdminNavbar = ({ pageTitle }) => {
     };
 
     fetchNotifications();
-  }, [user.role]); 
+  }, [user.role]);
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
@@ -100,7 +130,7 @@ const AdminNavbar = ({ pageTitle }) => {
   };
 
   const handleSignOut = () => {
-    dispatch(logout())
+    dispatch(logout());
   };
 
   return (
@@ -188,27 +218,45 @@ const AdminNavbar = ({ pageTitle }) => {
           </button>
           {isDropdownOpen && (
             <div className="absolute right-0 top-full mt-3 bg-[#0d0d0d] text-white rounded-md shadow-lg z-30">
-              <div className="text-center py-2 font-bold border-b border-gray-600">Notifications</div>
+              <div className="text-center py-2 font-bold border-b border-gray-600">
+                Notifications
+              </div>
               {loading ? (
-                <div className="py-2 px-4 font-semibold text-lg text-white opacity-70">Loading...</div>
+                <div className="py-2 px-4 font-semibold text-lg text-white opacity-70">
+                  Loading...
+                </div>
               ) : error ? (
-                <div className="py-2 px-4 font-semibold text-lg text-white opacity-70">{error}</div>
+                <div className="py-2 px-4 font-semibold text-lg text-white opacity-70">
+                  {error}
+                </div>
               ) : Array.isArray(notifications) && notifications.length > 0 ? (
                 <ul className="max-h-60 overflow-y-auto">
                   {notifications.map((notification, index) => (
-                    <li key={index} className="flex items-center h-20 px-4 py-2 hover:bg-[#404041] cursor-pointer ease-in-out transition">
+                    <li
+                      key={index}
+                      className="flex items-center h-20 px-4 py-2 hover:bg-[#404041] cursor-pointer ease-in-out transition"
+                    >
                       <div className="flex flex-col justify-center flex-grow overflow-hidden">
-                        <div className="font-semibold">{notification.notificationType}</div>
-                        <div className="text-sm w-96 text-gray-400 overflow-hidden text-ellipsis whitespace-nowrap line-clamp-1">{notification.content}</div>
+                        <div className="font-semibold">
+                          {notification.notificationType}
+                        </div>
+                        <div className="text-sm w-96 text-gray-400 overflow-hidden text-ellipsis whitespace-nowrap line-clamp-1">
+                          {notification.content}
+                        </div>
                       </div>
-                      <span className="ml-4 text-xs text-gray-400" style={{ width: "100px", textAlign: "center" }}>
+                      <span
+                        className="ml-4 text-xs text-gray-400"
+                        style={{ width: "100px", textAlign: "center" }}
+                      >
                         {notification.time}
                       </span>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <div className="py-2 px-4 font-semibold text-lg text-white opacity-70">No notifications available</div>
+                <div className="py-2 px-4 font-semibold text-lg text-white opacity-70">
+                  No notifications available
+                </div>
               )}
               <Link to="/dashboard/notifications" onClick={dropdownRef}>
                 <button className="flex justify-end w-full my-3 px-3 text-sm hover:font-semibold ease-in-out transition duration-300">
@@ -220,57 +268,82 @@ const AdminNavbar = ({ pageTitle }) => {
         </div>
 
         <div className="flex justify-between items-center gap-8">
-        <div
-          className="flex flex-row items-center cursor-pointer gap-5 mr-6 relative"
-          ref={profileRef}
-          onClick={toggleProfileDropdown}
-        >
-          <img
-            src={`${process.env.PUBLIC_URL}/images/ProfileA.png`}
-            alt="Profile"
-            className="w-10 h-10"
-          />
-          <div>
-            <h1>{user.firstName || "User"}</h1>
-            <p className="text-sm opacity-70">{user?.role || "Role"}</p>
-          </div>
-          <KeyboardArrowDownIcon />
-          {isProfileDropdownOpen && (
-            <div className="absolute right-1 top-full mt-3 text-white rounded-md shadow-lg z-30 bg-[#0d0d0d]">
-              <div className="px-4 py-3 text-sm border-b-2">
-                <div className="text-base font-bold">{user.firstName}</div>
-                <div className="font-medium truncate opacity-60">{user.email}</div>
-              </div>
-              <ul className="py-2 text-sm space-y-2">
-                <li>
-                  <Link to="/dashboard" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
-                    Dashboard
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/dashboard/notifications" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
-                    Notifications
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/dashboard/profile" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
-                    Settings
-                  </Link>
-                </li>
+          <div
+            className="flex flex-row items-center cursor-pointer gap-5 mr-6 relative"
+            ref={profileRef}
+            onClick={toggleProfileDropdown}
+          >
+            <img
+              src={
+                currentUser.profileImageUrl ||
+                `${process.env.PUBLIC_URL}/images/ProfileA.png`
+              }
+              alt="Profile"
+              className="w-10 h-10 rounded-lg"
+            />
+            <div>
+              <h1>{currentUser.firstName || "User"}</h1>
+              <p className="text-sm opacity-70">{currentUser?.role || "Role"}</p>
+            </div>
+            <KeyboardArrowDownIcon />
+            {isProfileDropdownOpen && (
+              <div className="absolute right-1 top-full mt-3 text-white rounded-md shadow-lg z-30 bg-[#0d0d0d]">
+                <div className="px-4 py-3 text-sm border-b-2">
+                  <div className="text-base font-bold">{currentUser.firstName}</div>
+                  <div className="font-medium truncate opacity-60">
+                    {currentUser.email}
+                  </div>
+                </div>
+                <ul className="py-2 text-sm space-y-2">
                   <li>
-                    <Link to="/" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
+                    <Link
+                      to="/dashboard"
+                      className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition"
+                    >
+                      <DashboardOutlinedIcon className="mr-2" />
+                      Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/dashboard/notifications"
+                      className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition"
+                    >
+                      <NotificationsNoneOutlinedIcon className="mr-2" />
+                      Notifications
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/dashboard/profile"
+                      className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition"
+                    >
+                      <SettingsOutlinedIcon className="mr-2" />
+                      Settings
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/"
+                      className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition"
+                    >
+                      <AccountBoxOutlinedIcon className="mr-2" />
                       User Panel
                     </Link>
                   </li>
-              </ul>
-              <div className="py-2" onClick={handleSignOut}>
-                <Link to="/" className="block px-4 py-2 mx-2 rounded-lg text-sm text-white hover:bg-red-700 cursor-pointer ease-in-out transition">
-                  Sign out
-                </Link>
+                </ul>
+                <div className="py-2" onClick={handleSignOut}>
+                  <Link
+                    to="/"
+                    className="block px-4 py-2 mx-2 rounded-lg text-sm text-white hover:bg-red-700 cursor-pointer ease-in-out transition"
+                  >
+                    <LogoutOutlinedIcon className="mr-2" />
+                    Sign out
+                  </Link>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
