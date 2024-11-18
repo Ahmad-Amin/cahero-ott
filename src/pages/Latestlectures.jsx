@@ -41,7 +41,8 @@ function LatestLectures({ limit }) {
             <WebinarCard
               key={lecture.id}
               title={lecture.title}
-              genre="Webinar Genre"
+              year={lecture.duration}
+              genre={lecture.category}
               height={300}
               image={
                 lecture.coverImageUrl ||

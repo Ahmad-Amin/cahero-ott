@@ -42,7 +42,7 @@ function UpcomingWebinars() {
               <WebinarCard
                 title={webinar.title}
                 year={webinar.startDate.split("-")[0]}
-                genre="Webinar Genre"
+                genre={webinar.type}
                 image={
                   webinar.coverImageUrl ||
                   `${process.env.PUBLIC_URL}/images/Tokyotrain.png`

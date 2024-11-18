@@ -29,6 +29,7 @@ const Lectures = () => {
       try {
         setLoading(true);
         const response = await axiosInstance.get(`/lectures?search=${debouncedQuery}&target=${selectedDateFilter}`);
+        console.log(response)
         setLectures(response.data);
       } catch (e) {
         console.log("Error getting the lecture", e);
@@ -176,7 +177,8 @@ const Lectures = () => {
             {lectures.map((lecture) => (
               <WebinarCard
                 title={lecture.title}
-                genre="Webinar Genre"
+                genre={lecture.category}
+                year={lecture.duration}
                 height={300}
                 image={
                   lecture.coverImageUrl ||

@@ -17,7 +17,7 @@ function WebinarCard({ title, year, genre, image, height, author, link, isVideo}
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-white to-transparent text-black p-4 rounded-b-xl">
           <h3 className="font-semibold">{title}</h3>
           {author ? (
-            <p className="text-sm">{author}</p>
+            <p className="text-sm">by {author}</p>
           ) : (
             <p className="text-sm">
               {year} | {genre}

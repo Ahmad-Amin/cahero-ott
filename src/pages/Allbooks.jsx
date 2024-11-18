@@ -177,7 +177,7 @@ function Allbooks() {
             {books.map((book) => (
               <WebinarCard
                 title={book.title}
-                genre="Book Genre"
+                author={book.author}
                 image={
                   book.coverImageUrl ||
                   `${process.env.PUBLIC_URL}/images/Tokyotrain.png`

@@ -65,7 +65,7 @@ const Favorite = () => {
                 key={webinar.id}
                 title={webinar.title}
                 year={webinar?.startDate?.split("-")[0]}
-                genre="Webinar Genre"
+                genre={webinar.type}
                 image={
                   webinar.coverImageUrl ||
                   `${process.env.PUBLIC_URL}/images/Tokyotrain.png`
@@ -81,7 +81,7 @@ const Favorite = () => {
             {data.map((book) => (
               <WebinarCard
                 title={book.title}
-                genre="Book Genre"
+                author={book.author}
                 image={
                   book.coverImageUrl ||
                   `${process.env.PUBLIC_URL}/images/Tokyotrain.png`
@@ -97,7 +97,8 @@ const Favorite = () => {
             {data.map((document) => (
               <WebinarCard
                 title={document.title}
-                genre="Webinar Genre"
+                genre={document.category}
+                year={document.duration}
                 height={300}
                 image={
                   document.coverImageUrl ||
