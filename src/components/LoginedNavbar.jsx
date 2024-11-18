@@ -170,6 +170,11 @@ const navigate = useNavigate();
                   </Link>
                 </li>
                 <li>
+                  <Link to="/favourites" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
+                    Favourites
+                  </Link>
+                </li>
+                <li>
                   <Link to="/profile-settings" className="block px-4 mx-2 py-2 rounded-lg hover:bg-[#5242b6] cursor-pointer ease-in-out transition">
                     Settings
                   </Link>

@@ -44,6 +44,7 @@ import EditNotifications from "./pages/Admin Pages/EditNotifications";
 import Community from "./pages/Community";
 import LectureDetails from "./pages/LectureDetails"
 import AdminCommunity from "./pages/Admin Pages/AdminCommunity";
+import Favourite from "./pages/Favourite";
 function App() {
 
   return (
@@ -71,6 +72,7 @@ function App() {
                 } />
               <Route path="/webinar/:id/user-lobby" element={<StreamPage />} />
               <Route path="/notifications" element={<NotificationsUser />} />
+              <Route path="/favourites" element={<Favourite />} />
               {/* <Route
                 path="/subscription-plans"
                 element={<SubscriptionPlans />}

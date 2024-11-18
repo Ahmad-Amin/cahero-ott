@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import LoginedNavbar from "../components/LoginedNavbar";
-import { FaRegHeart } from "react-icons/fa";
+import { FaRegHeart, FaHeart } from "react-icons/fa"; // Import both outlined and filled heart icons
 import { FaStar } from "react-icons/fa6";
 import { FaRegStar } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router-dom";
@@ -13,6 +13,7 @@ import RatingsReviews from "../components/RatingsReview";
 import Comments from "../components/Comments";
 const drawerWidth = 280;
 const type = "webinar";
+
 const WebinarDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const WebinarDetails = () => {
   const currentUser = useSelector((state) => state.auth.user);
   const [refreshKey, setRefreshKey] = useState(0);
   const [stats, setStats] = useState(0);
+  const [isFavorite, setIsFavorite] = useState(false); // State to track if the webinar is in favorites
 
   const handleCommentAdded = () => {
     setRefreshKey((prevKey) => prevKey + 1);
@@ -40,6 +42,7 @@ const WebinarDetails = () => {
     })();
   }, [id]);
 
+  // Check webinar live status
   useEffect(() => {
     (async () => {
       try {
@@ -59,6 +62,7 @@ const WebinarDetails = () => {
     })();
   }, [id]);
 
+  // Fetch review stats
   useEffect(() => {
     const fetchReviewStats = async () => {
       try {
@@ -76,6 +80,38 @@ const WebinarDetails = () => {
 
     fetchReviewStats();
   }, [type, id]);
+
+  // Fetch all favorites on page load and check if the current webinar is a favorite
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        const response = await axiosInstance.get("/me");
+        console.log(response)
+        const favoriteWebinars = response?.data?.favorites?.webinars || [];
+        setIsFavorite(favoriteWebinars.some((fav) => fav.item === id));
+      } catch (error) {
+        console.error("Failed to fetch favorites", error);
+      }
+    };
+
+    fetchFavorites();
+  }, [id]);
+
+  const toggleFavorite = async () => {
+    try {
+      if (isFavorite) {
+        const deleteresposnce = await axiosInstance.delete(`/webinars/${id}/favorite`);
+        console.log(deleteresposnce)
+        setIsFavorite(false);
+      } else {
+        // Add to favorites
+        await axiosInstance.post(`/webinars/${id}/favorite`);
+        setIsFavorite(true);
+      }
+    } catch (error) {
+      console.error("Error toggling favorite status", error);
+    }
+  };
 
   const handleWatchNow = () => {
     if (isWatchNowEnabled) {
@@ -117,14 +153,14 @@ const WebinarDetails = () => {
               className="mt-12 mx-4 md:mx-8 flex flex-row items-center justify-start"
             >
               <div>
-              <img
-                src={
-                  webinar.coverImageUrl ||
-                  `${process.env.PUBLIC_URL}/images/Rectangle1.png`
-                }
-                alt=""
-                className="w-full rounded-xl md:w-[288px] h-[296px]"
-              />
+                <img
+                  src={
+                    webinar.coverImageUrl ||
+                    `${process.env.PUBLIC_URL}/images/Rectangle1.png`
+                  }
+                  alt=""
+                  className="w-full rounded-xl md:w-[288px] h-[296px]"
+                />
               </div>
               <div className="mt-10 mx-5 w-full lg:w-2/4 ">
                 <div className="flex justify-between items-center">
@@ -150,10 +186,14 @@ const WebinarDetails = () => {
                   </p>
                 </div>
                 <div className="text-lg font-medium mr-4">
-                <p className="text-[#b2b2b2]">{webinar.startTime} - {webinar.endTime}</p>
+                  <p className="text-[#b2b2b2]">
+                    {webinar.startTime} - {webinar.endTime}
+                  </p>
                 </div>
                 <div className="mt-2 mr-0">
-                  <p className="text-white text-base line-clamp-1 text-ellipsis">{webinar.description}</p>
+                  <p className="text-white text-base line-clamp-1 text-ellipsis">
+                    {webinar.description}
+                  </p>
                 </div>
                 <div>
                   {webinarLiveStatus && (
@@ -173,8 +213,15 @@ const WebinarDetails = () => {
                   >
                     Watch Now
                   </button>
-                  <button className="bg-white h-16 w-full md:w-16 text-black mx-0 md:mx-5 rounded-2xl mt-3 flex justify-center items-center">
-                    <FaRegHeart className="w-6 h-6" />
+                  <button
+                    className="bg-white h-16 w-full md:w-16 text-black mx-0 md:mx-5 rounded-2xl mt-3 flex justify-center items-center"
+                    onClick={toggleFavorite}
+                  >
+                    {isFavorite ? (
+                      <FaHeart className="w-6 h-6 text-red-500" />
+                    ) : (
+                      <FaRegHeart className="w-6 h-6" />
+                    )}
                   </button>
                 </div>
               </div>
