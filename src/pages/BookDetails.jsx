@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import LoginedNavbar from "../components/LoginedNavbar";
 import { FaStar } from "react-icons/fa6";
-import { FaRegStar } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaRegStar } from "react-icons/fa";
 import { FiPlayCircle } from "react-icons/fi";
 import { RiBook2Line } from "react-icons/ri";
 import AudioPlayer from "../components/AudioPlayer"; // Import your AudioPlayer component
@@ -12,14 +12,19 @@ import { useParams } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
 import Navbar from "../components/Navbar";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import RatingsReviews from "../components/RatingsReview";
 import Comments from "../components/Comments";
+import { toast } from "react-toastify";
+import { updateUser } from "../Slice/AuthSlice";
 const type = "book";
 
 const drawerWidth = 280;
 
 const BookDetails = () => {
+
+  const { id: bookId } = useParams();
+
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const navigate = useNavigate();
   const [book, setBook] = useState({});
@@ -28,11 +33,18 @@ const BookDetails = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [stats, setStats] = useState(0);
 
+  const { user } = useSelector((state) => state.auth);
+
+  const [isFavorite, setIsFavorite] = useState(
+    user?.favorites?.some((favorite) => favorite.item === bookId)
+  );
+  const dispatch = useDispatch();
+
   const handleCommentAdded = () => {
     setRefreshKey((prevKey) => prevKey + 1);
   };
 
-  const { id: bookId } = useParams();
+  
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -67,6 +79,33 @@ const BookDetails = () => {
 
     fetchReviewStats();
   }, [type, bookId]);
+
+  const toggleFavorite = async () => {
+    try {
+      setLoading(true);
+      if (isFavorite) {
+        await axiosInstance.delete(`/books/${bookId}/favorite`);
+        setIsFavorite(false);
+        toast.success("Removed from Favourites");
+      } else {
+        await axiosInstance.post(`/books/${bookId}/favorite`);
+        setIsFavorite(true);
+        toast.success("Added To Favourites");
+      }
+    } catch (error) {
+      console.error("Error toggling favorite status", error);
+      toast.error("Error Removing from favorite");
+    } finally {
+      fetchLatestUsers();
+      setLoading(false);
+    }
+  };
+
+  const fetchLatestUsers = async () => {
+    const response = await axiosInstance.get("/me");
+    dispatch(updateUser({ user: response.data }));
+  };
+
   return (
     <>
       <Box
@@ -144,20 +183,21 @@ const BookDetails = () => {
                 </p>
               </div>
               <Box className="flex items-center gap-2 mt-2 ">
-                <p className="text-white font-semibold">Genre:</p> <p className="text-white font-normal opacity-80">
-                {book.genre}
+                <p className="text-white font-semibold">Genre:</p>{" "}
+                <p className="text-white font-normal opacity-80">
+                  {book.genre}
                 </p>
               </Box>
               <Box className="flex items-center mt-3 gap-3">
                 <Box className="flex items-center mt-3">
                   <Button
                     variant="contained"
-                    onClick={() => setIsAudioPlaying(true)} 
+                    onClick={() => setIsAudioPlaying(true)}
                     sx={{
-                      backgroundColor: "#6a55ea", 
+                      backgroundColor: "#6a55ea",
                       color: "white",
                       "&:hover": {
-                        backgroundColor: "#5a47d1", 
+                        backgroundColor: "#5a47d1",
                       },
                       height: "64px",
                       width: "160px",
@@ -185,7 +225,7 @@ const BookDetails = () => {
                         justifyContent: "center",
                         gap: 1,
                         "&:hover": {
-                          backgroundColor: "rgba(255, 255, 255, 0.1)", // Lighten background on hover
+                          backgroundColor: "rgba(255, 255, 255, 0.1)", 
                         },
                       }}
                     >
@@ -193,6 +233,16 @@ const BookDetails = () => {
                       Read Book
                     </Button>
                   </Link>
+                  <button
+                    className="bg-white h-16 w-full md:w-16 text-black mx-0 md:mx-5 rounded-2xl flex justify-center items-center"
+                    onClick={toggleFavorite}
+                  >
+                    {isFavorite ? (
+                      <FaHeart className="w-6 h-6 text-red-500" />
+                    ) : (
+                      <FaRegHeart className="w-6 h-6" />
+                    )}
+                  </button>
                 </Box>
               </Box>
             </Box>

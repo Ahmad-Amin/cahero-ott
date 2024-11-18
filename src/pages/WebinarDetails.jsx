@@ -7,10 +7,12 @@ import { FaRegStar } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
 import LoadingWrapper from "../components/ui/LoadingWrapper";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import RatingsReviews from "../components/RatingsReview";
 import Comments from "../components/Comments";
+import { updateUser } from "../Slice/AuthSlice";
+import { toast } from "react-toastify";
 const drawerWidth = 280;
 const type = "webinar";
 
@@ -24,7 +26,12 @@ const WebinarDetails = () => {
   const currentUser = useSelector((state) => state.auth.user);
   const [refreshKey, setRefreshKey] = useState(0);
   const [stats, setStats] = useState(0);
-  const [isFavorite, setIsFavorite] = useState(false); // State to track if the webinar is in favorites
+  const { user } = useSelector((state) => state.auth);
+
+  const [isFavorite, setIsFavorite] = useState(
+    user?.favorites?.some((favorite) => favorite.item === id)
+  );
+  const dispatch = useDispatch();
 
   const handleCommentAdded = () => {
     setRefreshKey((prevKey) => prevKey + 1);
@@ -81,36 +88,29 @@ const WebinarDetails = () => {
     fetchReviewStats();
   }, [type, id]);
 
-  // Fetch all favorites on page load and check if the current webinar is a favorite
-  useEffect(() => {
-    const fetchFavorites = async () => {
-      try {
-        const response = await axiosInstance.get("/me");
-        console.log(response)
-        const favoriteWebinars = response?.data?.favorites?.webinars || [];
-        setIsFavorite(favoriteWebinars.some((fav) => fav.item === id));
-      } catch (error) {
-        console.error("Failed to fetch favorites", error);
-      }
-    };
-
-    fetchFavorites();
-  }, [id]);
-
   const toggleFavorite = async () => {
     try {
+      setLoading(true);
       if (isFavorite) {
-        const deleteresposnce = await axiosInstance.delete(`/webinars/${id}/favorite`);
-        console.log(deleteresposnce)
+        await axiosInstance.delete(`/webinars/${id}/favorite`);
         setIsFavorite(false);
+        toast.success("Removed from Favourites");
       } else {
-        // Add to favorites
         await axiosInstance.post(`/webinars/${id}/favorite`);
         setIsFavorite(true);
+        toast.success("Added To Favourites");
       }
     } catch (error) {
       console.error("Error toggling favorite status", error);
+    } finally {
+      fetchLatestUsers();
+      setLoading(false);
     }
+  };
+
+  const fetchLatestUsers = async () => {
+    const response = await axiosInstance.get("/me");
+    dispatch(updateUser({ user: response.data }));
   };
 
   const handleWatchNow = () => {

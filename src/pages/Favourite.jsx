@@ -25,7 +25,7 @@ const Favorite = () => {
         case "books":
           url = "/books/favorites";
           break;
-        case "documents":
+        case "documentaries":
           url = "/lectures/favorites";
           break;
         default:
@@ -33,9 +33,6 @@ const Favorite = () => {
       }
 
       const response = await axiosInstance.get(url);
-      console.log("API Response:", response.data); // Debugging log
-
-      // Access items properly from the favorites array
       const items = response?.data?.favorites?.map((fav) => fav.item) || [];
       setData(items);
     } catch (error) {
@@ -47,6 +44,7 @@ const Favorite = () => {
   };
 
   useEffect(() => {
+    setData([]);
     fetchData(activeTab);
   }, [activeTab]);
 
@@ -66,7 +64,7 @@ const Favorite = () => {
               <WebinarCard
                 key={webinar.id}
                 title={webinar.title}
-                year={webinar.startDate.split("-")[0]}
+                year={webinar?.startDate?.split("-")[0]}
                 genre="Webinar Genre"
                 image={
                   webinar.coverImageUrl ||
@@ -81,21 +79,32 @@ const Favorite = () => {
         return (
           <div className="grid grid-cols-4 gap-6 mt-10">
             {data.map((book) => (
-              <div key={book.id} className="book-card">
-                <h3>{book.title}</h3>
-                <p>Author: {book.author}</p>
-              </div>
+              <WebinarCard
+                title={book.title}
+                genre="Book Genre"
+                image={
+                  book.coverImageUrl ||
+                  `${process.env.PUBLIC_URL}/images/Tokyotrain.png`
+                }
+                link={`/all-books/${book.id}`}
+              />
             ))}
           </div>
         );
-      case "documents":
+      case "documentaries":
         return (
-          <div className="grid grid-cols-4 gap-6 mt-10">
+          <div className="grid grid-cols-3 gap-6 mt-10">
             {data.map((document) => (
-              <div key={document.id} className="document-card">
-                <h3>{document.name}</h3>
-                <p>Uploaded by: {document.uploader}</p>
-              </div>
+              <WebinarCard
+                title={document.title}
+                genre="Webinar Genre"
+                height={300}
+                image={
+                  document.coverImageUrl ||
+                  `${process.env.PUBLIC_URL}/images/Tokyotrain.png`
+                }
+                link={`/documentaries/${document.id}`}
+              />
             ))}
           </div>
         );
@@ -153,11 +162,11 @@ const Favorite = () => {
               </button>
               <button
                 className={`text-white ${
-                  activeTab === "documents" ? "opacity-100" : "opacity-60"
+                  activeTab === "documentaries" ? "opacity-100" : "opacity-60"
                 }`}
-                onClick={() => setActiveTab("documents")}
+                onClick={() => setActiveTab("documentaries")}
               >
-                Documents
+                Documentaries
               </button>
             </div>
 
